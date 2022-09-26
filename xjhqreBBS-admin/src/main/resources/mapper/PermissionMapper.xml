@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xjhqre.admin.mapper.PermissionMapper">
+
+
+    <!-- 分页查询权限 -->
+    <select id="findPermission" resultType="com.xjhqre.admin.entity.vo.PermissionVO">
+        select *
+        from t_permission
+    </select>
+
+    <!-- 无条件查询所有权限列表 -->
+    <select id="listAll" resultType="com.xjhqre.admin.entity.Permission">
+        select *
+        from t_permission
+    </select>
+
+
+</mapper>
