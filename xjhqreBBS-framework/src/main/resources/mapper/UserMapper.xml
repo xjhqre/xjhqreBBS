@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xjhqre.framework.mapper.UserMapper">
+
+    <!--    <resultMap id="UserResult" type="com.xjhqre.common.domain.entity.User">-->
+    <!--        <id property="userId" column="user_id"/>-->
+    <!--        <result property="userName" column="user_name"/>-->
+    <!--        <result property="nickName" column="nick_name"/>-->
+    <!--        <result property="password" column="password"/>-->
+    <!--        <result property="sex" column="sex"/>-->
+    <!--        <result property="userType" column="user_type"/>-->
+    <!--        <result property="avatar" column="avatar"/>-->
+    <!--        <result property="email" column="email"/>-->
+    <!--        <result property="birthday" column="birthday"/>-->
+    <!--        <result property="mobile" column="mobile"/>-->
+    <!--        <result property="summary" column="summary"/>-->
+    <!--        <result property="status" column="status"/>-->
+    <!--        <result property="delFlag" column="del_flag"/>-->
+    <!--        <result property="loginDate" column="login_date"/>-->
+    <!--        <result property="loginIp" column="login_ip"/>-->
+    <!--        <result property="browser" column="browser"/>-->
+    <!--        <result property="os" column="os"/>-->
+    <!--        <result property="createBy" column="create_by"/>-->
+    <!--        <result property="createTime" column="create_time"/>-->
+    <!--        <result property="updateBy" column="update_by"/>-->
+    <!--        <result property="updateTime" column="update_time"/>-->
+    <!--        <result property="remark" column="remark"/>-->
+    <!--        <collection property="roles" javaType="java.util.List" resultMap="RoleResult"/>-->
+    <!--    </resultMap>-->
+
+    <!--    <resultMap id="RoleResult" type="com.xjhqre.common.domain.entity.Role">-->
+    <!--        <id property="roleId" column="role_id"/>-->
+    <!--        <result property="roleName" column="role_name"/>-->
+    <!--        <result property="roleKey" column="role_key"/>-->
+    <!--        <result property="roleSort" column="role_sort"/>-->
+    <!--        <result property="status" column="role_status"/>-->
+    <!--        <result property="delFlag" column="del_flag"/>-->
+    <!--    </resultMap>-->
+
+    <sql id="selectUserVo">
+        select u.user_id,
+               u.user_name,
+               u.nick_name,
+               u.email,
+               u.avatar,
+               u.mobile,
+               u.password,
+               u.sex,
+               u.status,
+               u.del_flag,
+               u.login_ip,
+               u.login_date,
+               u.create_by,
+               u.create_time,
+               r.role_id,
+               r.role_name,
+               r.role_key,
+               r.role_sort,
+               r.status as role_status
+        from t_user u
+                 left join t_user_role ur on u.user_id = ur.user_id
+                 left join t_role r on r.role_id = ur.role_id
+    </sql>
+
+    <!-- 根据条件分页查询用户 -->
+    <select id="findUser" parameterType="com.xjhqre.common.domain.entity.User"
+            resultType="com.xjhqre.common.domain.entity.User">
+        select * from t_user u
+        <where>
+            <if test="userId != null and userId != 0">
+                AND u.user_id = #{userId}
+            </if>
+            <if test="userName != null and userName != ''">
+                AND u.user_name like concat('%', #{userName}, '%')
+            </if>
+            <if test="nickName != null and nickName != ''">
+                AND u.nick_name like concat('%', #{nickName}, '%')
+            </if>
+            <if test="sex != null and sex != ''">
+                AND u.sex like concat('%', #{sex}, '%')
+            </if>
+            <if test="userType != null and userType != ''">
+                AND u.user_type like concat('%', #{userType}, '%')
+            </if>
+            <if test="status != null and status != ''">
+                AND u.status = #{status}
+            </if>
+            <if test="mobile != null and mobile != ''">
+                AND u.mobile like concat('%', #{mobile}, '%')
+            </if>
+        </where>
+    </select>
+
+    <!-- 根据条件分页查询已配用户角色列表 -->
+    <select id="selectAllocatedList" parameterType="com.xjhqre.common.domain.entity.User"
+            resultType="com.xjhqre.common.domain.entity.User">
+        select distinct u.user_id, u.user_name, u.nick_name, u.email, u.mobile, u.status, u.create_time
+        from t_user u
+        left join t_user_role ur on u.user_id = ur.user_id
+        left join t_role r on r.role_id = ur.role_id
+        where u.del_flag = '0' and r.role_id = #{roleId}
+        <if test="userName != null and userName != ''">
+            AND u.user_name like concat('%', #{userName}, '%')
+        </if>
+        <if test="mobile != null and mobile != ''">
+            AND u.mobile like concat('%', #{mobile}, '%')
+        </if>
+    </select>
+
+    <!-- 根据条件分页查询未分配用户角色列表 -->
+    <select id="selectUnallocatedList" parameterType="com.xjhqre.common.domain.entity.User"
+            resultType="com.xjhqre.common.domain.entity.User">
+        select distinct u.user_id, u.user_name, u.nick_name, u.email, u.mobile, u.status, u.create_time
+        from t_user u
+        left join t_user_role ur on u.user_id = ur.user_id
+        left join t_role r on r.role_id = ur.role_id
+        where u.del_flag = '0' and (r.role_id != #{roleId} or r.role_id IS NULL)
+        and u.user_id not in (select u.user_id from t_user u inner join t_user_role ur on u.user_id = ur.user_id and
+        ur.role_id = #{roleId})
+        <if test="userName != null and userName != ''">
+            AND u.user_name like concat('%', #{userName}, '%')
+        </if>
+        <if test="mobile != null and mobile != ''">
+            AND u.mobile like concat('%', #{mobile}, '%')
+        </if>
+    </select>
+
+    <select id="selectUserByUserName" parameterType="String" resultType="com.xjhqre.common.domain.entity.User">
+        <include refid="selectUserVo"/>
+        where u.user_name = #{userName} and u.del_flag = '0'
+    </select>
+
+    <select id="selectUserById" parameterType="Long" resultType="com.xjhqre.common.domain.entity.User">
+        <include refid="selectUserVo"/>
+        where u.user_id = #{userId}
+    </select>
+
+    <select id="checkUserNameUnique" parameterType="String" resultType="com.xjhqre.common.domain.entity.User">
+        select user_id, user_name
+        from t_user
+        where user_name = #{userName}
+          and del_flag = '0'
+        limit 1
+    </select>
+
+    <select id="checkPhoneUnique" parameterType="String" resultType="com.xjhqre.common.domain.entity.User">
+        select user_id, mobile
+        from t_user
+        where mobile = #{phonenumber}
+          and del_flag = '0'
+        limit 1
+    </select>
+
+    <select id="checkEmailUnique" parameterType="String" resultType="com.xjhqre.common.domain.entity.User">
+        select user_id, email
+        from t_user
+        where email = #{email}
+          and del_flag = '0'
+        limit 1
+    </select>
+
+    <insert id="insertUser" parameterType="com.xjhqre.common.domain.entity.User" useGeneratedKeys="true"
+            keyProperty="userId">
+        insert into t_user(
+        <if test="userId != null and userId != 0">user_id,</if>
+        <if test="userName != null and userName != ''">user_name,</if>
+        <if test="nickName != null and nickName != ''">nick_name,</if>
+        <if test="email != null and email != ''">email,</if>
+        <if test="avatar != null and avatar != ''">avatar,</if>
+        <if test="mobile != null and mobile != ''">mobile,</if>
+        <if test="sex != null and sex != ''">sex,</if>
+        <if test="password != null and password != ''">password,</if>
+        <if test="status != null and status != ''">status,</if>
+        <if test="createBy != null and createBy != ''">create_by,</if>
+        create_time
+        )values(
+        <if test="userId != null and userId != ''">#{userId},</if>
+        <if test="userName != null and userName != ''">#{userName},</if>
+        <if test="nickName != null and nickName != ''">#{nickName},</if>
+        <if test="email != null and email != ''">#{email},</if>
+        <if test="avatar != null and avatar != ''">#{avatar},</if>
+        <if test="mobile != null and mobile != ''">#{mobile},</if>
+        <if test="sex != null and sex != ''">#{sex},</if>
+        <if test="password != null and password != ''">#{password},</if>
+        <if test="status != null and status != ''">#{status},</if>
+        <if test="createBy != null and createBy != ''">#{createBy},</if>
+        sysdate()
+        )
+    </insert>
+
+    <update id="updateUser" parameterType="com.xjhqre.common.domain.entity.User">
+        update t_user
+        <set>
+            <if test="userName != null and userName != ''">user_name = #{userName},</if>
+            <if test="nickName != null and nickName != ''">nick_name = #{nickName},</if>
+            <if test="email != null ">email = #{email},</if>
+            <if test="mobile != null ">mobile = #{mobile},</if>
+            <if test="sex != null and sex != ''">sex = #{sex},</if>
+            <if test="avatar != null and avatar != ''">avatar = #{avatar},</if>
+            <if test="password != null and password != ''">password = #{password},</if>
+            <if test="status != null and status != ''">status = #{status},</if>
+            <if test="loginIp != null and loginIp != ''">login_ip = #{loginIp},</if>
+            <if test="loginDate != null">login_date = #{loginDate},</if>
+            <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+            update_time = sysdate()
+        </set>
+        where user_id = #{userId}
+    </update>
+
+    <update id="updateUserStatus" parameterType="com.xjhqre.common.domain.entity.User">
+        update t_user
+        set status = #{status}
+        where user_id = #{userId}
+    </update>
+
+    <update id="updateUserAvatar" parameterType="com.xjhqre.common.domain.entity.User">
+        update t_user
+        set avatar = #{avatar}
+        where user_name = #{userName}
+    </update>
+
+    <update id="resetUserPwd" parameterType="com.xjhqre.common.domain.entity.User">
+        update t_user
+        set password = #{password}
+        where user_name = #{userName}
+    </update>
+
+    <delete id="deleteUserById" parameterType="Long">
+        update t_user
+        set del_flag = '2'
+        where user_id = #{userId}
+    </delete>
+
+    <delete id="deleteUserByIds" parameterType="Long">
+        update t_user set del_flag = '2' where user_id in
+        <foreach collection="array" item="userId" open="(" separator="," close=")">
+            #{userId}
+        </foreach>
+    </delete>
+
+</mapper> 

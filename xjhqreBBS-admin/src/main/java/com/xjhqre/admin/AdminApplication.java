@@ -1,24 +1,25 @@
 package com.xjhqre.admin;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cache.annotation.EnableCaching;
 
 /**
  * Created by lhr on 17-7-31.
  */
-@SpringBootApplication
-@EnableCaching // 缓存支持
+@SpringBootApplication(scanBasePackages = {"com.xjhqre.*"})
 public class AdminApplication {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(AdminApplication.class);
+
     public static void main(String[] args) {
-        // 更改properties配置文件名称,避免依赖冲突
-        // Properties properties = new Properties();
-        // InputStream in = App.class.getClassLoader().getResourceAsStream("admin.properties");
-        // properties.load(in);
-        // SpringApplication app = new SpringApplication(App.class);
-        // app.setDefaultProperties(properties);
-        // app.run(args);
-        SpringApplication.run(AdminApplication.class, args);
+        try {
+            SpringApplication.run(AdminApplication.class, args);
+        } catch (Exception e) {
+            e.printStackTrace();
+            // （推荐）如果项目中存在日志框架，可以通过日志框架打印
+            LOGGER.debug("the exception is {}", e.getMessage(), e);
+        }
     }
 }

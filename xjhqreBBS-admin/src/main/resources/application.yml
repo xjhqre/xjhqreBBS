@@ -9,21 +9,51 @@ spring:
       password: 123456
   application:
     name: admin
+  # redis 配置
   redis:
+    # 地址
     host: 116.62.103.149
+    # 端口
     port: 6379
+    # 连接超时时间 2s
     timeout: 2000
 
+# MyBatis-plus配置
 mybatis-plus:
   configuration:
     #在映射实体或者属性时，将数据库中表名和字段名中的下划线去掉，按照驼峰命名法映射
     map-underscore-to-camel-case: true
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    #    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
   global-config:
     db-config:
+      # 雪花算法生成 ID
       id-type: ASSIGN_ID
+
+# 日志配置
 logging:
   level:
-    web: debug
+    com.xjhqre.admin: debug
+    org.springframework: warn
+
+# 端口号
 server:
   port: 8080
+
+
+# token配置
+token:
+  # 令牌自定义标识
+  header: Authorization
+  # 令牌密钥
+  secret: abcdefghijklmnopqrstuvwxyz
+  # 令牌有效期（默认30分钟）
+  expireTime: 30
+
+# 用户配置
+user:
+  password:
+    # 密码最大错误次数
+    maxRetryCount: 5
+    # 密码锁定时间（默认10分钟）
+    lockTime: 10

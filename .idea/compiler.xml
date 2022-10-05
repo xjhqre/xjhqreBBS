@@ -14,12 +14,10 @@
         <outputRelativeToContentRoot value="true" />
         <module name="xjhqreBBS-common" />
         <module name="xjhqreBBS-admin" />
+        <module name="xjhqreBBS-framework" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="xjhqreBBS" target="1.8" />
-      <module name="xjhqreBBS-admin" target="1.8" />
-      <module name="xjhqreBBS-common" target="1.8" />
       <module name="xjhqreBBS-gateway" target="1.8" />
     </bytecodeTargetLevel>
   </component>
@@ -27,6 +25,7 @@
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="xjhqreBBS-admin" options="-parameters" />
       <module name="xjhqreBBS-common" options="-parameters" />
+      <module name="xjhqreBBS-framework" options="-parameters" />
       <module name="xjhqreBBS-gateway" options="-parameters" />
     </option>
   </component>

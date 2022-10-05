@@ -1,35 +1,64 @@
 package com.xjhqre.admin.core;
 
-import javax.servlet.ServletRequest;
+import java.beans.PropertyEditorSupport;
+import java.util.Date;
 
-import org.apache.shiro.session.Session;
-import org.apache.shiro.subject.SimplePrincipalCollection;
-import org.apache.shiro.subject.support.DefaultSubjectContext;
-import org.apache.shiro.web.util.WebUtils;
-import org.crazycake.shiro.RedisSessionDAO;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 
-import com.alibaba.fastjson.JSON;
-import com.xjhqre.admin.entity.Admin;
+import com.xjhqre.common.domain.model.LoginUser;
+import com.xjhqre.common.utils.DateUtils;
+import com.xjhqre.common.utils.SecurityUtils;
 
 /**
- * 用于获取登陆用户数据
+ * web层通用数据处理
+ *
+ * @author ruoyi
  */
-@Controller
 public class BaseController {
+    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    @Autowired
-    private RedisSessionDAO redisSessionDAO;
-
-    public Admin getAdminByHeader(ServletRequest request) throws Exception {
-        // 前端ajax的headers中必须传入Authorization的值
-        String id = WebUtils.toHttp(request).getHeader("Authorization");
-        Session session = this.redisSessionDAO.readSession(id);
-        Object obj = session.getAttribute(DefaultSubjectContext.PRINCIPALS_SESSION_KEY);
-        SimplePrincipalCollection coll = (SimplePrincipalCollection)obj;
-        String userStr = JSON.toJSON(coll.getPrimaryPrincipal()).toString();
-        return JSON.parseObject(userStr, Admin.class);
+    /**
+     * 将前台传递过来的日期格式的字符串，自动转化为Date类型
+     */
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        // Date 类型转换
+        binder.registerCustomEditor(Date.class, new PropertyEditorSupport() {
+            @Override
+            public void setAsText(String text) {
+                this.setValue(DateUtils.parseDate(text));
+            }
+        });
     }
 
+    /**
+     * 获取用户缓存信息
+     */
+    public LoginUser getLoginUser() {
+        return SecurityUtils.getLoginUser();
+    }
+
+    /**
+     * 获取登录用户id
+     */
+    public Long getUserId() {
+        return this.getLoginUser().getUserId();
+    }
+
+    /**
+     * 获取登录部门id
+     */
+    public Long getDeptId() {
+        return this.getLoginUser().getDeptId();
+    }
+
+    /**
+     * 获取登录用户名
+     */
+    public String getUsername() {
+        return this.getLoginUser().getUsername();
+    }
 }
