@@ -1,6 +1,6 @@
 package com.xjhqre.common.domain.entity;
 
-import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
@@ -11,10 +11,10 @@ import lombok.Data;
 @Data
 public class RoleMenu {
     /** 角色ID */
-    @Schema(name = "角色id")
+    @ApiModelProperty(name = "角色id")
     private Long roleId;
 
     /** 菜单ID */
-    @Schema(name = "菜单id")
+    @ApiModelProperty(name = "菜单id")
     private Long menuId;
 }

@@ -14,7 +14,7 @@
 // import com.xjhqre.common.constant.ErrorCode;
 // import com.xjhqre.common.domain.entity.User;
 // import com.xjhqre.common.exception.ServiceException;
-// import com.xjhqre.framework.service.UserService;
+// import com.xjhqre.admin.service.UserService;
 //
 // import io.swagger.annotations.Api;
 // import io.swagger.annotations.ApiImplicitParam;

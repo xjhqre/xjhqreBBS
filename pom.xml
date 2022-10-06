@@ -12,7 +12,6 @@
     <modules>
         <module>xjhqreBBS-common</module>
         <module>xjhqreBBS-admin</module>
-        <module>xjhqreBBS-framework</module>
     </modules>
 
     <parent>

@@ -14,10 +14,10 @@
         <outputRelativeToContentRoot value="true" />
         <module name="xjhqreBBS-common" />
         <module name="xjhqreBBS-admin" />
-        <module name="xjhqreBBS-framework" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="xjhqreBBS-framework" target="1.8" />
       <module name="xjhqreBBS-gateway" target="1.8" />
     </bytecodeTargetLevel>
   </component>

@@ -9,12 +9,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import com.xjhqre.admin.security.service.PermissionService;
+import com.xjhqre.admin.service.RoleService;
+import com.xjhqre.admin.service.UserService;
 import com.xjhqre.common.domain.entity.User;
 import com.xjhqre.common.utils.SecurityUtils;
 import com.xjhqre.common.utils.SpringUtils;
-import com.xjhqre.framework.service.RoleService;
-import com.xjhqre.framework.service.UserService;
-import com.xjhqre.framework.web.service.PermissionService;
 
 /**
  * Created by lhr on 17-7-31. user.setUsername("lhr"); user.setPassword("root");

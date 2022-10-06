@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.xjhqre.admin.core.BaseController;
+import com.xjhqre.admin.service.RoleService;
+import com.xjhqre.admin.service.UserService;
 import com.xjhqre.common.annotation.Log;
 import com.xjhqre.common.common.R;
 import com.xjhqre.common.constant.Constants;
@@ -27,13 +29,11 @@ import com.xjhqre.common.enums.BusinessType;
 import com.xjhqre.common.exception.ServiceException;
 import com.xjhqre.common.utils.SecurityUtils;
 import com.xjhqre.common.utils.StringUtils;
-import com.xjhqre.framework.service.RoleService;
-import com.xjhqre.framework.service.UserService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.annotations.ApiOperation;
 
 /**
  * 用户信息
@@ -50,7 +50,7 @@ public class UserController extends BaseController {
     @Autowired
     private RoleService roleService;
 
-    @Operation(summary = "分页查询用户列表")
+    @ApiOperation(value = "分页查询用户列表")
     @ApiImplicitParams({
         @ApiImplicitParam(name = "pageNum", value = "正整数，表示查询第几页", required = true, dataType = "int", example = "1"),
         @ApiImplicitParam(name = "pageSize", value = "正整数，表示每页几条记录", required = true, dataType = "int",
@@ -65,7 +65,7 @@ public class UserController extends BaseController {
     /**
      * 根据用户编号获取详细信息
      */
-    @Operation(summary = "根据用户编号获取详细信息")
+    @ApiOperation(value = "根据用户编号获取详细信息")
     @PreAuthorize("@ss.hasPermission('system:user:query')")
     @GetMapping(value = "/{userId}")
     public R<User> getInfo(@PathVariable(value = "userId") Long userId) {
@@ -80,7 +80,7 @@ public class UserController extends BaseController {
     /**
      * 新增用户
      */
-    @Operation(summary = "添加用户")
+    @ApiOperation(value = "添加用户")
     @PreAuthorize("@ss.hasPermission('system:user:add')")
     @Log(title = "用户管理", businessType = BusinessType.INSERT)
     @PostMapping
@@ -103,7 +103,7 @@ public class UserController extends BaseController {
     /**
      * 修改用户
      */
-    @Operation(summary = "修改用户")
+    @ApiOperation(value = "修改用户")
     @PreAuthorize("@ss.hasPermission('system:user:edit')")
     @Log(title = "用户管理", businessType = BusinessType.UPDATE)
     @PutMapping
@@ -126,7 +126,7 @@ public class UserController extends BaseController {
     /**
      * 删除用户
      */
-    @Operation(summary = "删除用户")
+    @ApiOperation(value = "删除用户")
     @PreAuthorize("@ss.hasPermission('system:user:remove')")
     @Log(title = "用户管理", businessType = BusinessType.DELETE)
     @DeleteMapping("/{userIds}")
@@ -142,7 +142,7 @@ public class UserController extends BaseController {
     /**
      * 重置密码
      */
-    @Operation(summary = "重置密码")
+    @ApiOperation(value = "重置密码")
     @PreAuthorize("@ss.hasPermission('system:user:resetPwd')")
     @Log(title = "用户管理", businessType = BusinessType.UPDATE)
     @PutMapping("/resetPwd")
@@ -161,7 +161,7 @@ public class UserController extends BaseController {
     /**
      * 状态修改
      */
-    @Operation(summary = "修改用户状态")
+    @ApiOperation(value = "修改用户状态")
     @PreAuthorize("@ss.hasPermission('system:user:edit')")
     @Log(title = "用户管理", businessType = BusinessType.UPDATE)
     @PutMapping("/changeStatus")
@@ -175,7 +175,7 @@ public class UserController extends BaseController {
     /**
      * 根据用户编号获取角色
      */
-    @Operation(summary = "根据用户id获取用户角色")
+    @ApiOperation(value = "根据用户id获取用户角色")
     @PreAuthorize("@ss.hasPermission('system:user:query')")
     @GetMapping("/authRole/{userId}")
     public R<List<Role>> authRole(@PathVariable("userId") Long userId) {
@@ -186,7 +186,7 @@ public class UserController extends BaseController {
     /**
      * 给用户分配角色
      */
-    @Operation(summary = "给用户分配角色")
+    @ApiOperation(value = "给用户分配角色")
     @PreAuthorize("@ss.hasPermission('system:user:edit')")
     @Log(title = "用户管理", businessType = BusinessType.GRANT)
     @PutMapping("/authRole")

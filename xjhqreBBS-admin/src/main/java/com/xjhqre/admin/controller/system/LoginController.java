@@ -8,17 +8,17 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.xjhqre.admin.security.service.LoginService;
+import com.xjhqre.admin.security.service.PermissionService;
+import com.xjhqre.admin.service.MenuService;
 import com.xjhqre.common.common.R;
 import com.xjhqre.common.constant.Constants;
 import com.xjhqre.common.domain.entity.User;
 import com.xjhqre.common.domain.model.LoginBody;
 import com.xjhqre.common.utils.SecurityUtils;
-import com.xjhqre.framework.service.MenuService;
-import com.xjhqre.framework.web.service.LoginService;
-import com.xjhqre.framework.web.service.PermissionService;
 
 import io.swagger.annotations.Api;
-import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.annotations.ApiOperation;
 
 /**
  * 登录验证
@@ -44,7 +44,7 @@ public class LoginController {
      *            登录信息
      * @return token
      */
-    @Operation(summary = "登陆方法")
+    @ApiOperation(value = "登陆方法")
     @PostMapping("/login")
     public R<String> login(@RequestBody LoginBody loginBody) {
         // 生成令牌
@@ -58,8 +58,8 @@ public class LoginController {
      * 
      * @return 用户信息
      */
-    @Operation(summary = "获取用户信息")
-    @GetMapping("getInfo")
+    @ApiOperation(value = "获取用户信息")
+    @GetMapping("/getInfo")
     public R<String> getInfo() {
         User user = SecurityUtils.getLoginUser().getUser();
         // 角色集合

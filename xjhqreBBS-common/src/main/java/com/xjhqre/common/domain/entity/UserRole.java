@@ -1,6 +1,6 @@
 package com.xjhqre.common.domain.entity;
 
-import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
@@ -12,11 +12,11 @@ import lombok.Data;
 public class UserRole {
 
     /** 用户ID */
-    @Schema(name = "用户id")
+    @ApiModelProperty(name = "用户id")
     private Long userId;
 
     /** 角色ID */
-    @Schema(name = "角色id")
+    @ApiModelProperty(name = "角色id")
     private Long roleId;
 
 }
