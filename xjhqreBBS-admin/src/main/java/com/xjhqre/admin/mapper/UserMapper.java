@@ -30,11 +30,11 @@ public interface UserMapper {
     /**
      * 根据条件分页查询已配用户角色列表
      * 
+     * @param page
      * @param user
-     *            用户信息
-     * @return 用户信息集合信息
+     * @return
      */
-    List<User> selectAllocatedList(@Param("user") User user);
+    IPage<User> selectAllocatedList(@Param("Page") Page<User> page, @Param("user") User user);
 
     /**
      * 根据条件分页查询未分配用户角色列表

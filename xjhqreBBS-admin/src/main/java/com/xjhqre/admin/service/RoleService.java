@@ -3,6 +3,7 @@ package com.xjhqre.admin.service;
 import java.util.List;
 import java.util.Set;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.xjhqre.common.domain.entity.Role;
 import com.xjhqre.common.domain.entity.UserRole;
 
@@ -20,6 +21,16 @@ public interface RoleService {
      * @return 角色数据集合信息
      */
     List<Role> selectRoleList(Role role);
+
+    /**
+     * 根据条件分页查询角色数据
+     * 
+     * @param role
+     * @param pageNum
+     * @param pageSize
+     * @return
+     */
+    IPage<Role> findRole(Role role, Integer pageNum, Integer pageSize);
 
     /**
      * 根据用户ID查询角色列表
@@ -89,14 +100,6 @@ public interface RoleService {
      *            角色信息
      */
     void checkRoleAllowed(Long roleId);
-
-    /**
-     * 校验角色是否有数据权限
-     * 
-     * @param roleId
-     *            角色id
-     */
-    void checkRoleDataScope(Long roleId);
 
     /**
      * 通过角色ID查询角色使用数量

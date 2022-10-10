@@ -1,6 +1,3 @@
-/**
- * Copyright (c) 2022, CCSSOFT All Rights Reserved.
- */
 package com.xjhqre.common.constant;
 
 /**

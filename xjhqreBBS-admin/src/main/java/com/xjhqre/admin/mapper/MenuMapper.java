@@ -5,6 +5,8 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.xjhqre.common.domain.entity.Menu;
 
 /**
@@ -21,14 +23,23 @@ public interface MenuMapper {
      *            菜单信息
      * @return 菜单列表
      */
-    public List<Menu> selectMenuList(Menu menu);
+    List<Menu> selectMenuList(Menu menu);
+
+    /**
+     * 查询系统菜单列表
+     * 
+     * @param objectPage
+     * @param menu
+     * @return
+     */
+    IPage<Menu> findMenu(@Param("objectPage") Page<Menu> objectPage, @Param("menu") Menu menu);
 
     /**
      * 根据用户所有权限
      *
      * @return 权限列表
      */
-    public List<String> selectMenuPerms();
+    List<String> selectMenuPerms();
 
     /**
      * 根据用户查询系统菜单列表
@@ -37,7 +48,7 @@ public interface MenuMapper {
      *            菜单信息
      * @return 菜单列表
      */
-    public List<Menu> selectMenuListByUserId(Menu menu);
+    List<Menu> selectMenuListByUserId(Menu menu);
 
     /**
      * 根据角色ID查询权限
@@ -46,7 +57,7 @@ public interface MenuMapper {
      *            角色ID
      * @return 权限列表
      */
-    public List<String> selectMenuPermsByRoleId(Long roleId);
+    List<String> selectMenuPermsByRoleId(Long roleId);
 
     /**
      * 根据用户ID查询权限
@@ -55,14 +66,14 @@ public interface MenuMapper {
      *            用户ID
      * @return 权限列表
      */
-    public List<String> selectMenuPermsByUserId(Long userId);
+    List<String> selectMenuPermsByUserId(Long userId);
 
     /**
      * 根据用户ID查询菜单
      *
      * @return 菜单列表
      */
-    public List<Menu> selectMenuTreeAll();
+    List<Menu> selectMenuTreeAll();
 
     /**
      * 根据用户ID查询菜单
@@ -71,19 +82,16 @@ public interface MenuMapper {
      *            用户ID
      * @return 菜单列表
      */
-    public List<Menu> selectMenuTreeByUserId(Long userId);
+    List<Menu> selectMenuTreeByUserId(Long userId);
 
     /**
      * 根据角色ID查询菜单树信息
      * 
      * @param roleId
      *            角色ID
-     * @param menuCheckStrictly
-     *            菜单树选择项是否关联显示
      * @return 选中菜单列表
      */
-    public List<Long> selectMenuListByRoleId(@Param("roleId") Long roleId,
-        @Param("menuCheckStrictly") boolean menuCheckStrictly);
+    List<Long> selectMenuListByRoleId(@Param("roleId") Long roleId);
 
     /**
      * 根据菜单ID查询信息
@@ -92,7 +100,7 @@ public interface MenuMapper {
      *            菜单ID
      * @return 菜单信息
      */
-    public Menu selectMenuById(Long menuId);
+    Menu selectMenuById(Long menuId);
 
     /**
      * 是否存在菜单子节点
@@ -101,7 +109,7 @@ public interface MenuMapper {
      *            菜单ID
      * @return 结果
      */
-    public int hasChildByMenuId(Long menuId);
+    int hasChildByMenuId(Long menuId);
 
     /**
      * 新增菜单信息
@@ -110,7 +118,7 @@ public interface MenuMapper {
      *            菜单信息
      * @return 结果
      */
-    public int insertMenu(Menu menu);
+    int insertMenu(Menu menu);
 
     /**
      * 修改菜单信息
@@ -119,7 +127,7 @@ public interface MenuMapper {
      *            菜单信息
      * @return 结果
      */
-    public int updateMenu(Menu menu);
+    int updateMenu(Menu menu);
 
     /**
      * 删除菜单管理信息
@@ -128,7 +136,7 @@ public interface MenuMapper {
      *            菜单ID
      * @return 结果
      */
-    public int deleteMenuById(Long menuId);
+    int deleteMenuById(Long menuId);
 
     /**
      * 校验菜单名称是否唯一
@@ -139,5 +147,6 @@ public interface MenuMapper {
      *            父菜单ID
      * @return 结果
      */
-    public Menu checkMenuNameUnique(@Param("menuName") String menuName, @Param("parentId") Long parentId);
+    Menu checkMenuNameUnique(@Param("menuName") String menuName, @Param("parentId") Long parentId);
+
 }

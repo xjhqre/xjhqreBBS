@@ -59,3 +59,11 @@ user:
     maxRetryCount: 5
     # 密码锁定时间（默认10分钟）
     lockTime: 10
+
+# 阿里云oss配置信息
+aliyun:
+  oss:
+    bucketName: xjhqre-bbs
+    endPoint: https://oss-cn-hangzhou.aliyuncs.com
+    keyId: LTAI5tRA8NFprYduUmGAuXAi
+    keySecret: UgorzXce3lbW8n8hUMgomakhRtbfVO

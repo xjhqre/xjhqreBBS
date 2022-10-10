@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.xjhqre.admin.mapper.RoleMapper;
 import com.xjhqre.admin.mapper.RoleMenuMapper;
 import com.xjhqre.admin.mapper.UserRoleMapper;
@@ -17,7 +19,6 @@ import com.xjhqre.admin.service.RoleService;
 import com.xjhqre.common.constant.Constants;
 import com.xjhqre.common.domain.entity.Role;
 import com.xjhqre.common.domain.entity.RoleMenu;
-import com.xjhqre.common.domain.entity.User;
 import com.xjhqre.common.domain.entity.UserRole;
 import com.xjhqre.common.exception.ServiceException;
 import com.xjhqre.common.utils.SecurityUtils;
@@ -40,7 +41,7 @@ public class RoleServiceImpl implements RoleService {
     private UserRoleMapper userRoleMapper;
 
     /**
-     * 根据条件分页查询角色数据
+     * 根据条件查询角色列表
      * 
      * @param role
      *            角色信息
@@ -49,6 +50,11 @@ public class RoleServiceImpl implements RoleService {
     @Override
     public List<Role> selectRoleList(Role role) {
         return this.roleMapper.selectRoleList(role);
+    }
+
+    @Override
+    public IPage<Role> findRole(Role role, Integer pageNum, Integer pageSize) {
+        return this.roleMapper.findRole(new Page<>(pageNum, pageSize), role);
     }
 
     /**
@@ -164,24 +170,6 @@ public class RoleServiceImpl implements RoleService {
     }
 
     /**
-     * 校验角色是否有数据权限
-     * 
-     * @param roleId
-     *            角色id
-     */
-    @Override
-    public void checkRoleDataScope(Long roleId) {
-        if (!User.isSuperAdmin(SecurityUtils.getUserId())) {
-            Role role = new Role();
-            role.setRoleId(roleId);
-            List<Role> roles = this.selectRoleList(role);
-            if (StringUtils.isEmpty(roles)) {
-                throw new ServiceException("没有权限访问角色数据！");
-            }
-        }
-    }
-
-    /**
      * 通过角色ID查询角色使用数量
      * 
      * @param roleId
@@ -286,7 +274,6 @@ public class RoleServiceImpl implements RoleService {
     public int deleteRoleByIds(Long[] roleIds) {
         for (Long roleId : roleIds) {
             this.checkRoleAllowed(roleId);
-            this.checkRoleDataScope(roleId);
             Role role = this.selectRoleById(roleId);
             if (this.countUserRoleByRoleId(roleId) > 0) {
                 throw new ServiceException(String.format("%1$s已分配,不能删除", role.getRoleName()));

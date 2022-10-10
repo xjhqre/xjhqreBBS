@@ -8,10 +8,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.xjhqre.admin.config.OssProperties;
 import com.xjhqre.admin.security.service.PermissionService;
 import com.xjhqre.admin.service.RoleService;
 import com.xjhqre.admin.service.UserService;
+import com.xjhqre.admin.utils.OSSUtil;
+import com.xjhqre.admin.utils.OSSUtil.FileDirType;
 import com.xjhqre.common.domain.entity.User;
 import com.xjhqre.common.utils.SecurityUtils;
 import com.xjhqre.common.utils.SpringUtils;
@@ -59,5 +63,25 @@ public class AdminApplicationTest {
         user.setCreateBy("xjhqre");
         user.setPassword(SecurityUtils.encryptPassword("123456"));
         this.userService.insertUser(user);
+    }
+
+    // 测试参数注入
+    @Test
+    public void test4() {
+        System.out.println(OssProperties.BUCKET_NAME);
+        System.out.println(OssProperties.END_POINT);
+        System.out.println(OssProperties.KEY_ID);
+        System.out.println(OssProperties.KEY_SECRET);
+    }
+
+    // oss测试
+    @Test
+    public void uploadTest(MultipartFile multipartFile) {
+        try {
+            String fileOssURL = OSSUtil.upload(multipartFile, FileDirType.AVATAR);
+            System.out.println(fileOssURL);
+        } catch (Exception e) {
+        }
+
     }
 }

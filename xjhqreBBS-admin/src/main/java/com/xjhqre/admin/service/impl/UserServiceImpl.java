@@ -70,11 +70,13 @@ public class UserServiceImpl implements UserService {
      * 
      * @param user
      *            用户信息
-     * @return 用户信息集合信息
+     * @param pageNum
+     * @param pageSize
+     * @return
      */
     @Override
-    public List<User> selectAllocatedList(User user) {
-        return this.userMapper.selectAllocatedList(user);
+    public IPage<User> selectAllocatedList(User user, Integer pageNum, Integer pageSize) {
+        return this.userMapper.selectAllocatedList(new Page<>(pageNum, pageSize), user);
     }
 
     /**

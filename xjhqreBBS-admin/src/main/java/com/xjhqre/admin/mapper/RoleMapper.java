@@ -5,6 +5,8 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.xjhqre.common.domain.entity.Role;
 
 /**
@@ -21,7 +23,16 @@ public interface RoleMapper {
      *            角色信息
      * @return 角色数据集合信息
      */
-    public List<Role> selectRoleList(@Param("role") Role role);
+    List<Role> selectRoleList(@Param("role") Role role);
+
+    /**
+     * 根据条件分页查询角色数据
+     * 
+     * @param objectPage
+     * @param role
+     * @return
+     */
+    IPage<Role> findRole(@Param("objectPage") Page<Role> objectPage, @Param("role") Role role);
 
     /**
      * 根据用户ID查询角色
@@ -30,14 +41,14 @@ public interface RoleMapper {
      *            用户ID
      * @return 角色列表
      */
-    public List<Role> selectRolesByUserId(@Param("userId") Long userId);
+    List<Role> selectRolesByUserId(@Param("userId") Long userId);
 
     /**
      * 查询所有角色
      * 
      * @return 角色列表
      */
-    public List<Role> selectRoleAll();
+    List<Role> selectRoleAll();
 
     /**
      * 根据用户ID获取角色选择框列表
@@ -46,7 +57,7 @@ public interface RoleMapper {
      *            用户ID
      * @return 选中角色ID列表
      */
-    public List<Long> selectRoleListByUserId(Long userId);
+    List<Long> selectRoleListByUserId(Long userId);
 
     /**
      * 通过角色ID查询角色
@@ -55,7 +66,7 @@ public interface RoleMapper {
      *            角色ID
      * @return 角色对象信息
      */
-    public Role selectRoleById(Long roleId);
+    Role selectRoleById(Long roleId);
 
     /**
      * 根据用户ID查询角色
@@ -64,7 +75,7 @@ public interface RoleMapper {
      *            用户名
      * @return 角色列表
      */
-    public List<Role> selectRolesByUserName(String userName);
+    List<Role> selectRolesByUserName(String userName);
 
     /**
      * 校验角色名称是否唯一
@@ -73,7 +84,7 @@ public interface RoleMapper {
      *            角色名称
      * @return 角色信息
      */
-    public Role checkRoleNameUnique(String roleName);
+    Role checkRoleNameUnique(String roleName);
 
     /**
      * 校验角色权限是否唯一
@@ -82,7 +93,7 @@ public interface RoleMapper {
      *            角色权限
      * @return 角色信息
      */
-    public Role checkRoleKeyUnique(String roleKey);
+    Role checkRoleKeyUnique(String roleKey);
 
     /**
      * 修改角色信息
@@ -91,7 +102,7 @@ public interface RoleMapper {
      *            角色信息
      * @return 结果
      */
-    public int updateRole(Role role);
+    int updateRole(Role role);
 
     /**
      * 新增角色信息
@@ -100,7 +111,7 @@ public interface RoleMapper {
      *            角色信息
      * @return 结果
      */
-    public int insertRole(Role role);
+    int insertRole(Role role);
 
     /**
      * 通过角色ID删除角色
@@ -109,7 +120,7 @@ public interface RoleMapper {
      *            角色ID
      * @return 结果
      */
-    public int deleteRoleById(Long roleId);
+    int deleteRoleById(Long roleId);
 
     /**
      * 批量删除角色信息
@@ -118,5 +129,5 @@ public interface RoleMapper {
      *            需要删除的角色ID
      * @return 结果
      */
-    public int deleteRoleByIds(Long[] roleIds);
+    int deleteRoleByIds(Long[] roleIds);
 }

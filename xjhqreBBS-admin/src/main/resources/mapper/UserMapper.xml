@@ -49,18 +49,17 @@
     </select>
 
     <!-- 根据条件分页查询已配用户角色列表 -->
-    <select id="selectAllocatedList" parameterType="com.xjhqre.common.domain.entity.User"
-            resultType="com.xjhqre.common.domain.entity.User">
+    <select id="selectAllocatedList" resultType="com.xjhqre.common.domain.entity.User">
         select distinct u.user_id, u.user_name, u.nick_name, u.email, u.mobile, u.status, u.create_time
         from t_user u
         left join t_user_role ur on u.user_id = ur.user_id
         left join t_role r on r.role_id = ur.role_id
-        where u.del_flag = '0' and r.role_id = #{roleId}
+        where u.del_flag = '0'
         <if test="userName != null and userName != ''">
-            AND u.user_name like concat('%', #{userName}, '%')
+            AND u.user_name like concat('%', #{user.userName}, '%')
         </if>
         <if test="mobile != null and mobile != ''">
-            AND u.mobile like concat('%', #{mobile}, '%')
+            AND u.mobile like concat('%', #{user.mobile}, '%')
         </if>
     </select>
 

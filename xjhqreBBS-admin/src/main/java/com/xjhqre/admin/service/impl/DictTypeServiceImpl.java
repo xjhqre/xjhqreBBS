@@ -11,13 +11,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.ruoyi.common.constant.UserConstants;
-import com.ruoyi.common.core.domain.entity.DictData;
-import com.ruoyi.common.exception.ServiceException;
-import com.ruoyi.common.utils.DictUtils;
-import com.ruoyi.common.utils.StringUtils;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.xjhqre.admin.mapper.DictDataMapper;
+import com.xjhqre.admin.mapper.DictTypeMapper;
 import com.xjhqre.admin.service.DictTypeService;
+import com.xjhqre.common.constant.Constants;
+import com.xjhqre.common.domain.entity.DictData;
 import com.xjhqre.common.domain.entity.DictType;
+import com.xjhqre.common.exception.ServiceException;
+import com.xjhqre.common.utils.DictUtils;
+import com.xjhqre.common.utils.StringUtils;
 
 /**
  * 字典 业务层处理
@@ -44,12 +48,13 @@ public class DictTypeServiceImpl implements DictTypeService {
      * 根据条件分页查询字典类型
      * 
      * @param dictType
-     *            字典类型信息
-     * @return 字典类型集合信息
+     * @param pageNum
+     * @param pageSize
+     * @return
      */
     @Override
-    public List<DictType> selectDictTypeList(DictType dictType) {
-        return this.dictTypeMapper.selectDictTypeList(dictType);
+    public IPage<DictType> listDictType(DictType dictType, Integer pageNum, Integer pageSize) {
+        return this.dictTypeMapper.listDictType(new Page<>(pageNum, pageSize), dictType);
     }
 
     /**
@@ -121,6 +126,7 @@ public class DictTypeServiceImpl implements DictTypeService {
                 throw new ServiceException(String.format("%1$s已分配,不能删除", dictType.getDictName()));
             }
             this.dictTypeMapper.deleteDictTypeById(dictId);
+            // 删除redis中的字典缓存
             DictUtils.removeDictCache(dictType.getDictType());
         }
     }
@@ -132,8 +138,10 @@ public class DictTypeServiceImpl implements DictTypeService {
     public void loadingDictCache() {
         DictData dictData = new DictData();
         dictData.setStatus("0");
+        // 以dictType为键，List<DictData>为值
         Map<String, List<DictData>> dictDataMap = this.dictDataMapper.selectDictDataList(dictData).stream()
             .collect(Collectors.groupingBy(DictData::getDictType));
+        // 对每个map里的键值对的值进行排序，并以 dictType --> dictDatas 的形式存入redis
         for (Map.Entry<String, List<DictData>> entry : dictDataMap.entrySet()) {
             DictUtils.setDictCache(entry.getKey(), entry.getValue().stream()
                 .sorted(Comparator.comparing(DictData::getDictSort)).collect(Collectors.toList()));
@@ -141,19 +149,13 @@ public class DictTypeServiceImpl implements DictTypeService {
     }
 
     /**
-     * 清空字典缓存数据
-     */
-    @Override
-    public void clearDictCache() {
-        DictUtils.clearDictCache();
-    }
-
-    /**
      * 重置字典缓存数据
      */
     @Override
     public void resetDictCache() {
-        this.clearDictCache();
+        // 清空字典缓存
+        DictUtils.clearDictCache();
+        // 加载字典缓存数据
         this.loadingDictCache();
     }
 
@@ -201,12 +203,12 @@ public class DictTypeServiceImpl implements DictTypeService {
      * @return 结果
      */
     @Override
-    public String checkDictTypeUnique(DictType dict) {
+    public Boolean checkDictTypeUnique(DictType dict) {
         Long dictId = StringUtils.isNull(dict.getDictId()) ? -1L : dict.getDictId();
         DictType dictType = this.dictTypeMapper.checkDictTypeUnique(dict.getDictType());
         if (StringUtils.isNotNull(dictType) && dictType.getDictId().longValue() != dictId.longValue()) {
-            return UserConstants.NOT_UNIQUE;
+            return Constants.NOT_UNIQUE;
         }
-        return UserConstants.UNIQUE;
+        return Constants.UNIQUE;
     }
 }

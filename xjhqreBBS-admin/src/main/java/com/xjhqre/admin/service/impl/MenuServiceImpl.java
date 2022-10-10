@@ -10,12 +10,13 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.xjhqre.admin.mapper.MenuMapper;
 import com.xjhqre.admin.mapper.RoleMapper;
 import com.xjhqre.admin.mapper.RoleMenuMapper;
 import com.xjhqre.admin.service.MenuService;
 import com.xjhqre.common.domain.entity.Menu;
-import com.xjhqre.common.domain.entity.Role;
 import com.xjhqre.common.domain.entity.User;
 import com.xjhqre.common.utils.SecurityUtils;
 import com.xjhqre.common.utils.StringUtils;
@@ -48,6 +49,12 @@ public class MenuServiceImpl implements MenuService {
     @Override
     public List<Menu> selectMenuList(Long userId) {
         return this.selectMenuList(new Menu(), userId);
+    }
+
+    @Override
+    public IPage<Menu> findMenu(Menu menu, Integer pageNum, Integer pageSize) {
+        return this.menuMapper.findMenu(new Page<>(pageNum, pageSize), menu);
+
     }
 
     /**
@@ -135,8 +142,7 @@ public class MenuServiceImpl implements MenuService {
      */
     @Override
     public List<Long> selectMenuListByRoleId(Long roleId) {
-        Role role = this.roleMapper.selectRoleById(roleId);
-        return this.menuMapper.selectMenuListByRoleId(roleId, false);
+        return this.menuMapper.selectMenuListByRoleId(roleId);
     }
 
     /**

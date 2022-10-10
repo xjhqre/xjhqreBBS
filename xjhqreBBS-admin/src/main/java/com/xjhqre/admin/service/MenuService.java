@@ -3,6 +3,7 @@ package com.xjhqre.admin.service;
 import java.util.List;
 import java.util.Set;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.xjhqre.common.domain.entity.Menu;
 
 /**
@@ -19,6 +20,16 @@ public interface MenuService {
      * @return 菜单列表
      */
     List<Menu> selectMenuList(Long userId);
+
+    /**
+     * 根据用户查询系统菜单列表
+     * 
+     * @param menu
+     * @param pageNum
+     * @param pageSize
+     * @return
+     */
+    IPage<Menu> findMenu(Menu menu, Integer pageNum, Integer pageSize);
 
     /**
      * 根据用户查询系统菜单列表

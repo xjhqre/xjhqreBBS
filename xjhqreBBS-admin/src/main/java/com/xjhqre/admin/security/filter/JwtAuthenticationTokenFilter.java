@@ -14,10 +14,10 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.xjhqre.admin.security.service.TokenService;
 import com.xjhqre.common.domain.model.LoginUser;
 import com.xjhqre.common.utils.SecurityUtils;
 import com.xjhqre.common.utils.StringUtils;
-import com.xjhqre.framework.web.service.TokenService;
 
 /**
  * token过滤器 验证token有效性
