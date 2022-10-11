@@ -14,10 +14,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.xjhqre.admin.core.BaseController;
 import com.xjhqre.common.annotation.Log;
 import com.xjhqre.common.common.R;
 import com.xjhqre.common.constant.CacheConstants;
+import com.xjhqre.common.controller.BaseController;
 import com.xjhqre.common.domain.UserOnline;
 import com.xjhqre.common.domain.model.LoginUser;
 import com.xjhqre.common.enums.BusinessType;

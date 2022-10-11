@@ -5,6 +5,7 @@ import javax.validation.constraints.Size;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.xjhqre.common.domain.BaseEntity;
 
 import io.swagger.annotations.ApiModelProperty;
@@ -16,6 +17,7 @@ import lombok.Data;
  * @author xjhqre
  */
 @Data
+@TableName("t_config")
 public class Config extends BaseEntity {
     private static final long serialVersionUID = 1L;
 

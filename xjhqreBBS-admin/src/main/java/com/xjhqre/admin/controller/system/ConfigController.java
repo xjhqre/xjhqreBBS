@@ -13,13 +13,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.xjhqre.admin.core.BaseController;
-import com.xjhqre.admin.service.ConfigService;
 import com.xjhqre.common.annotation.Log;
 import com.xjhqre.common.common.R;
 import com.xjhqre.common.constant.Constants;
+import com.xjhqre.common.controller.BaseController;
 import com.xjhqre.common.domain.admin.Config;
 import com.xjhqre.common.enums.BusinessType;
+import com.xjhqre.common.service.ConfigService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;

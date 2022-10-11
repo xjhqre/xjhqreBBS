@@ -1,5 +1,7 @@
 package com.xjhqre.common.domain.admin;
 
+import com.baomidou.mybatisplus.annotation.TableName;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -9,6 +11,7 @@ import lombok.Data;
  * @author xjhqre
  */
 @Data
+@TableName("t_user_role")
 public class UserRole {
 
     /** 用户ID */

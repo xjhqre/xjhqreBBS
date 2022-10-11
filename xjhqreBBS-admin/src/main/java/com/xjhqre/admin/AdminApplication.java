@@ -8,7 +8,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 /**
  * Created by lhr on 17-7-31.
  */
-@SpringBootApplication(scanBasePackages = {"com.xjhqre.*"})
+@SpringBootApplication(scanBasePackages = {"com.xjhqre.common.*", "com.xjhqre.admin.*"})
 public class AdminApplication {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AdminApplication.class);

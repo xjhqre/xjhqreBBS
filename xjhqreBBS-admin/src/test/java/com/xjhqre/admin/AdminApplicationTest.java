@@ -10,13 +10,13 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.xjhqre.admin.config.properties.OssProperties;
-import com.xjhqre.admin.security.service.PermissionService;
-import com.xjhqre.admin.service.RoleService;
-import com.xjhqre.admin.service.UserService;
-import com.xjhqre.admin.utils.OSSUtil;
-import com.xjhqre.admin.utils.OSSUtil.FileDirType;
+import com.xjhqre.common.config.properties.OssProperties;
 import com.xjhqre.common.domain.admin.User;
+import com.xjhqre.common.security.service.PermissionService;
+import com.xjhqre.common.service.RoleService;
+import com.xjhqre.common.service.UserService;
+import com.xjhqre.common.utils.OSSUtil;
+import com.xjhqre.common.utils.OSSUtil.FileDirType;
 import com.xjhqre.common.utils.SecurityUtils;
 import com.xjhqre.common.utils.SpringUtils;
 
