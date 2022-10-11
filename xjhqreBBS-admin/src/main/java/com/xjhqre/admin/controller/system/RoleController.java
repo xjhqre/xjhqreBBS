@@ -23,9 +23,9 @@ import com.xjhqre.admin.service.UserService;
 import com.xjhqre.common.annotation.Log;
 import com.xjhqre.common.common.R;
 import com.xjhqre.common.constant.Constants;
-import com.xjhqre.common.domain.entity.Role;
-import com.xjhqre.common.domain.entity.User;
-import com.xjhqre.common.domain.entity.UserRole;
+import com.xjhqre.common.domain.admin.Role;
+import com.xjhqre.common.domain.admin.User;
+import com.xjhqre.common.domain.admin.UserRole;
 import com.xjhqre.common.domain.model.LoginUser;
 import com.xjhqre.common.enums.BusinessType;
 import com.xjhqre.common.utils.StringUtils;
@@ -38,7 +38,7 @@ import io.swagger.annotations.ApiOperation;
 /**
  * 角色信息
  * 
- * @author ruoyi
+ * @author xjhqre
  */
 @RestController
 @Api(value = "角色操作接口", tags = "角色操作接口")

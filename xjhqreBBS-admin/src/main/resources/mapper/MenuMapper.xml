@@ -18,7 +18,7 @@
         from t_menu
     </sql>
 
-    <select id="selectMenuList" resultType="com.xjhqre.common.domain.entity.Menu">
+    <select id="selectMenuList" resultType="com.xjhqre.common.domain.admin.Menu">
         <include refid="selectMenuVo"/>
         <where>
             <if test="menuName != null and menuName != ''">
@@ -31,7 +31,7 @@
         order by parent_id, order_num
     </select>
 
-    <select id="findMenu" resultType="com.xjhqre.common.domain.entity.Menu">
+    <select id="findMenu" resultType="com.xjhqre.common.domain.admin.Menu">
         <include refid="selectMenuVo"/>
         <where>
             <if test="menuName != null and menuName != ''">
@@ -44,7 +44,7 @@
         order by parent_id, order_num
     </select>
 
-    <select id="selectMenuTreeAll" resultType="com.xjhqre.common.domain.entity.Menu">
+    <select id="selectMenuTreeAll" resultType="com.xjhqre.common.domain.admin.Menu">
         select distinct m.menu_id,
                         m.parent_id,
                         m.menu_name,
@@ -61,8 +61,8 @@
         order by m.parent_id, m.order_num
     </select>
 
-    <select id="selectMenuListByUserId" parameterType="com.xjhqre.common.domain.entity.Menu"
-            resultType="com.xjhqre.common.domain.entity.Menu">
+    <select id="selectMenuListByUserId" parameterType="com.xjhqre.common.domain.admin.Menu"
+            resultType="com.xjhqre.common.domain.admin.Menu">
         select distinct m.menu_id, m.parent_id, m.menu_name, m.path, m.component, m.status,
         ifnull(m.perms,'') as perms, m.menu_type, m.order_num, m.create_time
         from t_menu m
@@ -79,7 +79,7 @@
         order by m.parent_id, m.order_num
     </select>
 
-    <select id="selectMenuTreeByUserId" parameterType="Long" resultType="com.xjhqre.common.domain.entity.Menu">
+    <select id="selectMenuTreeByUserId" parameterType="Long" resultType="com.xjhqre.common.domain.admin.Menu">
         select distinct m.menu_id,
                         m.parent_id,
                         m.menu_name,
@@ -137,7 +137,7 @@
           and rm.role_id = #{roleId}
     </select>
 
-    <select id="selectMenuById" parameterType="Long" resultType="com.xjhqre.common.domain.entity.Menu">
+    <select id="selectMenuById" parameterType="Long" resultType="com.xjhqre.common.domain.admin.Menu">
         <include refid="selectMenuVo"/>
         where menu_id = #{menuId}
     </select>
@@ -148,14 +148,14 @@
         where parent_id = #{menuId}
     </select>
 
-    <select id="checkMenuNameUnique" parameterType="com.xjhqre.common.domain.entity.Menu"
-            resultType="com.xjhqre.common.domain.entity.Menu">
+    <select id="checkMenuNameUnique" parameterType="com.xjhqre.common.domain.admin.Menu"
+            resultType="com.xjhqre.common.domain.admin.Menu">
         <include refid="selectMenuVo"/>
         where menu_name=#{menuName} and parent_id = #{parentId} limit 1
     </select>
 
 
-    <update id="updateMenu" parameterType="com.xjhqre.common.domain.entity.Menu">
+    <update id="updateMenu" parameterType="com.xjhqre.common.domain.admin.Menu">
         update t_menu
         <set>
             <if test="menuName != null and menuName != ''">menu_name = #{menuName},</if>
@@ -177,7 +177,7 @@
         where menu_id = #{menuId}
     </update>
 
-    <insert id="insertMenu" parameterType="com.xjhqre.common.domain.entity.Menu">
+    <insert id="insertMenu" parameterType="com.xjhqre.common.domain.admin.Menu">
         insert into t_menu(
         <if test="menuId != null and menuId != 0">menu_id,</if>
         <if test="parentId != null and parentId != 0">parent_id,</if>

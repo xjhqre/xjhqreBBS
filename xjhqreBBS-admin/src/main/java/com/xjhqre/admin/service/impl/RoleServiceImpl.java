@@ -17,9 +17,9 @@ import com.xjhqre.admin.mapper.RoleMenuMapper;
 import com.xjhqre.admin.mapper.UserRoleMapper;
 import com.xjhqre.admin.service.RoleService;
 import com.xjhqre.common.constant.Constants;
-import com.xjhqre.common.domain.entity.Role;
-import com.xjhqre.common.domain.entity.RoleMenu;
-import com.xjhqre.common.domain.entity.UserRole;
+import com.xjhqre.common.domain.admin.Role;
+import com.xjhqre.common.domain.admin.RoleMenu;
+import com.xjhqre.common.domain.admin.UserRole;
 import com.xjhqre.common.exception.ServiceException;
 import com.xjhqre.common.utils.SecurityUtils;
 import com.xjhqre.common.utils.StringUtils;
@@ -27,7 +27,7 @@ import com.xjhqre.common.utils.StringUtils;
 /**
  * 角色 业务层处理
  * 
- * @author ruoyi
+ * @author xjhqre
  */
 @Service
 public class RoleServiceImpl implements RoleService {

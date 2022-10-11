@@ -13,7 +13,7 @@ import com.xjhqre.admin.security.context.AuthenticationContextHolder;
 import com.xjhqre.common.constant.CacheConstants;
 import com.xjhqre.common.constant.Constants;
 import com.xjhqre.common.constant.ErrorCode;
-import com.xjhqre.common.domain.entity.User;
+import com.xjhqre.common.domain.admin.User;
 import com.xjhqre.common.exception.ServiceException;
 import com.xjhqre.common.utils.SecurityUtils;
 import com.xjhqre.common.utils.StringUtils;

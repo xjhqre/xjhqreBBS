@@ -10,7 +10,7 @@
     </sql>
 
     <!-- 根据条件查询字典类型分页 -->
-    <select id="listDictType" resultType="com.xjhqre.common.domain.entity.DictType">
+    <select id="listDictType" resultType="com.xjhqre.common.domain.admin.DictType">
         <include refid="selectDictTypeVo"/>
         <where>
             <if test="dictType.dictName != null and dictType.dictName != ''">
@@ -22,30 +22,33 @@
             <if test="dictType.dictType != null and dictType.dictType != ''">
                 AND dict_type like concat('%', #{dictType.dictType}, '%')
             </if>
-            <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
-                and date_format(create_time,'%y%m%d') &gt;= date_format(#{params.beginTime},'%y%m%d')
+            <if test="params != null">
+                <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
+                    and date_format(create_time,'%y%m%d') &gt;= date_format(#{params.beginTime},'%y%m%d')
+                </if>
+                <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
+                    and date_format(create_time,'%y%m%d') &lt;= date_format(#{params.endTime},'%y%m%d')
+                </if>
             </if>
-            <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
-                and date_format(create_time,'%y%m%d') &lt;= date_format(#{params.endTime},'%y%m%d')
-            </if>
+
         </where>
     </select>
 
-    <select id="selectDictTypeAll" resultType="com.xjhqre.common.domain.entity.DictType">
+    <select id="selectDictTypeAll" resultType="com.xjhqre.common.domain.admin.DictType">
         <include refid="selectDictTypeVo"/>
     </select>
 
-    <select id="selectDictTypeById" resultType="com.xjhqre.common.domain.entity.DictType">
+    <select id="selectDictTypeById" resultType="com.xjhqre.common.domain.admin.DictType">
         <include refid="selectDictTypeVo"/>
         where dict_id = #{dictId}
     </select>
 
-    <select id="selectDictTypeByType" resultType="com.xjhqre.common.domain.entity.DictType">
+    <select id="selectDictTypeByType" resultType="com.xjhqre.common.domain.admin.DictType">
         <include refid="selectDictTypeVo"/>
         where dict_type = #{dictType}
     </select>
 
-    <select id="checkDictTypeUnique" resultType="com.xjhqre.common.domain.entity.DictType">
+    <select id="checkDictTypeUnique" resultType="com.xjhqre.common.domain.admin.DictType">
         <include refid="selectDictTypeVo"/>
         where dict_type = #{dictType} limit 1
     </select>

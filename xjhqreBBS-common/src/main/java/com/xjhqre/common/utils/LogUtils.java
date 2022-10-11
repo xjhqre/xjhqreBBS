@@ -3,7 +3,7 @@ package com.xjhqre.common.utils;
 /**
  * 处理并记录日志文件
  * 
- * @author ruoyi
+ * @author xjhqre
  */
 public class LogUtils {
     public static String getBlock(Object msg) {

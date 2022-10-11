@@ -7,7 +7,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.alibaba.fastjson2.annotation.JSONField;
-import com.xjhqre.common.domain.entity.User;
+import com.xjhqre.common.domain.admin.User;
 
 import lombok.Data;
 
@@ -26,12 +26,7 @@ public class LoginUser implements UserDetails {
     private Long userId;
 
     /**
-     * 部门ID
-     */
-    private Long deptId;
-
-    /**
-     * 用户唯一标识
+     * 用户唯一标识，用户的登陆令牌
      */
     private String token;
 

@@ -1,4 +1,4 @@
-package com.xjhqre.common.domain.entity;
+package com.xjhqre.common.domain.admin;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -6,7 +6,7 @@ import lombok.Data;
 /**
  * 角色和菜单关联 sys_role_menu
  * 
- * @author ruoyi
+ * @author xjhqre
  */
 @Data
 public class RoleMenu {

@@ -5,15 +5,28 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.xjhqre.common.domain.LoginInfo;
 
 /**
  * 系统访问日志情况信息 数据层
  * 
- * @author ruoyi
+ * @author xjhqre
  */
 @Mapper
 public interface LoginInfoMapper {
+
+    /**
+     * 根据条件分页查询登陆信息
+     * 
+     * @param loginInfoPage
+     * @param loginInfo
+     * @return
+     */
+    IPage<LoginInfo> listLoginInfo(@Param("loginInfoPage") Page<LoginInfo> loginInfoPage,
+        @Param("loginInfo") LoginInfo loginInfo);
+
     /**
      * 新增系统登录日志
      * 

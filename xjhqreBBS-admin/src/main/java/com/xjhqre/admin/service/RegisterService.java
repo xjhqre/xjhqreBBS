@@ -8,7 +8,7 @@ import com.xjhqre.admin.manager.AsyncManager;
 import com.xjhqre.common.constant.CacheConstants;
 import com.xjhqre.common.constant.Constants;
 import com.xjhqre.common.constant.UserConstants;
-import com.xjhqre.common.domain.entity.User;
+import com.xjhqre.common.domain.admin.User;
 import com.xjhqre.common.domain.model.RegisterBody;
 import com.xjhqre.common.exception.ServiceException;
 import com.xjhqre.common.utils.SecurityUtils;
@@ -18,7 +18,7 @@ import com.xjhqre.common.utils.redis.RedisCache;
 /**
  * 注册校验方法
  * 
- * @author ruoyi
+ * @author xjhqre
  */
 @Component
 public class RegisterService {

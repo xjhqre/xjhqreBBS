@@ -1,4 +1,4 @@
-package com.xjhqre.common.domain.entity;
+package com.xjhqre.common.domain.admin;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;

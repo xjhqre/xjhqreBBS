@@ -7,12 +7,12 @@ import org.apache.ibatis.annotations.Param;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.xjhqre.common.domain.entity.Config;
+import com.xjhqre.common.domain.admin.Config;
 
 /**
  * 参数配置 数据层
  * 
- * @author ruoyi
+ * @author xjhqre
  */
 @Mapper
 public interface ConfigMapper {

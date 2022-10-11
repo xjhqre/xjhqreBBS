@@ -22,7 +22,7 @@ import com.xjhqre.common.utils.StringUtils;
 /**
  * token过滤器 验证token有效性
  * 
- * @author ruoyi
+ * @author xjhqre
  */
 @Component
 public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {

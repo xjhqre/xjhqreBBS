@@ -18,7 +18,7 @@ import com.xjhqre.admin.service.ConfigService;
 import com.xjhqre.common.annotation.Log;
 import com.xjhqre.common.common.R;
 import com.xjhqre.common.constant.Constants;
-import com.xjhqre.common.domain.entity.Config;
+import com.xjhqre.common.domain.admin.Config;
 import com.xjhqre.common.enums.BusinessType;
 
 import io.swagger.annotations.Api;
@@ -29,7 +29,7 @@ import io.swagger.annotations.ApiOperation;
 /**
  * 参数配置 信息操作处理
  * 
- * @author ruoyi
+ * @author xjhqre
  */
 @RestController
 @RequestMapping("/system/config")

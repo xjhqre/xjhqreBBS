@@ -3,13 +3,13 @@ package com.xjhqre.admin.service;
 import java.util.List;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.xjhqre.common.domain.entity.DictData;
-import com.xjhqre.common.domain.entity.DictType;
+import com.xjhqre.common.domain.admin.DictData;
+import com.xjhqre.common.domain.admin.DictType;
 
 /**
  * 字典 业务层
  * 
- * @author ruoyi
+ * @author xjhqre
  */
 public interface DictTypeService {
     /**

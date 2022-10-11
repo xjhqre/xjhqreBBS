@@ -21,9 +21,9 @@ import com.xjhqre.admin.mapper.UserMapper;
 import com.xjhqre.admin.mapper.UserRoleMapper;
 import com.xjhqre.admin.service.UserService;
 import com.xjhqre.common.constant.Constants;
-import com.xjhqre.common.domain.entity.Role;
-import com.xjhqre.common.domain.entity.User;
-import com.xjhqre.common.domain.entity.UserRole;
+import com.xjhqre.common.domain.admin.Role;
+import com.xjhqre.common.domain.admin.User;
+import com.xjhqre.common.domain.admin.UserRole;
 import com.xjhqre.common.exception.ServiceException;
 import com.xjhqre.common.utils.SecurityUtils;
 import com.xjhqre.common.utils.StringUtils;
@@ -31,7 +31,7 @@ import com.xjhqre.common.utils.StringUtils;
 /**
  * 用户 业务层处理
  * 
- * @author ruoyi
+ * @author xjhqre
  */
 @Service
 public class UserServiceImpl implements UserService {

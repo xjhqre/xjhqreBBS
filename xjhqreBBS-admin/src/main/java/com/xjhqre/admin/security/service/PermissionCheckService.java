@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import com.xjhqre.admin.security.context.PermissionContextHolder;
-import com.xjhqre.common.domain.entity.Role;
+import com.xjhqre.common.domain.admin.Role;
 import com.xjhqre.common.domain.model.LoginUser;
 import com.xjhqre.common.utils.SecurityUtils;
 import com.xjhqre.common.utils.StringUtils;
@@ -14,7 +14,7 @@ import com.xjhqre.common.utils.StringUtils;
 /**
  * RuoYi首创 自定义权限实现，ss取自SpringSecurity首字母
  * 
- * @author ruoyi
+ * @author xjhqre
  */
 @Service("ss")
 public class PermissionCheckService {

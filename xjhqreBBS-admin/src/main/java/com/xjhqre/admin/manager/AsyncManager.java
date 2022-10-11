@@ -10,7 +10,7 @@ import com.xjhqre.common.utils.Threads;
 /**
  * 异步任务管理器
  *
- * @author ruoyi
+ * @author xjhqre
  */
 public class AsyncManager {
     /**

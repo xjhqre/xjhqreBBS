@@ -17,8 +17,8 @@ import com.xjhqre.admin.mapper.DictDataMapper;
 import com.xjhqre.admin.mapper.DictTypeMapper;
 import com.xjhqre.admin.service.DictTypeService;
 import com.xjhqre.common.constant.Constants;
-import com.xjhqre.common.domain.entity.DictData;
-import com.xjhqre.common.domain.entity.DictType;
+import com.xjhqre.common.domain.admin.DictData;
+import com.xjhqre.common.domain.admin.DictType;
 import com.xjhqre.common.exception.ServiceException;
 import com.xjhqre.common.utils.DictUtils;
 import com.xjhqre.common.utils.StringUtils;
@@ -26,7 +26,7 @@ import com.xjhqre.common.utils.StringUtils;
 /**
  * 字典 业务层处理
  * 
- * @author ruoyi
+ * @author xjhqre
  */
 @Service
 public class DictTypeServiceImpl implements DictTypeService {

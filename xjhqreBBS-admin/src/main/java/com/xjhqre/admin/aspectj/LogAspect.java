@@ -34,7 +34,7 @@ import com.xjhqre.common.utils.ip.IpUtils;
 /**
  * 操作日志记录处理
  *
- * @author ruoyi
+ * @author xjhqre
  */
 @Aspect
 @Component

@@ -3,16 +3,29 @@ package com.xjhqre.admin.mapper;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.xjhqre.common.domain.OperLog;
 
 /**
  * 操作日志 数据层
  * 
- * @author ruoyi
+ * @author xjhqre
  */
 @Mapper
 public interface OperLogMapper {
+
+    /**
+     * 根据条件分页查询操作日志记录
+     * 
+     * @param operLogPage
+     * @param operLog
+     * @return
+     */
+    IPage<OperLog> listOperLog(@Param("operLogPage") Page<OperLog> operLogPage, @Param("operLog") OperLog operLog);
+
     /**
      * 新增操作日志
      * 

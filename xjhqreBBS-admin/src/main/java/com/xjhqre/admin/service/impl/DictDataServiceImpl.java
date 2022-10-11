@@ -9,13 +9,13 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.xjhqre.admin.mapper.DictDataMapper;
 import com.xjhqre.admin.service.DictDataService;
-import com.xjhqre.common.domain.entity.DictData;
+import com.xjhqre.common.domain.admin.DictData;
 import com.xjhqre.common.utils.DictUtils;
 
 /**
  * 字典 业务层处理
  * 
- * @author ruoyi
+ * @author xjhqre
  */
 @Service
 public class DictDataServiceImpl implements DictDataService {

@@ -5,13 +5,13 @@ import java.util.List;
 
 import com.alibaba.fastjson2.JSONArray;
 import com.xjhqre.common.constant.CacheConstants;
-import com.xjhqre.common.domain.entity.DictData;
+import com.xjhqre.common.domain.admin.DictData;
 import com.xjhqre.common.utils.redis.RedisCache;
 
 /**
  * 字典工具类
  * 
- * @author ruoyi
+ * @author xjhqre
  */
 public class DictUtils {
     /**

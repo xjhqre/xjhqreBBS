@@ -10,7 +10,7 @@ import com.xjhqre.common.utils.StringUtils;
 /**
  * 获取IP方法
  * 
- * @author ruoyi
+ * @author xjhqre
  */
 public class IpUtils {
     /**

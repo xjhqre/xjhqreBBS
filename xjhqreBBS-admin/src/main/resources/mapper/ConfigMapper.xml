@@ -18,7 +18,7 @@
         from t_config
     </sql>
 
-    <select id="selectConfig" resultType="com.xjhqre.common.domain.entity.Config">
+    <select id="selectConfig" resultType="com.xjhqre.common.domain.admin.Config">
         <include refid="selectConfigVo"/>
         <where>
             <if test="configId !=null">
@@ -30,7 +30,7 @@
         </where>
     </select>
 
-    <select id="listConfig" resultType="com.xjhqre.common.domain.entity.Config">
+    <select id="listConfig" resultType="com.xjhqre.common.domain.admin.Config">
         <include refid="selectConfigVo"/>
         <where>
             <if test="config.configId !=null">
@@ -43,8 +43,8 @@
     </select>
 
 
-    <select id="selectConfigList" parameterType="com.xjhqre.common.domain.entity.Config"
-            resultType="com.xjhqre.common.domain.entity.Config">
+    <select id="selectConfigList" parameterType="com.xjhqre.common.domain.admin.Config"
+            resultType="com.xjhqre.common.domain.admin.Config">
         <include refid="selectConfigVo"/>
         <where>
             <if test="configName != null and configName != ''">
@@ -67,7 +67,7 @@
         </where>
     </select>
 
-    <select id="checkConfigKeyUnique" resultType="com.xjhqre.common.domain.entity.Config">
+    <select id="checkConfigKeyUnique" resultType="com.xjhqre.common.domain.admin.Config">
         <include refid="selectConfigVo"/>
         where config_key = #{configKey} limit 1
     </select>

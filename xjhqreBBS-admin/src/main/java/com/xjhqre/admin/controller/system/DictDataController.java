@@ -21,7 +21,7 @@ import com.xjhqre.admin.service.DictDataService;
 import com.xjhqre.admin.service.DictTypeService;
 import com.xjhqre.common.annotation.Log;
 import com.xjhqre.common.common.R;
-import com.xjhqre.common.domain.entity.DictData;
+import com.xjhqre.common.domain.admin.DictData;
 import com.xjhqre.common.enums.BusinessType;
 import com.xjhqre.common.utils.StringUtils;
 

@@ -3,12 +3,12 @@ package com.xjhqre.admin.service;
 import java.util.List;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.xjhqre.common.domain.entity.Config;
+import com.xjhqre.common.domain.admin.Config;
 
 /**
  * 参数配置 服务层
  * 
- * @author ruoyi
+ * @author xjhqre
  */
 public interface ConfigService {
     /**

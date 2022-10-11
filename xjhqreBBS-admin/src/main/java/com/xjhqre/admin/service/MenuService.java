@@ -4,12 +4,12 @@ import java.util.List;
 import java.util.Set;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.xjhqre.common.domain.entity.Menu;
+import com.xjhqre.common.domain.admin.Menu;
 
 /**
  * 菜单 业务层
  * 
- * @author ruoyi
+ * @author xjhqre
  */
 public interface MenuService {
     /**

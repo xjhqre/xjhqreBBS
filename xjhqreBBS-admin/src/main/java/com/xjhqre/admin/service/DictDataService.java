@@ -1,12 +1,12 @@
 package com.xjhqre.admin.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.xjhqre.common.domain.entity.DictData;
+import com.xjhqre.common.domain.admin.DictData;
 
 /**
  * 字典 业务层
  * 
- * @author ruoyi
+ * @author xjhqre
  */
 public interface DictDataService {
 

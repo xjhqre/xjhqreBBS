@@ -16,7 +16,7 @@ import com.xjhqre.admin.service.UserService;
 import com.xjhqre.common.constant.CacheConstants;
 import com.xjhqre.common.constant.Constants;
 import com.xjhqre.common.constant.ErrorCode;
-import com.xjhqre.common.domain.entity.User;
+import com.xjhqre.common.domain.admin.User;
 import com.xjhqre.common.domain.model.LoginUser;
 import com.xjhqre.common.exception.ServiceException;
 import com.xjhqre.common.utils.DateUtils;
@@ -28,7 +28,7 @@ import com.xjhqre.common.utils.redis.RedisCache;
 /**
  * 登录校验方法
  * 
- * @author ruoyi
+ * @author xjhqre
  */
 @Component
 public class LoginService {

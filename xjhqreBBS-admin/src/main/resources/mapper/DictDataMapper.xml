@@ -6,19 +6,19 @@
 
     <sql id="selectDictDataVo">
         select dict_code,
-               dict_sort,
-               dict_label,
-               dict_value,
-               dict_type,
-               is_default,
-               status,
-               create_by,
-               create_time,
-               remark
+        dict_sort,
+        dict_label,
+        dict_value,
+        dict_type,
+        is_default,
+        status,
+        create_by,
+        create_time,
+        remark
         from t_dict_data
     </sql>
 
-    <select id="selectDictDataList" resultType="com.xjhqre.common.domain.entity.DictData">
+    <select id="selectDictDataList" resultType="com.xjhqre.common.domain.admin.DictData">
         <include refid="selectDictDataVo"/>
         <where>
             <if test="dictType != null and dictType != ''">
@@ -35,7 +35,7 @@
     </select>
 
     <!-- 根据条件分页查询字典数据 -->
-    <select id="listDictData" resultType="com.xjhqre.common.domain.entity.DictData">
+    <select id="listDictData" resultType="com.xjhqre.common.domain.admin.DictData">
         <include refid="selectDictDataVo"/>
         <where>
             <if test="dictData.dictType != null and dictData.dictType != ''">
@@ -51,7 +51,7 @@
         order by dict_sort asc
     </select>
 
-    <select id="selectDictDataByType" resultType="com.xjhqre.common.domain.entity.DictData">
+    <select id="selectDictDataByType" resultType="com.xjhqre.common.domain.admin.DictData">
         <include refid="selectDictDataVo"/>
         where status = '1' and dict_type = #{dictType} order by dict_sort asc
     </select>
@@ -60,10 +60,10 @@
         select dict_label
         from t_dict_data
         where dict_type = #{dictType}
-          and dict_value = #{dictValue}
+        and dict_value = #{dictValue}
     </select>
 
-    <select id="selectDictDataById" parameterType="Long" resultType="com.xjhqre.common.domain.entity.DictData">
+    <select id="selectDictDataById" parameterType="Long" resultType="com.xjhqre.common.domain.admin.DictData">
         <include refid="selectDictDataVo"/>
         where dict_code = #{dictCode}
     </select>

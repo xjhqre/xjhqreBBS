@@ -5,6 +5,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.xjhqre.admin.mapper.LoginInfoMapper;
 import com.xjhqre.admin.service.LoginInfoService;
 import com.xjhqre.common.domain.LoginInfo;
@@ -12,13 +14,26 @@ import com.xjhqre.common.domain.LoginInfo;
 /**
  * 系统访问日志情况信息 服务层处理
  * 
- * @author ruoyi
+ * @author xjhqre
  */
 @Service
 public class LoginInfoServiceImpl implements LoginInfoService {
 
     @Autowired
     private LoginInfoMapper loginInfoMapper;
+
+    /**
+     * 根据条件分页查询登陆信息
+     * 
+     * @param loginInfo
+     * @param pageNum
+     * @param pageSize
+     * @return
+     */
+    @Override
+    public IPage<LoginInfo> listLoginInfo(LoginInfo loginInfo, Integer pageNum, Integer pageSize) {
+        return this.loginInfoMapper.listLoginInfo(new Page<>(pageNum, pageSize), loginInfo);
+    }
 
     /**
      * 新增系统登录日志

@@ -3,12 +3,12 @@ package com.xjhqre.admin.service;
 import java.util.List;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.xjhqre.common.domain.entity.User;
+import com.xjhqre.common.domain.admin.User;
 
 /**
  * 用户 业务层
  * 
- * @author ruoyi
+ * @author xjhqre
  */
 public interface UserService {
 

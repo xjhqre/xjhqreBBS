@@ -3,7 +3,7 @@ package com.xjhqre.common.enums;
 /**
  * 操作状态
  * 
- * @author ruoyi
+ * @author xjhqre
  *
  */
 public enum BusinessStatus {

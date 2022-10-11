@@ -8,7 +8,7 @@ import com.xjhqre.common.text.Convert;
 /**
  * 权限信息，存入 request 域中
  * 
- * @author ruoyi
+ * @author xjhqre
  */
 public class PermissionContextHolder {
 

@@ -1,4 +1,4 @@
-package com.xjhqre.common.domain.entity;
+package com.xjhqre.common.domain.admin;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
@@ -13,7 +13,7 @@ import lombok.Data;
 /**
  * 字典数据表 sys_dict_data
  * 
- * @author ruoyi
+ * @author xjhqre
  */
 @Data
 public class DictData extends BaseEntity {

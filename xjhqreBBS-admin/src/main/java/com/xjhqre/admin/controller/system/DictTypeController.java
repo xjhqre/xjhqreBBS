@@ -20,7 +20,7 @@ import com.xjhqre.admin.service.DictTypeService;
 import com.xjhqre.common.annotation.Log;
 import com.xjhqre.common.common.R;
 import com.xjhqre.common.constant.Constants;
-import com.xjhqre.common.domain.entity.DictType;
+import com.xjhqre.common.domain.admin.DictType;
 import com.xjhqre.common.enums.BusinessType;
 
 import io.swagger.annotations.Api;
@@ -31,7 +31,7 @@ import io.swagger.annotations.ApiOperation;
 /**
  * 数据字典信息
  * 
- * @author ruoyi
+ * @author xjhqre
  */
 @RestController
 @RequestMapping("/system/dict/type")

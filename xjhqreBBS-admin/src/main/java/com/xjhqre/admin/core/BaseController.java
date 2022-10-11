@@ -15,7 +15,7 @@ import com.xjhqre.common.utils.SecurityUtils;
 /**
  * web层通用数据处理
  *
- * @author ruoyi
+ * @author xjhqre
  */
 public class BaseController {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -46,13 +46,6 @@ public class BaseController {
      */
     public Long getUserId() {
         return this.getLoginUser().getUserId();
-    }
-
-    /**
-     * 获取登录部门id
-     */
-    public Long getDeptId() {
-        return this.getLoginUser().getDeptId();
     }
 
     /**

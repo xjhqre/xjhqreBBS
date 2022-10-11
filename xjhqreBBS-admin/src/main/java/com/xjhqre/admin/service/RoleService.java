@@ -4,13 +4,13 @@ import java.util.List;
 import java.util.Set;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.xjhqre.common.domain.entity.Role;
-import com.xjhqre.common.domain.entity.UserRole;
+import com.xjhqre.common.domain.admin.Role;
+import com.xjhqre.common.domain.admin.UserRole;
 
 /**
  * 角色业务层
  * 
- * @author ruoyi
+ * @author xjhqre
  */
 public interface RoleService {
     /**

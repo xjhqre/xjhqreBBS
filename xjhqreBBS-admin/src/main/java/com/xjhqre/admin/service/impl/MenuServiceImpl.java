@@ -16,15 +16,15 @@ import com.xjhqre.admin.mapper.MenuMapper;
 import com.xjhqre.admin.mapper.RoleMapper;
 import com.xjhqre.admin.mapper.RoleMenuMapper;
 import com.xjhqre.admin.service.MenuService;
-import com.xjhqre.common.domain.entity.Menu;
-import com.xjhqre.common.domain.entity.User;
+import com.xjhqre.common.domain.admin.Menu;
+import com.xjhqre.common.domain.admin.User;
 import com.xjhqre.common.utils.SecurityUtils;
 import com.xjhqre.common.utils.StringUtils;
 
 /**
  * 菜单 业务层处理
  * 
- * @author ruoyi
+ * @author xjhqre
  */
 @Service
 public class MenuServiceImpl implements MenuService {
@@ -154,10 +154,10 @@ public class MenuServiceImpl implements MenuService {
      */
     @Override
     public List<Menu> buildMenuTree(List<Menu> menus) {
-        List<Menu> returnList = new ArrayList<Menu>();
-        List<Long> tempList = new ArrayList<Long>(); // 存放所有权限的id
-        for (Menu dept : menus) {
-            tempList.add(dept.getMenuId());
+        List<Menu> returnList = new ArrayList<>();
+        List<Long> tempList = new ArrayList<>(); // 存放所有权限的id
+        for (Menu menu : menus) {
+            tempList.add(menu.getMenuId());
         }
         for (Menu menu : menus) {
             // 如果是顶级节点, 遍历该父节点的所有子节点

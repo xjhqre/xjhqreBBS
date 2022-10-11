@@ -9,8 +9,8 @@ import org.springframework.stereotype.Component;
 
 import com.xjhqre.admin.service.MenuService;
 import com.xjhqre.admin.service.RoleService;
-import com.xjhqre.common.domain.entity.Role;
-import com.xjhqre.common.domain.entity.User;
+import com.xjhqre.common.domain.admin.Role;
+import com.xjhqre.common.domain.admin.User;
 
 /**
  * 用户权限处理

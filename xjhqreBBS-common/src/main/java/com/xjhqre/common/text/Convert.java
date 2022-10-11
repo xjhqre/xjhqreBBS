@@ -13,7 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 /**
  * 类型转换器
  *
- * @author ruoyi
+ * @author xjhqre
  */
 public class Convert {
     /**

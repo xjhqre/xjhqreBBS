@@ -3,7 +3,7 @@ package com.xjhqre.common.utils.file;
 /**
  * 媒体类型工具类
  * 
- * @author ruoyi
+ * @author xjhqre
  */
 public class MimeTypeUtils {
     public static final String IMAGE_PNG = "image/png";

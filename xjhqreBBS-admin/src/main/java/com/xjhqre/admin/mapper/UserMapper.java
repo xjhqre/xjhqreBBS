@@ -7,12 +7,12 @@ import org.apache.ibatis.annotations.Param;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.xjhqre.common.domain.entity.User;
+import com.xjhqre.common.domain.admin.User;
 
 /**
  * 用户表 数据层
  * 
- * @author ruoyi
+ * @author xjhqre
  */
 @Mapper
 public interface UserMapper {

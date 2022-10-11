@@ -18,7 +18,7 @@ import com.xjhqre.admin.utils.OSSUtil.FileDirType;
 import com.xjhqre.common.annotation.Log;
 import com.xjhqre.common.common.R;
 import com.xjhqre.common.constant.Constants;
-import com.xjhqre.common.domain.entity.User;
+import com.xjhqre.common.domain.admin.User;
 import com.xjhqre.common.domain.model.LoginUser;
 import com.xjhqre.common.enums.BusinessType;
 import com.xjhqre.common.utils.SecurityUtils;
@@ -29,7 +29,7 @@ import io.swagger.annotations.Api;
 /**
  * 个人信息 业务处理
  * 
- * @author ruoyi
+ * @author xjhqre
  */
 @RestController
 @Api(value = "个人信息接口", tags = "个人信息接口")

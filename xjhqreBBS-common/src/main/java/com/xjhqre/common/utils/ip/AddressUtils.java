@@ -12,7 +12,7 @@ import com.xjhqre.common.utils.http.HttpUtils;
 /**
  * 获取地址类
  *
- * @author ruoyi
+ * @author xjhqre
  */
 public class AddressUtils {
     private static final Logger log = LoggerFactory.getLogger(AddressUtils.class);

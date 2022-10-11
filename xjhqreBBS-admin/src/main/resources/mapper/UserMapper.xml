@@ -28,7 +28,7 @@
     </sql>
 
     <!-- 根据条件分页查询用户 -->
-    <select id="findUser" resultType="com.xjhqre.common.domain.entity.User">
+    <select id="findUser" resultType="com.xjhqre.common.domain.admin.User">
         select u.user_id, u.nick_name, u.user_name, u.email, u.avatar, u.mobile, u.sex, u.status, u.del_flag,
         u.login_ip,
         u.login_date, u.create_by, u.create_time
@@ -49,7 +49,7 @@
     </select>
 
     <!-- 根据条件分页查询已配用户角色列表 -->
-    <select id="selectAllocatedList" resultType="com.xjhqre.common.domain.entity.User">
+    <select id="selectAllocatedList" resultType="com.xjhqre.common.domain.admin.User">
         select distinct u.user_id, u.user_name, u.nick_name, u.email, u.mobile, u.status, u.create_time
         from t_user u
         left join t_user_role ur on u.user_id = ur.user_id
@@ -64,8 +64,8 @@
     </select>
 
     <!-- 根据条件分页查询未分配用户角色列表 -->
-    <select id="selectUnallocatedList" parameterType="com.xjhqre.common.domain.entity.User"
-            resultType="com.xjhqre.common.domain.entity.User">
+    <select id="selectUnallocatedList" parameterType="com.xjhqre.common.domain.admin.User"
+            resultType="com.xjhqre.common.domain.admin.User">
         select distinct u.user_id, u.user_name, u.nick_name, u.email, u.mobile, u.status, u.create_time
         from t_user u
         left join t_user_role ur on u.user_id = ur.user_id
@@ -81,17 +81,17 @@
         </if>
     </select>
 
-    <select id="selectUserByUserName" parameterType="String" resultType="com.xjhqre.common.domain.entity.User">
+    <select id="selectUserByUserName" parameterType="String" resultType="com.xjhqre.common.domain.admin.User">
         <include refid="selectUserVo"/>
         where u.user_name = #{userName} and u.del_flag = '0'
     </select>
 
-    <select id="selectUserById" parameterType="Long" resultType="com.xjhqre.common.domain.entity.User">
+    <select id="selectUserById" parameterType="Long" resultType="com.xjhqre.common.domain.admin.User">
         <include refid="selectUserVo"/>
         where u.user_id = #{userId}
     </select>
 
-    <select id="checkUserNameUnique" parameterType="String" resultType="com.xjhqre.common.domain.entity.User">
+    <select id="checkUserNameUnique" parameterType="String" resultType="com.xjhqre.common.domain.admin.User">
         select user_id, user_name
         from t_user
         where user_name = #{userName}
@@ -99,7 +99,7 @@
         limit 1
     </select>
 
-    <select id="checkPhoneUnique" parameterType="String" resultType="com.xjhqre.common.domain.entity.User">
+    <select id="checkPhoneUnique" parameterType="String" resultType="com.xjhqre.common.domain.admin.User">
         select user_id, mobile
         from t_user
         where mobile = #{mobile}
@@ -107,7 +107,7 @@
         limit 1
     </select>
 
-    <select id="checkEmailUnique" parameterType="String" resultType="com.xjhqre.common.domain.entity.User">
+    <select id="checkEmailUnique" parameterType="String" resultType="com.xjhqre.common.domain.admin.User">
         select user_id, email
         from t_user
         where email = #{email}
@@ -115,7 +115,7 @@
         limit 1
     </select>
 
-    <insert id="insertUser" parameterType="com.xjhqre.common.domain.entity.User" useGeneratedKeys="true"
+    <insert id="insertUser" parameterType="com.xjhqre.common.domain.admin.User" useGeneratedKeys="true"
             keyProperty="user.userId">
         insert into t_user(
         <if test="user.userId != null and user.userId != 0">user_id,</if>
@@ -144,7 +144,7 @@
         )
     </insert>
 
-    <update id="updateUser" parameterType="com.xjhqre.common.domain.entity.User">
+    <update id="updateUser" parameterType="com.xjhqre.common.domain.admin.User">
         update t_user
         <set>
             <if test="userName != null and userName != ''">user_name = #{userName},</if>
@@ -163,19 +163,19 @@
         where user_id = #{userId}
     </update>
 
-    <!--    <update id="updateUserStatus" parameterType="com.xjhqre.common.domain.entity.User">-->
+    <!--    <update id="updateUserStatus" parameterType="com.xjhqre.common.domain.admin.User">-->
     <!--        update t_user-->
     <!--        set status = #{status}-->
     <!--        where user_id = #{userId}-->
     <!--    </update>-->
 
-    <update id="updateUserAvatar" parameterType="com.xjhqre.common.domain.entity.User">
+    <update id="updateUserAvatar" parameterType="com.xjhqre.common.domain.admin.User">
         update t_user
         set avatar = #{avatar}
         where user_name = #{userName}
     </update>
 
-    <update id="resetUserPwd" parameterType="com.xjhqre.common.domain.entity.User">
+    <update id="resetUserPwd" parameterType="com.xjhqre.common.domain.admin.User">
         update t_user
         set password = #{password}
         where user_name = #{userName}

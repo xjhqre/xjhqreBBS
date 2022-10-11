@@ -21,10 +21,12 @@ import com.xjhqre.common.utils.redis.RedisCache;
 import com.xjhqre.common.utils.sign.Base64;
 import com.xjhqre.common.utils.uuid.IdUtils;
 
+import io.swagger.annotations.ApiOperation;
+
 /***
  * 验证码操作处理**
  * 
- * @author ruoyi
+ * @author xjhqre
  */
 @RestController
 public class CaptchaController {
@@ -43,6 +45,7 @@ public class CaptchaController {
     /**
      * 生成验证码
      */
+    @ApiOperation(value = "生成验证码")
     @GetMapping("/captchaImage")
     public R<String> getCode() {
         boolean captchaEnabled = this.configService.selectCaptchaEnabled();

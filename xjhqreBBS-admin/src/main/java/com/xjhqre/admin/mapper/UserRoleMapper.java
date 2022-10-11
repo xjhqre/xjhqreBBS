@@ -5,12 +5,12 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-import com.xjhqre.common.domain.entity.UserRole;
+import com.xjhqre.common.domain.admin.UserRole;
 
 /**
  * 用户与角色关联表 数据层
  * 
- * @author ruoyi
+ * @author xjhqre
  */
 @Mapper
 public interface UserRoleMapper {

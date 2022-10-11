@@ -15,7 +15,7 @@ import com.xjhqre.admin.service.ConfigService;
 import com.xjhqre.common.constant.CacheConstants;
 import com.xjhqre.common.constant.Constants;
 import com.xjhqre.common.constant.UserConstants;
-import com.xjhqre.common.domain.entity.Config;
+import com.xjhqre.common.domain.admin.Config;
 import com.xjhqre.common.exception.ServiceException;
 import com.xjhqre.common.text.Convert;
 import com.xjhqre.common.utils.StringUtils;
@@ -24,7 +24,7 @@ import com.xjhqre.common.utils.redis.RedisCache;
 /**
  * 参数配置 服务层实现
  * 
- * @author ruoyi
+ * @author xjhqre
  */
 @Service
 public class ConfigServiceImpl implements ConfigService {

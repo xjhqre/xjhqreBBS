@@ -11,7 +11,7 @@ import com.xjhqre.common.enums.BusinessType;
 /**
  * 自定义操作日志记录注解
  * 
- * @author ruoyi
+ * @author xjhqre
  *
  */
 @Target({ElementType.PARAMETER, ElementType.METHOD})

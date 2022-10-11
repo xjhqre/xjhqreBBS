@@ -17,7 +17,7 @@ import io.swagger.annotations.Api;
 /**
  * 注册验证
  * 
- * @author ruoyi
+ * @author xjhqre
  */
 @RestController
 @Api(value = "用户注册接口", tags = "用户注册接口")

@@ -13,7 +13,7 @@ import com.xjhqre.admin.security.service.PermissionService;
 import com.xjhqre.admin.service.MenuService;
 import com.xjhqre.common.common.R;
 import com.xjhqre.common.constant.Constants;
-import com.xjhqre.common.domain.entity.User;
+import com.xjhqre.common.domain.admin.User;
 import com.xjhqre.common.domain.model.LoginBody;
 import com.xjhqre.common.utils.SecurityUtils;
 

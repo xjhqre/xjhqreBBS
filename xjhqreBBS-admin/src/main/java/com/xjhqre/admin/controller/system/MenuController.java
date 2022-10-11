@@ -20,7 +20,7 @@ import com.xjhqre.admin.service.MenuService;
 import com.xjhqre.common.annotation.Log;
 import com.xjhqre.common.common.R;
 import com.xjhqre.common.constant.Constants;
-import com.xjhqre.common.domain.entity.Menu;
+import com.xjhqre.common.domain.admin.Menu;
 import com.xjhqre.common.enums.BusinessType;
 
 import io.swagger.annotations.Api;
@@ -31,7 +31,7 @@ import io.swagger.annotations.ApiOperation;
 /**
  * 菜单信息
  * 
- * @author ruoyi
+ * @author xjhqre
  */
 @RestController
 @RequestMapping("/system/menu")

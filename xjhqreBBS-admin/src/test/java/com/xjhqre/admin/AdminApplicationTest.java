@@ -16,7 +16,7 @@ import com.xjhqre.admin.service.RoleService;
 import com.xjhqre.admin.service.UserService;
 import com.xjhqre.admin.utils.OSSUtil;
 import com.xjhqre.admin.utils.OSSUtil.FileDirType;
-import com.xjhqre.common.domain.entity.User;
+import com.xjhqre.common.domain.admin.User;
 import com.xjhqre.common.utils.SecurityUtils;
 import com.xjhqre.common.utils.SpringUtils;
 

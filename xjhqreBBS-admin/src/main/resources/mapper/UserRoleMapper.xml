@@ -31,11 +31,11 @@
         </foreach>
     </insert>
 
-    <delete id="deleteUserRoleInfo" parameterType="com.xjhqre.common.domain.entity.UserRole">
+    <delete id="deleteUserRoleInfo" parameterType="com.xjhqre.common.domain.admin.UserRole">
         delete
         from t_user_role
         where user_id = #{userId}
-          and role_id = #{roleId}
+        and role_id = #{roleId}
     </delete>
 
     <delete id="deleteUserRoleInfos">

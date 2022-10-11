@@ -2,6 +2,7 @@ package com.xjhqre.admin.service;
 
 import java.util.List;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.xjhqre.common.domain.LoginInfo;
 
 /**
@@ -10,6 +11,17 @@ import com.xjhqre.common.domain.LoginInfo;
  * @author xjhqre
  */
 public interface LoginInfoService {
+
+    /**
+     * 根据条件分页查询登陆信息
+     * 
+     * @param loginInfo
+     * @param pageNum
+     * @param pageSize
+     * @return
+     */
+    IPage<LoginInfo> listLoginInfo(LoginInfo loginInfo, Integer pageNum, Integer pageSize);
+
     /**
      * 新增系统登录日志
      * 

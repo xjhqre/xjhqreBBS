@@ -9,7 +9,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.xjhqre.admin.service.UserService;
-import com.xjhqre.common.domain.entity.User;
+import com.xjhqre.common.domain.admin.User;
 import com.xjhqre.common.domain.model.LoginUser;
 import com.xjhqre.common.enums.UserStatus;
 import com.xjhqre.common.exception.ServiceException;
@@ -18,7 +18,7 @@ import com.xjhqre.common.utils.StringUtils;
 /**
  * 用户验证处理
  *
- * @author ruoyi
+ * @author xjhqre
  */
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {

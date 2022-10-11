@@ -4,12 +4,12 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 
-import com.xjhqre.common.domain.entity.RoleMenu;
+import com.xjhqre.common.domain.admin.RoleMenu;
 
 /**
  * 角色与菜单关联表 数据层
  * 
- * @author ruoyi
+ * @author xjhqre
  */
 @Mapper
 public interface RoleMenuMapper {

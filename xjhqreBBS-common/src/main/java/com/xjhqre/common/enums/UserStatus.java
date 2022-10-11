@@ -3,7 +3,7 @@ package com.xjhqre.common.enums;
 /**
  * 用户状态
  * 
- * @author ruoyi
+ * @author xjhqre
  */
 public enum UserStatus {
     OK("1", "正常"), DISABLE("0", "停用"), DELETED("2", "删除");

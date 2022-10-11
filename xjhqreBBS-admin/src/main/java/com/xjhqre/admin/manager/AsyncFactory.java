@@ -22,7 +22,7 @@ import eu.bitwalker.useragentutils.UserAgent;
 /**
  * 异步工厂（产生任务用）
  *
- * @author ruoyi
+ * @author xjhqre
  */
 public class AsyncFactory {
     private static final Logger user_logger = LoggerFactory.getLogger("user");

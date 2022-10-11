@@ -8,7 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 /**
  * 字符集工具类
  * 
- * @author ruoyi
+ * @author xjhqre
  */
 public class CharsetKit {
     /** ISO-8859-1 */

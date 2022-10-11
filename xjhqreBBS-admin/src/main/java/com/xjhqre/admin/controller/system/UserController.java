@@ -23,8 +23,8 @@ import com.xjhqre.admin.service.UserService;
 import com.xjhqre.common.annotation.Log;
 import com.xjhqre.common.common.R;
 import com.xjhqre.common.constant.Constants;
-import com.xjhqre.common.domain.entity.Role;
-import com.xjhqre.common.domain.entity.User;
+import com.xjhqre.common.domain.admin.Role;
+import com.xjhqre.common.domain.admin.User;
 import com.xjhqre.common.enums.BusinessType;
 import com.xjhqre.common.exception.ServiceException;
 import com.xjhqre.common.utils.SecurityUtils;
@@ -38,7 +38,7 @@ import io.swagger.annotations.ApiOperation;
 /**
  * 用户信息
  * 
- * @author ruoyi
+ * @author xjhqre
  */
 @RestController
 @Api(value = "用户操作接口", tags = "用户操作接口")

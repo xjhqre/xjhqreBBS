@@ -3,7 +3,7 @@ package com.xjhqre.common.constant;
 /**
  * 用户常量信息
  * 
- * @author ruoyi
+ * @author xjhqre
  */
 public class UserConstants {
     /**
