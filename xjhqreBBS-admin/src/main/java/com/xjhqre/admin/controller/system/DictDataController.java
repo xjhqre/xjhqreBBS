@@ -60,6 +60,7 @@ public class DictDataController extends BaseController {
     /**
      * 查询字典数据详细
      */
+    @ApiOperation(value = "查询字典数据详情")
     @PreAuthorize("@ss.hasPermission('system:dict:query')")
     @GetMapping(value = "/{dictCode}")
     public R<DictData> getInfo(@PathVariable Long dictCode) {
@@ -69,6 +70,7 @@ public class DictDataController extends BaseController {
     /**
      * 根据字典类型查询字典数据信息
      */
+    @ApiOperation(value = "根据字典类型查询字典数据信息")
     @GetMapping(value = "/type/{dictType}")
     public R<List<DictData>> dictType(@PathVariable String dictType) {
         List<DictData> data = this.dictTypeService.selectDictDataByType(dictType);
@@ -81,6 +83,7 @@ public class DictDataController extends BaseController {
     /**
      * 新增字典数据
      */
+    @ApiOperation(value = "新增字典数据")
     @PreAuthorize("@ss.hasPermission('system:dict:add')")
     @Log(title = "字典数据", businessType = BusinessType.INSERT)
     @PostMapping
@@ -93,6 +96,7 @@ public class DictDataController extends BaseController {
     /**
      * 修改保存字典数据
      */
+    @ApiOperation(value = "修改保存字典数据")
     @PreAuthorize("@ss.hasPermission('system:dict:edit')")
     @Log(title = "字典数据", businessType = BusinessType.UPDATE)
     @PutMapping
@@ -105,6 +109,7 @@ public class DictDataController extends BaseController {
     /**
      * 删除字典数据
      */
+    @ApiOperation(value = "删除字典数据")
     @PreAuthorize("@ss.hasPermission('system:dict:remove')")
     @Log(title = "字典类型", businessType = BusinessType.DELETE)
     @DeleteMapping("/{dictCodes}")

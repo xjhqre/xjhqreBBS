@@ -25,6 +25,7 @@ import com.xjhqre.common.utils.SecurityUtils;
 import com.xjhqre.common.utils.StringUtils;
 
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
 /**
  * 个人信息 业务处理
@@ -44,6 +45,7 @@ public class ProfileController extends BaseController {
     /**
      * 个人信息附加角色组
      */
+    @ApiOperation(value = "获取个人信息以及角色组")
     @GetMapping
     public R<User> profile() {
         LoginUser loginUser = this.getLoginUser();
@@ -55,6 +57,7 @@ public class ProfileController extends BaseController {
     /**
      * 修改用户
      */
+    @ApiOperation(value = "修改用户信息")
     @Log(title = "个人信息", businessType = BusinessType.UPDATE)
     @PutMapping
     public R<String> updateProfile(@RequestBody User user) {
@@ -87,6 +90,7 @@ public class ProfileController extends BaseController {
     /**
      * 重置密码
      */
+    @ApiOperation(value = "重置密码")
     @Log(title = "个人信息", businessType = BusinessType.UPDATE)
     @PutMapping("/updatePwd")
     public R<String> updatePwd(String oldPassword, String newPassword) {
@@ -111,6 +115,7 @@ public class ProfileController extends BaseController {
     /**
      * 头像上传
      */
+    @ApiOperation(value = "上传头像")
     @Log(title = "用户头像", businessType = BusinessType.UPDATE)
     @PostMapping("/avatar")
     public R<String> avatar(@RequestParam("avatarfile") MultipartFile file) throws Exception {

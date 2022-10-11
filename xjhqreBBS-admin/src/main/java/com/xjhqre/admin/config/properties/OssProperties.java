@@ -1,4 +1,4 @@
-package com.xjhqre.admin.config;
+package com.xjhqre.admin.config.properties;
 
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;

@@ -21,6 +21,7 @@ import com.xjhqre.common.utils.redis.RedisCache;
 import com.xjhqre.common.utils.sign.Base64;
 import com.xjhqre.common.utils.uuid.IdUtils;
 
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
 /***
@@ -29,6 +30,7 @@ import io.swagger.annotations.ApiOperation;
  * @author xjhqre
  */
 @RestController
+@Api(value = "验证码接口", tags = "验证码接口")
 public class CaptchaController {
     @Resource(name = "captchaProducer")
     private Producer captchaProducer;

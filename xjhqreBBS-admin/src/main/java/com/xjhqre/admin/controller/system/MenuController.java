@@ -55,6 +55,7 @@ public class MenuController extends BaseController {
     /**
      * 根据菜单编号获取详细信息
      */
+    @ApiOperation(value = "根据菜单编号获取详细信息")
     @PreAuthorize("@ss.hasPermission('system:menu:query')")
     @GetMapping(value = "/{menuId}")
     public R<Menu> getInfo(@PathVariable Long menuId) {
@@ -65,6 +66,7 @@ public class MenuController extends BaseController {
     /**
      * 获取菜单下拉树列表
      */
+    @ApiOperation(value = "获取菜单下拉树列表")
     @GetMapping("/treeselect")
     public R<List<Menu>> treeselect(Menu menu) {
         List<Menu> menus = this.menuService.selectMenuList(menu, this.getUserId());
@@ -75,8 +77,9 @@ public class MenuController extends BaseController {
     /**
      * 加载对应角色菜单列表树
      */
-    @GetMapping(value = "/roleMenuTreeselect/{roleId}")
-    public R<String> roleMenuTreeselect(@PathVariable("roleId") Long roleId) {
+    @ApiOperation(value = "加载对应角色菜单列表树")
+    @GetMapping(value = "/roleMenuTreeSelect/{roleId}")
+    public R<String> roleMenuTreeSelect(@PathVariable("roleId") Long roleId) {
         List<Menu> menus = this.menuService.selectMenuList(this.getUserId());
         List<Long> roleIds = this.menuService.selectMenuListByRoleId(roleId);
         menus = this.menuService.buildMenuTree(menus);
@@ -86,6 +89,7 @@ public class MenuController extends BaseController {
     /**
      * 新增菜单
      */
+    @ApiOperation(value = "新增菜单")
     @PreAuthorize("@ss.hasPermission('system:menu:add')")
     @Log(title = "菜单管理", businessType = BusinessType.INSERT)
     @PostMapping
@@ -101,6 +105,7 @@ public class MenuController extends BaseController {
     /**
      * 修改菜单
      */
+    @ApiOperation(value = "修改菜单")
     @PreAuthorize("@ss.hasPermission('system:menu:edit')")
     @Log(title = "菜单管理", businessType = BusinessType.UPDATE)
     @PutMapping
@@ -118,6 +123,7 @@ public class MenuController extends BaseController {
     /**
      * 删除菜单
      */
+    @ApiOperation(value = "删除菜单")
     @PreAuthorize("@ss.hasPermission('system:menu:remove')")
     @Log(title = "菜单管理", businessType = BusinessType.DELETE)
     @DeleteMapping("/{menuId}")

@@ -55,6 +55,7 @@ public class DictTypeController extends BaseController {
     /**
      * 查询字典类型详细
      */
+    @ApiOperation(value = "查询字典类型详细")
     @PreAuthorize("@ss. hasPermission('system:dict:query')")
     @GetMapping(value = "/{dictId}")
     public R<DictType> getInfo(@PathVariable Long dictId) {
@@ -65,6 +66,7 @@ public class DictTypeController extends BaseController {
     /**
      * 新增字典类型
      */
+    @ApiOperation(value = "新增字典类型")
     @PreAuthorize("@ss. hasPermission('system:dict:add')")
     @Log(title = "字典类型", businessType = BusinessType.INSERT)
     @PostMapping
@@ -80,6 +82,7 @@ public class DictTypeController extends BaseController {
     /**
      * 修改字典类型
      */
+    @ApiOperation(value = "修改字典类型")
     @PreAuthorize("@ss. hasPermission('system:dict:edit')")
     @Log(title = "字典类型", businessType = BusinessType.UPDATE)
     @PutMapping
@@ -95,6 +98,7 @@ public class DictTypeController extends BaseController {
     /**
      * 删除字典类型
      */
+    @ApiOperation(value = "删除字典类型")
     @PreAuthorize("@ss. hasPermission('system:dict:remove')")
     @Log(title = "字典类型", businessType = BusinessType.DELETE)
     @DeleteMapping("/{dictIds}")
@@ -106,6 +110,7 @@ public class DictTypeController extends BaseController {
     /**
      * 刷新字典缓存
      */
+    @ApiOperation(value = "刷新字典缓存")
     @PreAuthorize("@ss. hasPermission('system:dict:remove')")
     @Log(title = "字典类型", businessType = BusinessType.CLEAN)
     @DeleteMapping("/refreshCache")
@@ -117,6 +122,7 @@ public class DictTypeController extends BaseController {
     /**
      * 获取字典选择框列表
      */
+    @ApiOperation(value = "获取字典选择框列表")
     @GetMapping("/optionSelect")
     public R<List<DictType>> optionSelect() {
         List<DictType> dictTypes = this.dictTypeService.selectDictTypeAll();

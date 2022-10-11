@@ -18,7 +18,7 @@ import com.aliyun.oss.OSSException;
 import com.aliyun.oss.model.ObjectMetadata;
 import com.aliyun.oss.model.PutObjectResult;
 import com.fasterxml.jackson.annotation.JsonValue;
-import com.xjhqre.admin.config.OssProperties;
+import com.xjhqre.admin.config.properties.OssProperties;
 import com.xjhqre.common.exception.ServiceException;
 import com.xjhqre.common.utils.file.MimeTypeUtils;
 

@@ -13,6 +13,7 @@ import com.xjhqre.common.domain.model.RegisterBody;
 import com.xjhqre.common.utils.StringUtils;
 
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
 /**
  * 注册验证
@@ -28,6 +29,7 @@ public class RegisterController extends BaseController {
     @Autowired
     private ConfigService configService;
 
+    @ApiOperation(value = "用户注册")
     @PostMapping("/register")
     public R<String> register(@RequestBody RegisterBody user) {
         if (!("true".equals(this.configService.selectConfigByKey("registerUser")))) {

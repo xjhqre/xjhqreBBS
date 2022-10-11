@@ -85,6 +85,7 @@ public class UserOnlineController extends BaseController {
     /**
      * 强退用户
      */
+    @ApiOperation(value = "强制退出用户")
     @PreAuthorize("@ss.hasPermission('monitor:online:forceLogout')")
     @Log(title = "在线用户", businessType = BusinessType.FORCE)
     @DeleteMapping("/{tokenId}")

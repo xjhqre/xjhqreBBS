@@ -71,6 +71,7 @@ public class RoleController extends BaseController {
     /**
      * 根据角色编号获取详细信息
      */
+    @ApiOperation(value = "根据角色编号获取详细信息")
     @PreAuthorize("@ss.hasPermission('system:role:query')")
     @GetMapping(value = "/{roleId}")
     public R<Role> getInfo(@PathVariable Long roleId) {
@@ -81,6 +82,7 @@ public class RoleController extends BaseController {
     /**
      * 新增角色
      */
+    @ApiOperation(value = "新增角色")
     @PreAuthorize("@ss.hasPermission('system:role:add')")
     @Log(title = "角色管理", businessType = BusinessType.INSERT)
     @PostMapping
@@ -99,6 +101,7 @@ public class RoleController extends BaseController {
     /**
      * 修改保存角色
      */
+    @ApiOperation(value = "修改保存角色")
     @PreAuthorize("@ss.hasPermission('system:role:edit')")
     @Log(title = "角色管理", businessType = BusinessType.UPDATE)
     @PutMapping
@@ -127,6 +130,7 @@ public class RoleController extends BaseController {
     /**
      * 状态修改
      */
+    @ApiOperation(value = "状态修改")
     @PreAuthorize("@ss.hasPermission('system:role:edit')")
     @Log(title = "角色管理", businessType = BusinessType.UPDATE)
     @PutMapping("/changeStatus")
@@ -140,6 +144,7 @@ public class RoleController extends BaseController {
     /**
      * 删除角色
      */
+    @ApiOperation(value = "删除角色")
     @PreAuthorize("@ss.hasPermission('system:role:remove')")
     @Log(title = "角色管理", businessType = BusinessType.DELETE)
     @DeleteMapping("/{roleIds}")
@@ -151,6 +156,7 @@ public class RoleController extends BaseController {
     /**
      * 获取角色选择框列表
      */
+    @ApiOperation(value = "获取角色选择框列表")
     @PreAuthorize("@ss.hasPermission('system:role:query')")
     @GetMapping("/optionSelect")
     public R<List<Role>> optionSelect() {
@@ -184,6 +190,7 @@ public class RoleController extends BaseController {
     /**
      * 取消分配给用户的角色
      */
+    @ApiOperation(value = "取消分配给用户的角色")
     @PreAuthorize("@ss.hasPermission('system:role:edit')")
     @Log(title = "角色管理", businessType = BusinessType.GRANT)
     @PutMapping("/authUser/cancel")
@@ -195,6 +202,7 @@ public class RoleController extends BaseController {
     /**
      * 批量取消授权用户
      */
+    @ApiOperation(value = "批量取消授权用户")
     @PreAuthorize("@ss.hasPermission('system:role:edit')")
     @Log(title = "角色管理", businessType = BusinessType.GRANT)
     @PutMapping("/authUser/cancelAll")
@@ -206,6 +214,7 @@ public class RoleController extends BaseController {
     /**
      * 批量选择用户授权
      */
+    @ApiOperation(value = "批量选择用户授权")
     @PreAuthorize("@ss.hasPermission('system:role:edit')")
     @Log(title = "角色管理", businessType = BusinessType.GRANT)
     @PutMapping("/authUser/selectAll")

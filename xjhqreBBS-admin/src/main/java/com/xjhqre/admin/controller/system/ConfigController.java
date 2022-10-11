@@ -53,6 +53,7 @@ public class ConfigController extends BaseController {
     /**
      * 根据参数编号获取详细信息
      */
+    @ApiOperation(value = "根据参数编号获取详细信息")
     @PreAuthorize("@ss.hasPermission('system:config:query')")
     @GetMapping(value = "/{configId}")
     public R<Config> getInfo(@PathVariable Long configId) {
@@ -62,6 +63,7 @@ public class ConfigController extends BaseController {
     /**
      * 根据参数键名查询参数值
      */
+    @ApiOperation(value = "根据参数键名查询参数值")
     @GetMapping(value = "/configKey/{configKey}")
     public R<String> getConfigKey(@PathVariable String configKey) {
         return R.success(this.configService.selectConfigByKey(configKey));
@@ -70,6 +72,7 @@ public class ConfigController extends BaseController {
     /**
      * 新增参数配置
      */
+    @ApiOperation(value = "新增参数配置")
     @PreAuthorize("@ss.hasPermission('system:config:add')")
     @Log(title = "参数管理", businessType = BusinessType.INSERT)
     @PostMapping
@@ -85,6 +88,7 @@ public class ConfigController extends BaseController {
     /**
      * 修改参数配置
      */
+    @ApiOperation(value = "修改参数配置")
     @PreAuthorize("@ss.hasPermission('system:config:edit')")
     @Log(title = "参数管理", businessType = BusinessType.UPDATE)
     @PutMapping
@@ -100,6 +104,7 @@ public class ConfigController extends BaseController {
     /**
      * 删除参数配置
      */
+    @ApiOperation(value = "删除参数配置")
     @PreAuthorize("@ss.hasPermission('system:config:remove')")
     @Log(title = "参数管理", businessType = BusinessType.DELETE)
     @DeleteMapping("/{configIds}")
@@ -111,6 +116,7 @@ public class ConfigController extends BaseController {
     /**
      * 刷新参数缓存
      */
+    @ApiOperation(value = "刷新参数缓存")
     @PreAuthorize("@ss.hasPermission('system:config:remove')")
     @Log(title = "参数管理", businessType = BusinessType.CLEAN)
     @DeleteMapping("/refreshCache")

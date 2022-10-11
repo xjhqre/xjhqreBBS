@@ -10,7 +10,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.xjhqre.admin.config.OssProperties;
+import com.xjhqre.admin.config.properties.OssProperties;
 import com.xjhqre.admin.security.service.PermissionService;
 import com.xjhqre.admin.service.RoleService;
 import com.xjhqre.admin.service.UserService;
