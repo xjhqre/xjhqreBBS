@@ -29,6 +29,7 @@ import com.xjhqre.common.utils.StringUtils;
  * @author xjhqre
  */
 @Service
+@Transactional(rollbackFor = Exception.class)
 public class DictTypeServiceImpl implements DictTypeService {
     @Autowired
     private DictTypeMapper dictTypeMapper;
@@ -183,7 +184,6 @@ public class DictTypeServiceImpl implements DictTypeService {
      * @return 结果
      */
     @Override
-    @Transactional
     public int updateDictType(DictType dict) {
         DictType oldDict = this.dictTypeMapper.selectDictTypeById(dict.getDictId());
         this.dictDataMapper.updateDictDataType(oldDict.getDictType(), dict.getDictType());

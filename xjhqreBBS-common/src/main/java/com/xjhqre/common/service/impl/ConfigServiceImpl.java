@@ -7,6 +7,7 @@ import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -27,6 +28,7 @@ import com.xjhqre.common.utils.redis.RedisCache;
  * @author xjhqre
  */
 @Service
+@Transactional(rollbackFor = Exception.class)
 public class ConfigServiceImpl implements ConfigService {
     @Autowired
     private ConfigMapper configMapper;
@@ -96,6 +98,34 @@ public class ConfigServiceImpl implements ConfigService {
             return true;
         }
         return Convert.toBool(captchaEnabled);
+    }
+
+    /**
+     * 获取文章审核开关
+     *
+     * @return true开启，false关闭
+     */
+    @Override
+    public boolean selectArticleAuditEnabled() {
+        String articleAudit = this.selectConfigByKey("articleAudit");
+        if (StringUtils.isEmpty(articleAudit)) {
+            return true;
+        }
+        return Convert.toBool(articleAudit);
+    }
+
+    /**
+     * 获取图片审核开关
+     *
+     * @return true开启，false关闭
+     */
+    @Override
+    public boolean selectPictureAuditEnabled() {
+        String pictureAudit = this.selectConfigByKey("pictureAudit");
+        if (StringUtils.isEmpty(pictureAudit)) {
+            return true;
+        }
+        return Convert.toBool(pictureAudit);
     }
 
     /**

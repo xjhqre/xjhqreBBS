@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -14,9 +15,10 @@ import com.xjhqre.common.domain.admin.Notice;
 /**
  * 公告 服务层实现
  * 
- * @author ruoyi
+ * @author xjhqre
  */
 @Service
+@Transactional(rollbackFor = Exception.class)
 public class NoticeServiceImpl implements NoticeService {
     @Autowired
     private NoticeMapper noticeMapper;

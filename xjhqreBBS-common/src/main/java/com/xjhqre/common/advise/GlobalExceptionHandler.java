@@ -1,18 +1,16 @@
-package com.xjhqre.common.config;
+package com.xjhqre.common.advise;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Objects;
 
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.xjhqre.common.common.R;
-import com.xjhqre.common.constant.ErrorCode;
 import com.xjhqre.common.exception.ServiceException;
 
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
  * @DateTime: 2022/4/23 20:04
  */
 @Slf4j
+@Component
 @RestControllerAdvice(annotations = {RestController.class, Controller.class})
 public class GlobalExceptionHandler {
 
@@ -46,16 +45,9 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
     public R<String> handleValidException(MethodArgumentNotValidException e) {
-        log.error("数据校验出现问题{}，异常类型：{}", e.getMessage(), e.getClass());
-        BindingResult bindingResult = e.getBindingResult();
-
-        Map<String, String> errorMap = new HashMap<>();
-        bindingResult.getFieldErrors().forEach((fieldError) -> {
-            errorMap.put(fieldError.getField(), fieldError.getDefaultMessage());
-        });
-        R<String> r = R.error(ErrorCode.VALID_EXCEPTION, "参数格式校验失败");
-        r.add("data", errorMap);
-        return r;
+        log.error(e.getMessage(), e);
+        String message = Objects.requireNonNull(e.getBindingResult().getFieldError()).getDefaultMessage();
+        return R.error(message);
     }
 
     /**

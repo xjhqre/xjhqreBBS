@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xjhqre.portal.mapper.ArticleMapper">
+
+    <sql id="selectArticleVo">
+        select article_id,
+               title,
+               summary,
+               content,
+               author,
+               view_count,
+               thumb_count,
+               collect_count,
+               cover,
+               status,
+               is_publish,
+               sort,
+               open_comment,
+               create_by,
+               create_time,
+               update_by,
+               update_time,
+               remark
+        from t_article
+    </sql>
+
+    <!-- 根据条件分页查询文章信息 -->
+    <select id="findArticle" resultType="com.xjhqre.common.domain.portal.Article">
+        <include refid="selectArticleVo"/>
+        where del_flag = '0'
+        <if test="article.title != null and article.title != ''">
+            AND title like concat('%', #{article.title}, '%')
+        </if>
+        <if test="article.status != null and article.status != ''">
+            AND status = #{article.status}
+        </if>
+    </select>
+
+    <!-- 根据文章id查询文章详情 -->
+    <select id="selectArticleById" resultType="com.xjhqre.common.domain.portal.Article">
+        <include refid="selectArticleVo"/>
+        where article_id = #{articleId}
+    </select>
+
+    <!-- 发布文章 -->
+    <insert id="addArticle">
+        insert into t_article(
+        <if test="title != null and title != ''">title,</if>
+        <if test="summary != null and summary != ''">summary,</if>
+        <if test="content != null and content != ''">content,</if>
+        <if test="author != null and author != ''">author,</if>
+        <if test="viewCount != null and viewCount != 0">view_count,</if>
+        <if test="thumbCount != null and thumbCount != 0">thumb_count,</if>
+        <if test="collectCount != null and collectCount != 0">collect_count,</if>
+        <if test="cover != null and cover != ''">cover,</if>
+        <if test="status != null">status,</if>
+        <if test="is_publish != null">is_publish,</if>
+        <if test="sort != null">sort,</if>
+        <if test="open_comment != null">open_comment,</if>
+        <if test="createBy != null and createBy != ''">create_by,</if>
+        <if test="createTime != null">create_time,</if>
+        )values(
+        <if test="title != null and title != ''">#{title},</if>
+        <if test="summary != null and summary != ''">#{summary},</if>
+        <if test="content != null and content != ''">#{content},</if>
+        <if test="author != null and author != ''">#{author},</if>
+        <if test="viewCount != null and viewCount != 0">#{viewCount},</if>
+        <if test="thumbCount != null and thumbCount != 0">#{thumbCount},</if>
+        <if test="collectCount != null and collectCount != 0">#{collectCount},</if>
+        <if test="cover != null and cover != ''">#{cover},</if>
+        <if test="status != null">#{status},</if>
+        <if test="is_publish != null">#{isPublish},</if>
+        <if test="sort != null">#{sort},</if>
+        <if test="open_comment != null">#{openComment},</if>
+        <if test="createBy != null and createBy != ''">#{createBy},</if>
+        <if test="createTime != null and createTime != ''">#{createTime},</if>
+        )
+    </insert>
+
+    <!-- 修改文章 -->
+    <update id="updateArticle">
+        update t_article
+        <set>
+            <if test="title != null and title != ''">title = #{title},</if>
+            <if test="summary != null and summary != ''">summary = #{summary},</if>
+            <if test="content != null ">content = #{content},</if>
+            <if test="author != null ">author = #{author},</if>
+            <if test="viewCount != null">view_count = #{viewCount},</if>
+            <if test="thumbCount != null">thumb_count = #{thumbCount},</if>
+            <if test="collectCount != null">collect_count = #{collectCount},</if>
+            <if test="cover != null and cover != ''">cover = #{cover},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="isPublish != null">is_publish = #{isPublish},</if>
+            <if test="sort != null">sort = #{sort},</if>
+            <if test="openComment != null">open_comment = #{openComment},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+            <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+            update_time = sysdate()
+        </set>
+        where article_id = #{articleId}
+    </update>
+
+</mapper>

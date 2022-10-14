@@ -2,6 +2,7 @@ package com.xjhqre.common.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -10,11 +11,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.xjhqre.common.annotation.Log;
 import com.xjhqre.common.common.R;
 import com.xjhqre.common.constant.Constants;
 import com.xjhqre.common.domain.admin.User;
 import com.xjhqre.common.domain.model.LoginUser;
+import com.xjhqre.common.domain.portal.Article;
 import com.xjhqre.common.enums.BusinessType;
 import com.xjhqre.common.security.service.TokenService;
 import com.xjhqre.common.service.UserService;
@@ -24,6 +27,8 @@ import com.xjhqre.common.utils.SecurityUtils;
 import com.xjhqre.common.utils.StringUtils;
 
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 
 /**
@@ -37,7 +42,6 @@ import io.swagger.annotations.ApiOperation;
 public class ProfileController extends BaseController {
     @Autowired
     private UserService userService;
-
     @Autowired
     private TokenService tokenService;
 
@@ -129,5 +133,16 @@ public class ProfileController extends BaseController {
             }
         }
         return R.error("上传图片异常，请联系管理员");
+    }
+
+    @ApiOperation(value = "查询自己的文章列表")
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "pageNum", value = "正整数，表示查询第几页", required = true, dataType = "int", example = "1"),
+        @ApiImplicitParam(name = "pageSize", value = "正整数，表示每页几条记录", required = true, dataType = "int",
+            example = "20")})
+    @GetMapping("findMyArticle/{pageNum}/{pageSize}")
+    public R<IPage<Article>> findMyArticle(Article article, @PathVariable("pageNum") Integer pageNum,
+        @PathVariable("pageSize") Integer pageSize) {
+        return R.success(this.userService.findUserArticle(article, pageNum, pageSize));
     }
 }

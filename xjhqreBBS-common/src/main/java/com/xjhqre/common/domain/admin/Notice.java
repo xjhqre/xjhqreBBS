@@ -14,7 +14,7 @@ import lombok.Data;
 /**
  * 通知公告表 sys_notice
  * 
- * @author ruoyi
+ * @author xjhqre
  */
 @Data
 @TableName("t_notice")

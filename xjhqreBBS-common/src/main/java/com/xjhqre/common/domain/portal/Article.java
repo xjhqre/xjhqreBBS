@@ -1,7 +1,4 @@
-/*
- * Copyright (c) 2019, CCSSOFT All Rights Reserved.
- */
-package com.xjhqre.common.domain.bbs;
+package com.xjhqre.common.domain.portal;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
@@ -46,8 +43,8 @@ public class Article extends BaseEntity {
     @ApiModelProperty(value = "博客内容")
     private String content;
 
-    @ApiModelProperty(value = "作者id")
-    private String authorId;
+    @ApiModelProperty(value = "作者(用户名)")
+    private String author;
 
     @ApiModelProperty(value = "博客浏览数", hidden = true)
     private Integer viewCount;
@@ -72,4 +69,7 @@ public class Article extends BaseEntity {
 
     @ApiModelProperty(value = "是否开启评论(0:否 1:是)")
     private Integer openComment;
+
+    @ApiModelProperty(name = "删除标志（0代表存在 2代表删除）", hidden = true)
+    private String delFlag;
 }

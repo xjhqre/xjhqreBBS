@@ -1,4 +1,4 @@
-package com.xjhqre.admin.controller.system;
+package com.xjhqre.common.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -16,7 +16,6 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.xjhqre.common.annotation.Log;
 import com.xjhqre.common.common.R;
 import com.xjhqre.common.constant.Constants;
-import com.xjhqre.common.controller.BaseController;
 import com.xjhqre.common.domain.admin.Config;
 import com.xjhqre.common.enums.BusinessType;
 import com.xjhqre.common.service.ConfigService;

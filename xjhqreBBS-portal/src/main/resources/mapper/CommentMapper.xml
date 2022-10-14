@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xjhqre.portal.mapper.CommentMapper">
+
+    <sql id="selectCommentVo">
+        select comment_id,
+               user_id,
+               parent_id,
+               article_id,
+               content,
+               thumb_count,
+               content,
+               thumb_count,
+               comment_count,
+               status,
+               del_flag,
+               create_by,
+               create_time,
+               update_by,
+               update_time,
+               remark
+        from t_comment
+    </sql>
+
+    <!-- 根据条件分页查询评论信息 -->
+    <select id="findComment" resultType="com.xjhqre.common.domain.portal.Comment">
+        <include refid="selectCommentVo"/>
+        where del_flag = '0'
+        <if test="comment.userId != null">
+            AND user_id = #{comment.userId}
+        </if>
+        <if test="comment.articleId != null">
+            AND article_id = #{comment.articleId}
+        </if>
+        <if test="comment.parentId != null">
+            AND parent_id = #{comment.parentId}
+        </if>
+        <if test="comment.status != null">
+            AND status = #{comment.status}
+        </if>
+        order by create_time desc
+    </select>
+
+    <!-- 查询评论详情 -->
+    <select id="selectCommentById" resultType="com.xjhqre.common.domain.portal.Comment">
+        <include refid="selectCommentVo"/>
+        where comment_id = #{commentId}
+    </select>
+
+    <!-- 查询文章所有的根评论， 根据点赞数查询 -->
+    <select id="selectRootComment" resultType="com.xjhqre.common.domain.portal.Comment">
+        <include refid="selectCommentVo"/>
+        where del_flag = '0' and parent_id = 0
+        <if test="comment.userId != null">
+            AND user_id = #{comment.userId}
+        </if>
+        <if test="comment.articleId != null">
+            AND article_id = #{comment.articleId}
+        </if>
+        <if test="comment.parentId != null">
+            AND parent_id = #{comment.parentId}
+        </if>
+        <if test="comment.status != null">
+            AND status = #{comment.status}
+        </if>
+        order by thumb_count desc
+    </select>
+
+    <!-- 添加文章评论 -->
+    <insert id="addComment">
+        insert into t_comment(
+        <if test="commentId != null">comment_id,</if>
+        <if test="userId != null">user_id,</if>
+        <if test="parentId != null">parent_id,</if>
+        <if test="articleId != null">article_id,</if>
+        <if test="content != null and content != ''">content,</if>
+        <if test="thumbCount != null">thumb_count,</if>
+        <if test="commentCount != null">comment_count,</if>
+        <if test="status != null">status,</if>
+        <if test="sort != null">sort,</if>
+        <if test="delFlag != null">del_flag,</if>
+        <if test="createBy != null and createBy != ''">create_by,</if>
+        <if test="createTime != null">create_time,</if>
+        <if test="updateBy != null and updateBy != ''">update_by,</if>
+        <if test="updateTime != null">update_time,</if>
+        <if test="remark != null">remark,</if>
+        )values(
+        <if test="commentId != null">#{commentId},</if>
+        <if test="userId != null">#{userId},</if>
+        <if test="parentId != null">#{parentId},</if>
+        <if test="articleId != null">#{articleId},</if>
+        <if test="content != null and content != ''">#{content},</if>
+        <if test="thumbCount != null">#{thumbCount},</if>
+        <if test="commentCount != null">#{commentCount},</if>
+        <if test="status != null">#{status},</if>
+        <if test="sort != null">#{sort},</if>
+        <if test="delFlag != null">#{delFlag},</if>
+        <if test="createBy != null and createBy != ''">#{createBy},</if>
+        <if test="createTime != null">#{createTime},</if>
+        <if test="updateBy != null and updateBy != ''">#{updateBy},</if>
+        <if test="updateTime != null">#{updateTime},</if>
+        <if test="remark != null">#{remark},</if>
+        )
+    </insert>
+
+    <!-- 修改评论 -->
+    <update id="updateComment">
+        update t_comment
+        <set>
+            <if test="content != null and content != ''">content = #{content},</if>
+            <if test="thumbCount != null">thumb_count = #{thumbCount},</if>
+            <if test="commentCount != null ">comment_count = #{commentCount},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="sort != null">sort = #{sort},</if>
+            <if test="delFlag != null and delFlag != ''">del_flag = #{delFlag},</if>
+            <if test="createBy != null and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null and remark != ''">sort = #{remark},</if>
+        </set>
+        where comment_id = #{commentId}
+    </update>
+
+</mapper>

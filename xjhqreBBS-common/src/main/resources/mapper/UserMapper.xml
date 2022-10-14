@@ -115,6 +115,36 @@
         limit 1
     </select>
 
+    <!-- 查询用户发布的文章 -->
+    <select id="findUserArticle" resultType="com.xjhqre.common.domain.portal.Article">
+        select article_id,
+        title,
+        summary,
+        content,
+        author,
+        view_count,
+        thumb_count,
+        collect_count,
+        cover,
+        status,
+        is_publish,
+        sort,
+        open_comment,
+        create_by,
+        create_time,
+        update_by,
+        update_time,
+        remark
+        from t_article
+        where author = #{article.author}
+        <if test="article.title != null and article.title != ''">
+            AND title like concat('%', #{article.title}, '%')
+        </if>
+        <if test="article.status != null and article.status != ''">
+            AND status = #{article.status}
+        </if>
+    </select>
+
     <insert id="insertUser" parameterType="com.xjhqre.common.domain.admin.User" useGeneratedKeys="true"
             keyProperty="user.userId">
         insert into t_user(

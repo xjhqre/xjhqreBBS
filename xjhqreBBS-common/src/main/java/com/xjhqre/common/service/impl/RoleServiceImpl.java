@@ -30,6 +30,7 @@ import com.xjhqre.common.utils.StringUtils;
  * @author xjhqre
  */
 @Service
+@Transactional(rollbackFor = Exception.class)
 public class RoleServiceImpl implements RoleService {
     @Autowired
     private RoleMapper roleMapper;
@@ -189,7 +190,6 @@ public class RoleServiceImpl implements RoleService {
      * @return 结果
      */
     @Override
-    @Transactional
     public int insertRole(Role role) {
         // 新增角色信息
         this.roleMapper.insertRole(role);
@@ -204,7 +204,6 @@ public class RoleServiceImpl implements RoleService {
      * @return 结果
      */
     @Override
-    @Transactional
     public int updateRole(Role role) {
         // 修改角色信息
         this.roleMapper.updateRole(role);
@@ -255,7 +254,6 @@ public class RoleServiceImpl implements RoleService {
      * @return 结果
      */
     @Override
-    @Transactional
     public int deleteRoleById(Long roleId) {
         // 删除角色与菜单关联
         this.roleMenuMapper.deleteRoleMenuByRoleId(roleId);
@@ -270,7 +268,6 @@ public class RoleServiceImpl implements RoleService {
      * @return 结果
      */
     @Override
-    @Transactional
     public int deleteRoleByIds(Long[] roleIds) {
         for (Long roleId : roleIds) {
             this.checkRoleAllowed(roleId);

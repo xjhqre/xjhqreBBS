@@ -20,6 +20,7 @@ import com.xjhqre.common.constant.Constants;
 import com.xjhqre.common.domain.admin.Role;
 import com.xjhqre.common.domain.admin.User;
 import com.xjhqre.common.domain.admin.UserRole;
+import com.xjhqre.common.domain.portal.Article;
 import com.xjhqre.common.exception.ServiceException;
 import com.xjhqre.common.mapper.RoleMapper;
 import com.xjhqre.common.mapper.UserMapper;
@@ -34,6 +35,7 @@ import com.xjhqre.common.utils.StringUtils;
  * @author xjhqre
  */
 @Service
+@Transactional(rollbackFor = Exception.class)
 public class UserServiceImpl implements UserService {
     private static final Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
 
@@ -204,7 +206,6 @@ public class UserServiceImpl implements UserService {
      * @return 结果
      */
     @Override
-    @Transactional
     public int insertUser(User user) {
         // 新增用户信息
         int rows = this.userMapper.insertUser(user);
@@ -233,7 +234,6 @@ public class UserServiceImpl implements UserService {
      * @return 结果
      */
     @Override
-    @Transactional
     public int updateUser(User user) {
         Long userId = user.getUserId();
         // 删除用户与角色关联
@@ -252,7 +252,6 @@ public class UserServiceImpl implements UserService {
      *            角色组
      */
     @Override
-    @Transactional
     public void insertUserAuth(Long userId, Long[] roleIds) {
         // 先删除用户角色信息
         this.userRoleMapper.deleteUserRoleByUserId(userId);
@@ -363,7 +362,6 @@ public class UserServiceImpl implements UserService {
      * @return 结果
      */
     @Override
-    @Transactional
     public int deleteUserById(Long userId) {
         // 删除用户与角色关联
         this.userRoleMapper.deleteUserRoleByUserId(userId);
@@ -378,7 +376,6 @@ public class UserServiceImpl implements UserService {
      * @return 结果
      */
     @Override
-    @Transactional
     public int deleteUserByIds(Long[] userIds) {
         for (Long userId : userIds) {
             this.checkUserAllowed(userId);
@@ -387,6 +384,19 @@ public class UserServiceImpl implements UserService {
         this.userRoleMapper.deleteUserRole(userIds);
         // 删除用户
         return this.userMapper.deleteUserByIds(userIds);
+    }
+
+    /**
+     * 查找指定用户发布的文章
+     * 
+     * @param article
+     * @param pageNum
+     * @param pageSize
+     * @return
+     */
+    @Override
+    public IPage<Article> findUserArticle(Article article, Integer pageNum, Integer pageSize) {
+        return this.userMapper.findUserArticle(new Page<Article>(pageNum, pageSize), article);
     }
 
 }

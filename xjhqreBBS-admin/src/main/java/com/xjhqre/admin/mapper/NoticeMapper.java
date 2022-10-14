@@ -12,7 +12,7 @@ import com.xjhqre.common.domain.admin.Notice;
 /**
  * 通知公告表 数据层
  * 
- * @author ruoyi
+ * @author xjhqre
  */
 @Mapper
 public interface NoticeMapper {

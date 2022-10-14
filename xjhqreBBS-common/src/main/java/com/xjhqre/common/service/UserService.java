@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.xjhqre.common.domain.admin.User;
+import com.xjhqre.common.domain.portal.Article;
 
 /**
  * 用户 业务层
@@ -205,4 +206,14 @@ public interface UserService {
      * @return 结果
      */
     int deleteUserByIds(Long[] userIds);
+
+    /**
+     * 查找用户发布的文章
+     * 
+     * @param article
+     * @param pageNum
+     * @param pageSize
+     * @return
+     */
+    IPage<Article> findUserArticle(Article article, Integer pageNum, Integer pageSize);
 }

@@ -28,7 +28,7 @@ import io.swagger.annotations.ApiOperation;
 /**
  * 公告 信息操作处理
  * 
- * @author ruoyi
+ * @author xjhqre
  */
 @RestController
 @Api(value = "公告操作接口", tags = "公告操作接口")

@@ -8,15 +8,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.xjhqre.common.config.properties.OssProperties;
 import com.xjhqre.common.domain.admin.User;
 import com.xjhqre.common.security.service.PermissionService;
 import com.xjhqre.common.service.RoleService;
 import com.xjhqre.common.service.UserService;
-import com.xjhqre.common.utils.OSSUtil;
-import com.xjhqre.common.utils.OSSUtil.FileDirType;
 import com.xjhqre.common.utils.SecurityUtils;
 import com.xjhqre.common.utils.SpringUtils;
 
@@ -50,7 +47,7 @@ public class AdminApplicationTest {
 
     @org.junit.Test
     public void test2() {
-        Object redisCache = SpringUtils.getBean("redisCache");
+        Object redisCache = SpringUtils.getBean("globalExceptionHandler");
         System.out.println(redisCache);
     }
 
@@ -74,14 +71,4 @@ public class AdminApplicationTest {
         System.out.println(OssProperties.KEY_SECRET);
     }
 
-    // oss测试
-    @Test
-    public void uploadTest(MultipartFile multipartFile) {
-        try {
-            String fileOssURL = OSSUtil.upload(multipartFile, FileDirType.AVATAR);
-            System.out.println(fileOssURL);
-        } catch (Exception e) {
-        }
-
-    }
 }

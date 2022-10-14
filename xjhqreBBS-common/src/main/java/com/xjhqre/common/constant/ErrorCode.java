@@ -15,6 +15,7 @@ public class ErrorCode {
      */
     public static final int UNKNOWN_EXCEPTION = 10000; // 系统未知异常
     public static final int VALID_EXCEPTION = 10001; // 参数格式校验失败
+    public static final int NULL_EXCEPTION = 10002; // 不允许传入空值
 
     /**
      * 用户错误

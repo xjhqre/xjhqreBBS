@@ -23,6 +23,7 @@ import com.xjhqre.common.domain.OperLog;
 import com.xjhqre.common.domain.model.LoginUser;
 import com.xjhqre.common.enums.BusinessStatus;
 import com.xjhqre.common.enums.HttpMethod;
+import com.xjhqre.common.exception.ServiceException;
 import com.xjhqre.common.filter.PropertyPreExcludeFilter;
 import com.xjhqre.common.manager.AsyncFactory;
 import com.xjhqre.common.manager.AsyncManager;
@@ -110,18 +111,20 @@ public class LogAspect {
 
     /**
      * 获取注解中对方法的描述信息 用于Controller层注解
-     *
+     * 
+     * @param joinPoint
+     *            切点
      * @param log
-     *            日志
+     *            方法上的@Log注解
      * @param operLog
-     *            操作日志
-     * @throws Exception
+     *            传入的对象
+     * @param jsonResult
+     *            该形参可用于访问目标方法的返回值
      */
-    public void getControllerMethodDescription(JoinPoint joinPoint, Log log, OperLog operLog, Object jsonResult)
-        throws Exception {
-        // 设置action动作
+    public void getControllerMethodDescription(JoinPoint joinPoint, Log log, OperLog operLog, Object jsonResult) {
+        // 设置写在注解里的业务类型
         operLog.setBusinessType(log.businessType().ordinal());
-        // 设置标题
+        // 设置写在注解里标题
         operLog.setTitle(log.title());
         // 是否需要保存request，参数和值
         if (log.isSaveRequestData()) {
@@ -139,13 +142,11 @@ public class LogAspect {
      *
      * @param operLog
      *            操作日志
-     * @throws Exception
-     *             异常
      */
-    private void setRequestValue(JoinPoint joinPoint, OperLog operLog) throws Exception {
-        String requestMethod = operLog.getRequestMethod();
+    private void setRequestValue(JoinPoint joinPoint, OperLog operLog) {
+        String requestMethod = operLog.getRequestMethod(); // 请求方式：GET/POST..
         if (HttpMethod.PUT.name().equals(requestMethod) || HttpMethod.POST.name().equals(requestMethod)) {
-            String params = this.argsArrayToString(joinPoint.getArgs());
+            String params = this.argsArrayToString(joinPoint.getArgs()); // 传入切入方法的参数
             operLog.setOperParam(StringUtils.substring(params, 0, 2000));
         } else {
             Map<?, ?> paramsMap =
@@ -158,19 +159,21 @@ public class LogAspect {
      * 参数拼装
      */
     private String argsArrayToString(Object[] paramsArray) {
-        String params = "";
+        StringBuilder params = new StringBuilder();
         if (paramsArray != null && paramsArray.length > 0) {
             for (Object o : paramsArray) {
                 if (StringUtils.isNotNull(o) && !this.isFilterObject(o)) {
                     try {
+                        // 转换为JSON对象，过滤掉密码信息
                         String jsonObj = JSON.toJSONString(o, this.excludePropertyPreFilter());
-                        params += jsonObj.toString() + " ";
+                        params.append(jsonObj).append(" ");
                     } catch (Exception e) {
+                        throw new ServiceException("转换JSON格式异常");
                     }
                 }
             }
         }
-        return params.trim();
+        return params.toString().trim();
     }
 
     /**
@@ -181,7 +184,7 @@ public class LogAspect {
     }
 
     /**
-     * 判断是否需要过滤的对象。
+     * 判断是否需要过滤的对象。过滤 MultipartFile、HttpServletRequest、HttpServletResponse、BindingResult
      *
      * @param o
      *            对象信息。
@@ -190,14 +193,17 @@ public class LogAspect {
     @SuppressWarnings("rawtypes")
     public boolean isFilterObject(final Object o) {
         Class<?> clazz = o.getClass();
+        // 如果是数组对象
         if (clazz.isArray()) {
+            // MultipartFile是否为该数组中元素对象的子类
             return clazz.getComponentType().isAssignableFrom(MultipartFile.class);
-        } else if (Collection.class.isAssignableFrom(clazz)) {
+        } else if (Collection.class.isAssignableFrom(clazz)) { // 该对象类型是否为 Collection 的子类
             Collection collection = (Collection)o;
             for (Object value : collection) {
+                // 判断该对象是否为 MultipartFile 类型
                 return value instanceof MultipartFile;
             }
-        } else if (Map.class.isAssignableFrom(clazz)) {
+        } else if (Map.class.isAssignableFrom(clazz)) { // 该对象是否为 Map 的子类
             Map map = (Map)o;
             for (Object value : map.entrySet()) {
                 Map.Entry entry = (Map.Entry)value;

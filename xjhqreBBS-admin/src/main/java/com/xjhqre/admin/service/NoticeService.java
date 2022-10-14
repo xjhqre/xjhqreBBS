@@ -8,7 +8,7 @@ import com.xjhqre.common.domain.admin.Notice;
 /**
  * 公告 服务层
  * 
- * @author ruoyi
+ * @author xjhqre
  */
 public interface NoticeService {
     /**

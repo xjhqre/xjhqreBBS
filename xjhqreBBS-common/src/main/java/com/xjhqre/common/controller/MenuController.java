@@ -66,8 +66,8 @@ public class MenuController extends BaseController {
      * 获取菜单下拉树列表
      */
     @ApiOperation(value = "获取菜单下拉树列表")
-    @GetMapping("/treeselect")
-    public R<List<Menu>> treeselect(Menu menu) {
+    @GetMapping("/treeSelect")
+    public R<List<Menu>> treeSelect(Menu menu) {
         List<Menu> menus = this.menuService.selectMenuList(menu, this.getUserId());
         menus = this.menuService.buildMenuTree(menus);
         return R.success(menus);

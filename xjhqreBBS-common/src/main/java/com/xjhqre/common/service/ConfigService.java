@@ -47,6 +47,20 @@ public interface ConfigService {
     boolean selectCaptchaEnabled();
 
     /**
+     * 获取文章审核开关
+     *
+     * @return true开启，false关闭
+     */
+    boolean selectArticleAuditEnabled();
+
+    /**
+     * 获取图片审核开关
+     *
+     * @return true开启，false关闭
+     */
+    boolean selectPictureAuditEnabled();
+
+    /**
      * 查询参数配置列表
      * 
      * @param config

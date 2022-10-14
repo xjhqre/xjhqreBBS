@@ -9,6 +9,7 @@ import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -23,10 +24,11 @@ import com.xjhqre.common.utils.StringUtils;
 
 /**
  * 菜单 业务层处理
- * 
+ *
  * @author xjhqre
  */
 @Service
+@Transactional(rollbackFor = Exception.class)
 public class MenuServiceImpl implements MenuService {
     public static final String PREMISSION_STRING = "perms[\"{0}\"]";
 
@@ -41,7 +43,7 @@ public class MenuServiceImpl implements MenuService {
 
     /**
      * 根据用户查询系统菜单列表
-     * 
+     *
      * @param userId
      *            用户ID
      * @return 菜单列表
@@ -59,7 +61,7 @@ public class MenuServiceImpl implements MenuService {
 
     /**
      * 查询系统菜单列表
-     * 
+     *
      * @param menu
      *            菜单信息
      * @return 菜单列表
@@ -79,7 +81,7 @@ public class MenuServiceImpl implements MenuService {
 
     /**
      * 根据用户ID查询权限
-     * 
+     *
      * @param userId
      *            用户ID
      * @return 权限列表
@@ -98,7 +100,7 @@ public class MenuServiceImpl implements MenuService {
 
     /**
      * 根据角色ID查询权限
-     * 
+     *
      * @param roleId
      *            角色ID
      * @return 权限列表
@@ -117,7 +119,7 @@ public class MenuServiceImpl implements MenuService {
 
     /**
      * 根据用户ID查询菜单
-     * 
+     *
      * @param userId
      *            用户名称
      * @return 菜单列表
@@ -135,7 +137,7 @@ public class MenuServiceImpl implements MenuService {
 
     /**
      * 根据角色ID查询菜单树信息
-     * 
+     *
      * @param roleId
      *            角色ID
      * @return 选中菜单列表
@@ -147,7 +149,7 @@ public class MenuServiceImpl implements MenuService {
 
     /**
      * 构建前端所需要树结构
-     * 
+     *
      * @param menus
      *            菜单列表
      * @return 树结构列表
@@ -174,7 +176,7 @@ public class MenuServiceImpl implements MenuService {
 
     /**
      * 根据菜单ID查询信息
-     * 
+     *
      * @param menuId
      *            菜单ID
      * @return 菜单信息
@@ -186,7 +188,7 @@ public class MenuServiceImpl implements MenuService {
 
     /**
      * 是否存在菜单子节点
-     * 
+     *
      * @param menuId
      *            菜单ID
      * @return 结果
@@ -199,7 +201,7 @@ public class MenuServiceImpl implements MenuService {
 
     /**
      * 查询权限是否被使用，用于删除权限时校验
-     * 
+     *
      * @param menuId
      *            菜单ID
      * @return 结果
@@ -212,7 +214,7 @@ public class MenuServiceImpl implements MenuService {
 
     /**
      * 新增保存菜单信息
-     * 
+     *
      * @param menu
      *            菜单信息
      * @return 结果
@@ -224,7 +226,7 @@ public class MenuServiceImpl implements MenuService {
 
     /**
      * 修改保存菜单信息
-     * 
+     *
      * @param menu
      *            菜单信息
      * @return 结果
@@ -236,7 +238,7 @@ public class MenuServiceImpl implements MenuService {
 
     /**
      * 删除菜单管理信息
-     * 
+     *
      * @param menuId
      *            菜单ID
      * @return 结果
@@ -248,7 +250,7 @@ public class MenuServiceImpl implements MenuService {
 
     /**
      * 校验菜单名称是否唯一
-     * 
+     *
      * @param menu
      *            菜单信息
      * @return 结果
@@ -262,7 +264,7 @@ public class MenuServiceImpl implements MenuService {
 
     /**
      * 根据父节点的ID获取所有子节点
-     * 
+     *
      * @param list
      *            分类表
      * @param parentId
@@ -284,21 +286,21 @@ public class MenuServiceImpl implements MenuService {
 
     /**
      * 递归列表
-     * 
-     * @param list
+     *
+     * @param allMenuList
      *            权限列表
-     * @param t
-     *            顶级权限
+     * @param parent
+     *            上一级权限
      */
-    private void recursionFn(List<Menu> list, Menu t) {
+    private void recursionFn(List<Menu> allMenuList, Menu parent) {
         // 得到 t 的直接子节点列表
-        List<Menu> childList = this.getChildList(list, t);
-        t.setChildren(childList);
+        List<Menu> childList = this.getChildList(allMenuList, parent);
+        parent.setChildren(childList);
         for (Menu tChild : childList) {
             // 判断 tChild 是否还有子节点
-            if (this.hasChild(list, tChild)) {
+            if (this.getChildList(allMenuList, tChild).size() > 0) {
                 // 递归
-                this.recursionFn(list, tChild);
+                this.recursionFn(allMenuList, tChild);
             }
         }
     }
@@ -314,13 +316,6 @@ public class MenuServiceImpl implements MenuService {
             }
         }
         return tlist;
-    }
-
-    /**
-     * 判断是否有子节点
-     */
-    private boolean hasChild(List<Menu> list, Menu t) {
-        return this.getChildList(list, t).size() > 0;
     }
 
 }

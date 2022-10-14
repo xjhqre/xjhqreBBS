@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import com.xjhqre.common.constant.CacheConstants;
 import com.xjhqre.common.constant.Constants;
 import com.xjhqre.common.constant.ErrorCode;
+import com.xjhqre.common.constant.UserStatus;
 import com.xjhqre.common.domain.admin.User;
 import com.xjhqre.common.exception.ServiceException;
 import com.xjhqre.common.manager.AsyncFactory;
@@ -64,6 +65,9 @@ public class PasswordService {
         if (retryCount >= this.maxRetryCount) {
             AsyncManager.me().execute(AsyncFactory.recordLoginInfo(username, Constants.LOGIN_FAIL,
                 StringUtils.format("密码输入错误{0}次，帐户锁定{1}分钟", this.maxRetryCount, this.lockTime)));
+            // 锁定账户 10 分钟
+            this.redisCache.setCacheObject(CacheConstants.USER_STATUS + username, UserStatus.LOCKING, this.lockTime,
+                TimeUnit.MINUTES);
             throw new ServiceException(StringUtils.format("密码输入错误{0}次，帐户锁定{1}分钟", this.maxRetryCount, this.lockTime));
         }
 
