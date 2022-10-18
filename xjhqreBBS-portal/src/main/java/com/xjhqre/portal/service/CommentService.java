@@ -23,14 +23,6 @@ public interface CommentService {
     IPage<Comment> findComment(Comment comment, Integer pageNum, Integer pageSize);
 
     /**
-     * 根据文章id查询评论列表
-     *
-     * @param articleId
-     * @return
-     */
-    List<Comment> listCommentByArticleId(Integer articleId);
-
-    /**
      * 查询评论详情
      * 
      * @param commentId

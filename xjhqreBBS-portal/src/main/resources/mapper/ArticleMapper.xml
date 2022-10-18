@@ -27,6 +27,13 @@
         from t_article
     </sql>
 
+    <delete id="deleteThumbArticle">
+        delete
+        from t_user_article_thumb
+        where user_id = #{userId}
+          and article_id = #{articleId}
+    </delete>
+
     <!-- 根据条件分页查询文章信息 -->
     <select id="findArticle" resultType="com.xjhqre.common.domain.portal.Article">
         <include refid="selectArticleVo"/>
@@ -43,6 +50,13 @@
     <select id="selectArticleById" resultType="com.xjhqre.common.domain.portal.Article">
         <include refid="selectArticleVo"/>
         where article_id = #{articleId}
+    </select>
+
+    <!-- 查询用户点赞的文章id -->
+    <select id="selectUserLikedArticle" resultType="java.lang.Long">
+        select blog_id
+        from t_user_article_thumb
+        where user_id = #{userId}
     </select>
 
     <!-- 发布文章 -->

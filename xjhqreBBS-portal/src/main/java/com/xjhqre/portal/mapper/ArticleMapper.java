@@ -1,5 +1,7 @@
 package com.xjhqre.portal.mapper;
 
+import java.util.Set;
+
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -49,4 +51,19 @@ public interface ArticleMapper {
      */
     void updateArticle(Article article);
 
+    /**
+     * 查询用户点赞的文章id
+     * 
+     * @param userId
+     * @return
+     */
+    Set<Long> selectUserLikedArticle(Long userId);
+
+    /**
+     * 修改数据库，删除点赞的文章记录
+     * 
+     * @param userId
+     * @param articleId
+     */
+    void deleteThumbArticle(@Param("userId") Long userId, @Param("articleId") Long articleId);
 }

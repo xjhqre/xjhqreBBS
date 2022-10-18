@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xjhqre.quartz.mapper.JobMapper">
+
+    <sql id="selectJobVo">
+        select job_id,
+               job_name,
+               job_group,
+               invoke_target,
+               cron_expression,
+               misfire_policy,
+               concurrent,
+               status,
+               create_by,
+               create_time,
+               remark
+        from t_job
+    </sql>
+
+    <select id="selectJobList" resultType="com.xjhqre.quartz.domain.QuartzJob">
+        <include refid="selectJobVo"/>
+        <where>
+            <if test="jobName != null and jobName != ''">
+                AND job_name like concat('%', #{jobName}, '%')
+            </if>
+            <if test="jobGroup != null and jobGroup != ''">
+                AND job_group = #{jobGroup}
+            </if>
+            <if test="status != null and status != ''">
+                AND status = #{status}
+            </if>
+            <if test="invokeTarget != null and invokeTarget != ''">
+                AND invoke_target like concat('%', #{invokeTarget}, '%')
+            </if>
+        </where>
+    </select>
+
+    <!-- 根据条件分页查询调度任务 -->
+    <select id="findJob" resultType="com.xjhqre.quartz.domain.QuartzJob">
+        <include refid="selectJobVo"/>
+        <where>
+            <if test="quartzJob.jobName != null and quartzJob.jobName != ''">
+                AND job_name like concat('%', #{quartzJob.jobName}, '%')
+            </if>
+            <if test="quartzJob.jobGroup != null and quartzJob.jobGroup != ''">
+                AND job_group = #{quartzJob.jobGroup}
+            </if>
+            <if test="quartzJob.status != null and quartzJob.status != ''">
+                AND status = #{quartzJob.status}
+            </if>
+            <if test="quartzJob.invokeTarget != null and quartzJob.invokeTarget != ''">
+                AND invoke_target like concat('%', #{quartzJob.invokeTarget}, '%')
+            </if>
+        </where>
+    </select>
+
+    <select id="selectJobAll" resultType="com.xjhqre.quartz.domain.QuartzJob">
+        <include refid="selectJobVo"/>
+    </select>
+
+    <select id="selectJobById" parameterType="Long" resultType="com.xjhqre.quartz.domain.QuartzJob">
+        <include refid="selectJobVo"/>
+        where job_id = #{jobId}
+    </select>
+
+    <delete id="deleteJobById" parameterType="Long">
+        delete
+        from t_job
+        where job_id = #{jobId}
+    </delete>
+
+    <delete id="deleteJobByIds" parameterType="Long">
+        delete from t_job where job_id in
+        <foreach collection="array" item="jobId" open="(" separator="," close=")">
+            #{jobId}
+        </foreach>
+    </delete>
+
+    <update id="updateJob">
+        update t_job
+        <set>
+            <if test="jobName != null and jobName != ''">job_name = #{jobName},</if>
+            <if test="jobGroup != null and jobGroup != ''">job_group = #{jobGroup},</if>
+            <if test="invokeTarget != null and invokeTarget != ''">invoke_target = #{invokeTarget},</if>
+            <if test="cronExpression != null and cronExpression != ''">cron_expression = #{cronExpression},</if>
+            <if test="misfirePolicy != null and misfirePolicy != ''">misfire_policy = #{misfirePolicy},</if>
+            <if test="concurrent != null and concurrent != ''">concurrent = #{concurrent},</if>
+            <if test="status !=null">status = #{status},</if>
+            <if test="remark != null and remark != ''">remark = #{remark},</if>
+            <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+            update_time = sysdate()
+        </set>
+        where job_id = #{jobId}
+    </update>
+
+    <insert id="insertJob" useGeneratedKeys="true" keyProperty="jobId">
+        insert into t_job(
+        <if test="jobId != null and jobId != 0">job_id,</if>
+        <if test="jobName != null and jobName != ''">job_name,</if>
+        <if test="jobGroup != null and jobGroup != ''">job_group,</if>
+        <if test="invokeTarget != null and invokeTarget != ''">invoke_target,</if>
+        <if test="cronExpression != null and cronExpression != ''">cron_expression,</if>
+        <if test="misfirePolicy != null and misfirePolicy != ''">misfire_policy,</if>
+        <if test="concurrent != null and concurrent != ''">concurrent,</if>
+        <if test="status != null and status != ''">status,</if>
+        <if test="remark != null and remark != ''">remark,</if>
+        <if test="createBy != null and createBy != ''">create_by,</if>
+        create_time
+        )values(
+        <if test="jobId != null and jobId != 0">#{jobId},</if>
+        <if test="jobName != null and jobName != ''">#{jobName},</if>
+        <if test="jobGroup != null and jobGroup != ''">#{jobGroup},</if>
+        <if test="invokeTarget != null and invokeTarget != ''">#{invokeTarget},</if>
+        <if test="cronExpression != null and cronExpression != ''">#{cronExpression},</if>
+        <if test="misfirePolicy != null and misfirePolicy != ''">#{misfirePolicy},</if>
+        <if test="concurrent != null and concurrent != ''">#{concurrent},</if>
+        <if test="status != null and status != ''">#{status},</if>
+        <if test="remark != null and remark != ''">#{remark},</if>
+        <if test="createBy != null and createBy != ''">#{createBy},</if>
+        sysdate()
+        )
+    </insert>
+
+</mapper> 

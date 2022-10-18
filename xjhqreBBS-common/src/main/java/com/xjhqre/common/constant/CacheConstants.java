@@ -50,4 +50,19 @@ public class CacheConstants {
      * 用户状态 redis key
      */
     public static final String USER_STATUS = "user_status:";
+
+    /**
+     * 用户总的点赞数 HashMap<String, String>
+     */
+    public static final String USER_TOTAL_THUMB_COUNT_KEY = "user_total_thumb_count:";
+
+    /**
+     * 用户点赞的文章 HashMap<String, Set<String>>
+     */
+    public static final String USER_THUMB_ARTICLE_KEY = "user_thumb_article:";
+
+    /**
+     * 文章点赞的用户信息
+     */
+    public static final String ARTICLE_LIKED_USER_KEY = "article_liked_user:";
 }

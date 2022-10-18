@@ -29,14 +29,6 @@ public interface CommentMapper {
     IPage<Comment> findComment(@Param("commentPage") Page<Comment> commentPage, @Param("comment") Comment comment);
 
     /**
-     * 查询文章所有的父评论
-     * 
-     * @param articleId
-     * @return
-     */
-    List<Comment> listCommentByArticleId(Integer articleId);
-
-    /**
      * 查询评论详情
      * 
      * @param commentId

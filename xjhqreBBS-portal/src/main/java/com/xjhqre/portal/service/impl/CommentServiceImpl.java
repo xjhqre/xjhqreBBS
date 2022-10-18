@@ -1,6 +1,7 @@
 package com.xjhqre.portal.service.impl;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.springframework.beans.BeanUtils;
@@ -46,17 +47,6 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public IPage<Comment> findComment(Comment comment, Integer pageNum, Integer pageSize) {
         return this.commentMapper.findComment(new Page<>(pageNum, pageSize), comment);
-    }
-
-    /**
-     * 根据文章id查询评论信息
-     * 
-     * @param articleId
-     * @return
-     */
-    @Override
-    public List<Comment> listCommentByArticleId(Integer articleId) {
-        return this.commentMapper.listCommentByArticleId(articleId);
     }
 
     @Override
@@ -107,24 +97,48 @@ public class CommentServiceImpl implements CommentService {
     }
 
     /**
+     * 根据根评论的ID获取所有子评论，创建时间倒序排序
+     *
+     * @param list
+     *            分类表
+     * @param root
+     *            传入的父节点ID
+     * @return String
+     */
+    public List<CommentVO> getChildPerms(List<Comment> list, int root) {
+        List<CommentVO> returnList = new ArrayList<>();
+        for (Iterator<Comment> iterator = list.iterator(); iterator.hasNext();) {
+            Comment cur = iterator.next();
+            // 一、根据传入的某个父节点ID,遍历该父节点的所有子节点
+            if (cur.getParentId() == root) {
+                this.recursionFn(list, cur, returnList);
+                CommentVO commentVO = new CommentVO();
+                BeanUtils.copyProperties(cur, commentVO);
+                returnList.add(commentVO);
+            }
+        }
+        return returnList;
+    }
+
+    /**
      * 递归列表
      *
      * @param allCommentList
      *            权限列表
-     * @param parent
+     * @param cur
      *            上一级权限
-     * @param top
-     *            没有父评论的评论
+     * @param returnList
+     *            返回的子评论
      */
-    private void recursionFn(List<Comment> allCommentList, Comment parent, Comment top) {
-        // 得到 t 的直接子节点列表
-        List<CommentVO> childList = this.getChildList(allCommentList, parent);
-        top.setChildren(childList);
+    private void recursionFn(List<Comment> allCommentList, Comment cur, List<CommentVO> returnList) {
+        // 得到 cur 的直接子节点列表
+        List<CommentVO> childList = this.getChildList(allCommentList, cur);
+        returnList.addAll(childList);
         for (Comment tChild : childList) {
             // 判断 tChild 是否还有子节点
             if (this.getChildList(allCommentList, tChild).size() > 0) {
                 // 递归
-                this.recursionFn(allCommentList, tChild, top);
+                this.recursionFn(allCommentList, tChild, returnList);
             }
         }
     }
@@ -132,12 +146,12 @@ public class CommentServiceImpl implements CommentService {
     /**
      * 得到当前节点 t 的直接子节点列表
      */
-    private List<CommentVO> getChildList(List<Comment> list, Comment t) {
+    private List<CommentVO> getChildList(List<Comment> list, Comment cur) {
         List<CommentVO> tList = new ArrayList<>();
         for (Comment child : list) {
-            if (child.getParentId().longValue() == t.getCommentId().longValue()) {
+            if (child.getParentId().longValue() == cur.getCommentId().longValue()) {
                 // 设置回复人姓名
-                User user = this.userService.selectUserById(t.getUserId());
+                User user = this.userService.selectUserById(cur.getUserId());
                 CommentVO commentVO = new CommentVO();
                 BeanUtils.copyProperties(child, commentVO);
                 commentVO.setReplyName(user.getUserName());

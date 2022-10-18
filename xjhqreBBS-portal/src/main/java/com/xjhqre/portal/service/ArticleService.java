@@ -50,4 +50,18 @@ public interface ArticleService {
      */
     void deleteArticleById(Long articleId);
 
+    /**
+     * 点赞文章
+     * 
+     * @param articleId
+     */
+    String thumbArticle(Long articleId);
+
+    /**
+     * 统计某篇文章总点赞数
+     * 
+     * @param articleId
+     * @return
+     */
+    Integer countArticleLike(Long articleId);
 }

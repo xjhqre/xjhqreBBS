@@ -13,6 +13,7 @@
         <module>xjhqreBBS-common</module>
         <module>xjhqreBBS-admin</module>
         <module>xjhqreBBS-portal</module>
+        <module>xjhqreBBS-quartz</module>
     </modules>
 
     <parent>

@@ -32,6 +32,13 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- 定时任务 -->
+        <dependency>
+            <groupId>com.xjhqre.xjhqreBBS</groupId>
+            <artifactId>xjhqreBBS-quartz</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+
     </dependencies>
 
 

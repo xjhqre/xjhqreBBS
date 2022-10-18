@@ -124,4 +124,29 @@ public class ArticleController extends BaseController {
         return R.success("删除文章成功");
     }
 
+    /**
+     * 点赞文章 / 取消点赞
+     */
+    @ApiOperation(value = "点赞文章 / 取消点赞")
+    @PostMapping("/thumb/{articleId}")
+    public R<String> likeArticle(@PathVariable("articleId") Long articleId) {
+        if (articleId == null) {
+            throw new ServiceException("文章id不能为空");
+        }
+        String msg = this.articleService.thumbArticle(articleId);
+        return R.success(msg);
+    }
+
+    /**
+     * 统计某篇文章总点赞数
+     */
+    @ApiOperation(value = "统计某篇文章总点赞数")
+    @GetMapping("/totalThumb/{articleId}")
+    public R<Integer> countArticleLike(@PathVariable("articleId") Long articleId) {
+        if (articleId == null) {
+            throw new ServiceException("文章id不能为空");
+        }
+        return R.success(this.articleService.countArticleLike(articleId));
+    }
+
 }
