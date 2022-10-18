@@ -34,6 +34,20 @@
           and article_id = #{articleId}
     </delete>
 
+    <!-- 删除文章分类关联 -->
+    <delete id="deleteArticleSort">
+        delete
+        from t_article_sort
+        where article_id = #{articleId}
+    </delete>
+
+    <!-- 删除文章标签关联 -->
+    <delete id="deleteArticleTag">
+        delete
+        from t_article_tag
+        where article_id = #{articleId}
+    </delete>
+
     <!-- 根据条件分页查询文章信息 -->
     <select id="findArticle" resultType="com.xjhqre.common.domain.portal.Article">
         <include refid="selectArticleVo"/>
@@ -54,7 +68,7 @@
 
     <!-- 查询用户点赞的文章id -->
     <select id="selectUserLikedArticle" resultType="java.lang.Long">
-        select blog_id
+        select article_id
         from t_user_article_thumb
         where user_id = #{userId}
     </select>
@@ -93,6 +107,36 @@
         <if test="createTime != null and createTime != ''">#{createTime},</if>
         )
     </insert>
+
+    <!-- 添加文章分类关联 -->
+    <insert id="addArticleSort">
+        insert into t_article_sort(
+        <if test="articleId != null">article_id,</if>
+        <if test="sortId != null">sort_id</if>
+        )values(
+        <if test="articleId != null">#{sortId},</if>
+        <if test="sortId != null">#{sortId}</if>
+        )
+    </insert>
+
+    <!-- 添加文章标签关联 -->
+    <insert id="addArticleTag">
+        insert into t_article_tag(
+        <if test="articleId != null">article_id,</if>
+        <if test="tagIds != null">tag_id</if>
+        )values
+        <foreach collection="tagIds" separator="," item="item" open="(" close=")">
+            #{articleId},#{item}
+        </foreach>
+    </insert>
+
+    <!-- java项目www.fhadmin.org -->
+    <insert id="insertBatch">
+    INSERT INTO tb_student (name, age, phone, address, class_id) VALUES
+    <foreach collection="list" separator="," item="item">
+        (#{item.name},#{item.age},#{item.phone},#{item.address},#{item.classId})
+    </foreach>
+
 
     <!-- 修改文章 -->
     <update id="updateArticle">

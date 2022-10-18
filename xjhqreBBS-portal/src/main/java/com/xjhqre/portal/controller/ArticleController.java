@@ -14,8 +14,8 @@ import com.xjhqre.common.common.R;
 import com.xjhqre.common.constant.ArticleStatus;
 import com.xjhqre.common.controller.BaseController;
 import com.xjhqre.common.domain.portal.Article;
+import com.xjhqre.common.domain.portal.dto.ArticleDTO;
 import com.xjhqre.common.exception.ServiceException;
-import com.xjhqre.common.service.ConfigService;
 import com.xjhqre.common.utils.DateUtils;
 import com.xjhqre.common.utils.SecurityUtils;
 import com.xjhqre.portal.service.ArticleService;
@@ -26,7 +26,12 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 
 /**
- * @Author LHR Create By 2017/8/26
+ * <p>
+ * 文章操作接口
+ * </p>
+ *
+ * @author xjhqre
+ * @since 10月 18, 2022
  */
 @Api(value = "文章操作接口", tags = "文章操作接口")
 @RestController
@@ -35,8 +40,6 @@ public class ArticleController extends BaseController {
 
     @Autowired
     private ArticleService articleService;
-    @Autowired
-    private ConfigService configService;
 
     @ApiOperation(value = "分页查询文章列表")
     @ApiImplicitParams({
@@ -60,53 +63,39 @@ public class ArticleController extends BaseController {
 
     @ApiOperation(value = "发布文章")
     @PostMapping(value = "/uploadArticle")
-    public R<String> uploadArticle(@RequestBody @Validated Article article) {
+    public R<String> uploadArticle(@RequestBody @Validated ArticleDTO articleDTO) {
         if (SecurityUtils.getLoginUser() == null) {
             throw new ServiceException("登陆之后才能发布文章！！！");
         }
-        // 是否开启文章审核
-        if (this.configService.selectArticleAuditEnabled()) {
-            article.setStatus(ArticleStatus.PENDING_REVIEW); // 待审核状态
-        } else {
-            article.setStatus(ArticleStatus.PUBLISH); // 发布状态
-        }
-        article.setAuthor(this.getUsername());
-        article.setCollectCount(0);
-        article.setThumbCount(0);
-        article.setViewCount(0);
-        article.setSort(5);
-        article.setIsPublish("1");
-        article.setCreateBy(this.getUsername());
-        article.setCreateTime(DateUtils.getNowDate());
-        this.articleService.addArticle(article);
+        this.articleService.addArticle(articleDTO);
         return R.success("发布文章成功");
     }
 
     @ApiOperation(value = "保存为草稿")
     @PostMapping(value = "/saveDrafts")
-    public R<String> saveDrafts(@RequestBody @Validated Article article) {
-        article.setStatus(ArticleStatus.DRAFT); // 草稿
-        article.setAuthor(this.getUsername());
-        article.setCollectCount(0);
-        article.setThumbCount(0);
-        article.setViewCount(0);
-        article.setSort(5);
-        article.setIsPublish("1");
-        article.setCreateBy(this.getUsername());
-        article.setCreateTime(DateUtils.getNowDate());
-        this.articleService.addArticle(article);
+    public R<String> saveDrafts(@RequestBody @Validated ArticleDTO articleDTO) {
+        articleDTO.setStatus(ArticleStatus.DRAFT); // 草稿
+        articleDTO.setAuthor(this.getUsername());
+        articleDTO.setCollectCount(0);
+        articleDTO.setThumbCount(0);
+        articleDTO.setViewCount(0);
+        articleDTO.setSort(5);
+        articleDTO.setIsPublish("1");
+        articleDTO.setCreateBy(this.getUsername());
+        articleDTO.setCreateTime(DateUtils.getNowDate());
+        this.articleService.addArticle(articleDTO);
         return R.success("保存草稿成功");
     }
 
     @ApiOperation(value = "修改文章")
     @PostMapping(value = "/update")
-    public R<String> update(@RequestBody @Validated Article article) {
-        String author = article.getAuthor();
+    public R<String> update(@RequestBody @Validated ArticleDTO articleDTO) {
+        String author = articleDTO.getAuthor();
         if (!SecurityUtils.getUsername().equals(author)) {
             throw new ServiceException("没有权限修改别人的文章");
         }
-        this.articleService.updateArticle(article);
-        return R.success("保存草稿成功");
+        this.articleService.updateArticle(articleDTO);
+        return R.success("修改文章成功");
     }
 
     @ApiOperation(value = "删除文章")

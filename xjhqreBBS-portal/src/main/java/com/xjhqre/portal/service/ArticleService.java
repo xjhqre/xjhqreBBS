@@ -2,6 +2,7 @@ package com.xjhqre.portal.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.xjhqre.common.domain.portal.Article;
+import com.xjhqre.common.domain.portal.dto.ArticleDTO;
 
 /**
  * 文章 业务层
@@ -31,17 +32,17 @@ public interface ArticleService {
     /**
      * 添加文章
      *
-     * @param article
+     * @param articleDTO
      * @return
      */
-    int addArticle(Article article);
+    void addArticle(ArticleDTO articleDTO);
 
     /**
      * 修改文章
      *
      * @param article
      */
-    void updateArticle(Article article);
+    void updateArticle(ArticleDTO articleDTO);
 
     /**
      * 根据文章id删除文章

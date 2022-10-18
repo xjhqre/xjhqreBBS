@@ -18,7 +18,6 @@ import com.xjhqre.common.constant.ErrorCode;
 import com.xjhqre.common.controller.BaseController;
 import com.xjhqre.common.domain.portal.Comment;
 import com.xjhqre.common.exception.ServiceException;
-import com.xjhqre.common.utils.DateUtils;
 import com.xjhqre.common.utils.SecurityUtils;
 import com.xjhqre.portal.service.CommentService;
 
@@ -76,14 +75,6 @@ public class CommentController extends BaseController {
         if (SecurityUtils.getLoginUser() == null) {
             throw new ServiceException("登陆之后才能评论！！！");
         }
-        comment.setUserId(this.getUserId());
-        comment.setCommentCount(0);
-        comment.setThumbCount(0);
-        comment.setStatus(0);
-        comment.setDelFlag("0");
-        comment.setCreateBy(SecurityUtils.getUsername());
-        comment.setCreateTime(DateUtils.getNowDate());
-        comment.setSort(5);
         this.commentService.addComment(comment);
         return R.success("评论成功");
     }
@@ -94,8 +85,6 @@ public class CommentController extends BaseController {
         if (!Objects.equals(this.getUserId(), comment.getUserId())) {
             throw new ServiceException("不允许修改别人的评论");
         }
-        comment.setUpdateBy(SecurityUtils.getUsername());
-        comment.setUpdateTime(DateUtils.getNowDate());
         this.commentService.updateComment(comment);
         return R.success("修改评论成功");
     }
@@ -110,8 +99,6 @@ public class CommentController extends BaseController {
         if (!Objects.equals(this.getUserId(), comment.getUserId())) {
             throw new ServiceException("不允许删除别人的评论");
         }
-        comment.setUpdateBy(SecurityUtils.getUsername());
-        comment.setUpdateTime(DateUtils.getNowDate());
         this.commentService.deleteComment(comment);
         return R.success("删除评论成功");
     }

@@ -1,6 +1,8 @@
 package com.xjhqre.portal.service.impl;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,8 +11,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.xjhqre.common.constant.ArticleStatus;
 import com.xjhqre.common.constant.CacheConstants;
 import com.xjhqre.common.domain.portal.Article;
+import com.xjhqre.common.domain.portal.dto.ArticleDTO;
+import com.xjhqre.common.service.ConfigService;
+import com.xjhqre.common.utils.DateUtils;
 import com.xjhqre.common.utils.SecurityUtils;
 import com.xjhqre.common.utils.redis.RedisCache;
 import com.xjhqre.portal.mapper.ArticleMapper;
@@ -30,12 +36,15 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Autowired
     ArticleMapper articleMapper;
-
+    @Autowired
+    private ConfigService configService;
     @Autowired
     RedisCache redisCache;
 
-    // redis锁，防止多线程修改redis时产生线程安全问题
-    final Object redisLock = new Object();
+    // 文章点赞锁，防止多线程修改redis时产生线程安全问题
+    final Object thumbLock = new Object();
+    // 文章浏览量锁，防止多线程修改redis时产生线程安全问题
+    final Object viewLock = new Object();
 
     /**
      * 根据条件分页查询文章列表
@@ -59,28 +68,66 @@ public class ArticleServiceImpl implements ArticleService {
      */
     @Override
     public Article selectArticleById(Long articleId) {
+        synchronized (this.viewLock) {
+            // 文章浏览量+1
+            List<Long> userIds = this.redisCache.getCacheList(CacheConstants.ARTICLE_VIEW_USER_KEY + articleId);
+            if (userIds == null) {
+                userIds = new ArrayList<>();
+            }
+            userIds.add(SecurityUtils.getUserId());
+            this.redisCache.setCacheList(CacheConstants.ARTICLE_VIEW_USER_KEY + articleId, userIds);
+        }
         return this.articleMapper.selectArticleById(articleId);
     }
 
     /**
      * 发布新文章
      * 
-     * @param article
+     * @param articleDTO
      * @return
      */
     @Override
-    public int addArticle(Article article) {
-        return this.articleMapper.addArticle(article);
+    public void addArticle(ArticleDTO articleDTO) {
+        // 是否开启文章审核
+        if (this.configService.selectArticleAuditEnabled()) {
+            articleDTO.setStatus(ArticleStatus.PENDING_REVIEW); // 待审核状态
+        } else {
+            articleDTO.setStatus(ArticleStatus.PUBLISH); // 发布状态
+        }
+        articleDTO.setAuthor(SecurityUtils.getUsername());
+        articleDTO.setCollectCount(0);
+        articleDTO.setThumbCount(0);
+        articleDTO.setViewCount(0);
+        articleDTO.setSort(5);
+        articleDTO.setIsPublish("1");
+        articleDTO.setCreateBy(SecurityUtils.getUsername());
+        articleDTO.setCreateTime(DateUtils.getNowDate());
+        // 添加文章
+        this.articleMapper.addArticle(articleDTO);
+        // 关联分类
+        this.articleMapper.addArticleSort(articleDTO.getArticleId(), articleDTO.getSortId());
+        // 关联标签
+        this.articleMapper.addArticleTag(articleDTO.getArticleId(), articleDTO.getTagIds());
     }
 
     /**
      * 修改文章
      * 
-     * @param article
+     * @param articleDTO
      */
     @Override
-    public void updateArticle(Article article) {
-        this.articleMapper.updateArticle(article);
+    public void updateArticle(ArticleDTO articleDTO) {
+        articleDTO.setUpdateBy(SecurityUtils.getUsername());
+        articleDTO.setUpdateTime(DateUtils.getNowDate());
+        // 先删除关联在添加
+        this.articleMapper.deleteArticleSort(articleDTO.getArticleId());
+        this.articleMapper.deleteArticleTag(articleDTO.getArticleId());
+        // 关联分类
+        this.articleMapper.addArticleSort(articleDTO.getArticleId(), articleDTO.getSortId());
+        // 关联标签
+        this.articleMapper.addArticleTag(articleDTO.getArticleId(), articleDTO.getTagIds());
+        // 更新文章表
+        this.articleMapper.updateArticle(articleDTO);
     }
 
     /**
@@ -92,6 +139,8 @@ public class ArticleServiceImpl implements ArticleService {
     public void deleteArticleById(Long articleId) {
         Article article = this.selectArticleById(articleId);
         article.setDelFlag("2"); // 逻辑删除
+        article.setUpdateBy(SecurityUtils.getUsername());
+        article.setUpdateTime(DateUtils.getNowDate());
         this.articleMapper.updateArticle(article);
     }
 
@@ -105,7 +154,7 @@ public class ArticleServiceImpl implements ArticleService {
         // 只有未点赞的用户才可以进行点赞
         Boolean isThumb = this.likeArticleLogicValidate(articleId);
 
-        synchronized (this.redisLock) {
+        synchronized (this.viewLock) {
             Set<Long> articleIds =
                 this.redisCache.getCacheSet(CacheConstants.USER_THUMB_ARTICLE_KEY + SecurityUtils.getUserId());
             if (isThumb) {

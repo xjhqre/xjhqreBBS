@@ -15,6 +15,8 @@ import com.xjhqre.common.domain.admin.User;
 import com.xjhqre.common.domain.portal.Comment;
 import com.xjhqre.common.domain.portal.vo.CommentVO;
 import com.xjhqre.common.service.UserService;
+import com.xjhqre.common.utils.DateUtils;
+import com.xjhqre.common.utils.SecurityUtils;
 import com.xjhqre.portal.mapper.CommentMapper;
 import com.xjhqre.portal.service.CommentService;
 
@@ -61,6 +63,14 @@ public class CommentServiceImpl implements CommentService {
      */
     @Override
     public void addComment(Comment comment) {
+        comment.setUserId(SecurityUtils.getUserId());
+        comment.setCommentCount(0);
+        comment.setThumbCount(0);
+        comment.setStatus(0);
+        comment.setDelFlag("0");
+        comment.setCreateBy(SecurityUtils.getUsername());
+        comment.setCreateTime(DateUtils.getNowDate());
+        comment.setSort(5);
         this.commentMapper.addComment(comment);
     }
 
@@ -82,6 +92,8 @@ public class CommentServiceImpl implements CommentService {
      */
     @Override
     public void updateComment(Comment comment) {
+        comment.setUpdateBy(SecurityUtils.getUsername());
+        comment.setUpdateTime(DateUtils.getNowDate());
         this.commentMapper.updateComment(comment);
     }
 
@@ -92,6 +104,8 @@ public class CommentServiceImpl implements CommentService {
      */
     @Override
     public void deleteComment(Comment comment) {
+        comment.setUpdateBy(SecurityUtils.getUsername());
+        comment.setUpdateTime(DateUtils.getNowDate());
         comment.setDelFlag("2");
         this.commentMapper.updateComment(comment);
     }

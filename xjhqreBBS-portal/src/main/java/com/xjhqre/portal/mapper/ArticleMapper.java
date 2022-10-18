@@ -66,4 +66,34 @@ public interface ArticleMapper {
      * @param articleId
      */
     void deleteThumbArticle(@Param("userId") Long userId, @Param("articleId") Long articleId);
+
+    /**
+     * 添加文章分类关联
+     * 
+     * @param articleId
+     * @param sortId
+     */
+    void addArticleSort(Long articleId, Long sortId);
+
+    /**
+     * 添加文章标签关联
+     * 
+     * @param articleId
+     * @param tagIds
+     */
+    void addArticleTag(Long articleId, Long[] tagIds);
+
+    /**
+     * 删除文章分类关联
+     * 
+     * @param articleId
+     */
+    void deleteArticleSort(Long articleId);
+
+    /**
+     * 删除文章标签关联
+     * 
+     * @param articleId
+     */
+    void deleteArticleTag(Long articleId);
 }
