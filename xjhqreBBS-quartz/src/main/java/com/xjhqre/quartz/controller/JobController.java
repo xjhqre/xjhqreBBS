@@ -25,6 +25,7 @@ import com.xjhqre.quartz.service.JobService;
 import com.xjhqre.quartz.util.CronUtils;
 import com.xjhqre.quartz.util.ScheduleUtils;
 
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
@@ -35,6 +36,7 @@ import io.swagger.annotations.ApiOperation;
  * @author ruoyi
  */
 @RestController
+@Api(value = "任务调度操作接口", tags = "任务调度操作接口")
 @RequestMapping("/monitor/job")
 public class JobController extends BaseController {
     @Autowired
@@ -55,6 +57,7 @@ public class JobController extends BaseController {
     /**
      * 获取定时任务详细信息
      */
+    @ApiOperation(value = "获取定时任务详细信息")
     @PreAuthorize("@ss.hasPermission('monitor:job:query')")
     @GetMapping(value = "/{jobId}")
     public R<QuartzJob> getInfo(@PathVariable("jobId") Long jobId) {
@@ -64,6 +67,7 @@ public class JobController extends BaseController {
     /**
      * 新增定时任务
      */
+    @ApiOperation(value = "新增定时任务")
     @PreAuthorize("@ss.hasPermission('monitor:job:add')")
     @Log(title = "定时任务", businessType = BusinessType.INSERT)
     @PostMapping
@@ -91,6 +95,7 @@ public class JobController extends BaseController {
     /**
      * 修改定时任务
      */
+    @ApiOperation(value = "修改定时任务")
     @PreAuthorize("@ss.hasPermission('monitor:job:edit')")
     @Log(title = "定时任务", businessType = BusinessType.UPDATE)
     @PutMapping
@@ -118,6 +123,7 @@ public class JobController extends BaseController {
     /**
      * 定时任务状态修改
      */
+    @ApiOperation(value = "定时任务状态修改")
     @PreAuthorize("@ss.hasPermission('monitor:job:changeStatus')")
     @Log(title = "定时任务", businessType = BusinessType.UPDATE)
     @PutMapping("/changeStatus")
@@ -131,6 +137,7 @@ public class JobController extends BaseController {
     /**
      * 定时任务立即执行一次
      */
+    @ApiOperation(value = "定时任务立即执行一次")
     @PreAuthorize("@ss.hasPermission('monitor:job:changeStatus')")
     @Log(title = "定时任务", businessType = BusinessType.UPDATE)
     @PutMapping("/run")
@@ -142,6 +149,7 @@ public class JobController extends BaseController {
     /**
      * 删除定时任务
      */
+    @ApiOperation(value = "删除定时任务")
     @PreAuthorize("@ss.hasPermission('monitor:job:remove')")
     @Log(title = "定时任务", businessType = BusinessType.DELETE)
     @DeleteMapping("/{jobIds}")

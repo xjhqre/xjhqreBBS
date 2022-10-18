@@ -4,7 +4,10 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.xjhqre.quartz.domain.JobLog;
 import com.xjhqre.quartz.mapper.JobLogMapper;
 import com.xjhqre.quartz.service.JobLogService;
@@ -15,6 +18,7 @@ import com.xjhqre.quartz.service.JobLogService;
  * @author ruoyi
  */
 @Service
+@Transactional(rollbackFor = Exception.class)
 public class JobLogServiceImpl implements JobLogService {
     @Autowired
     private JobLogMapper jobLogMapper;
@@ -29,6 +33,19 @@ public class JobLogServiceImpl implements JobLogService {
     @Override
     public List<JobLog> selectJobLogList(JobLog jobLog) {
         return this.jobLogMapper.selectJobLogList(jobLog);
+    }
+
+    /**
+     * 分页查询任务日志
+     * 
+     * @param jobLog
+     * @param pageNum
+     * @param pageSize
+     * @return
+     */
+    @Override
+    public IPage<JobLog> findJobLog(JobLog jobLog, Integer pageNum, Integer pageSize) {
+        return this.jobLogMapper.findJobLog(new Page<JobLog>(pageNum, pageSize), jobLog);
     }
 
     /**

@@ -22,11 +22,12 @@ public class JobInvokeUtil {
      *            系统任务
      */
     public static void invokeMethod(QuartzJob quartzJob) throws Exception {
-        String invokeTarget = quartzJob.getInvokeTarget();
-        String beanName = getBeanName(invokeTarget);
-        String methodName = getMethodName(invokeTarget);
-        List<Object[]> methodParams = getMethodParams(invokeTarget);
+        String invokeTarget = quartzJob.getInvokeTarget(); // 获取执行目标方法字符串
+        String beanName = getBeanName(invokeTarget); // 获取bean名称
+        String methodName = getMethodName(invokeTarget); // 获取要执行的方法名
+        List<Object[]> methodParams = getMethodParams(invokeTarget); // 获取字符串中的方法参数
         if (!isValidClassName(beanName)) {
+            // 如果不是包名而是bean名称，直接获取
             Object bean = SpringUtils.getBean(beanName);
             invokeMethod(bean, methodName, methodParams);
         } else {
@@ -65,6 +66,7 @@ public class JobInvokeUtil {
      * @return true是 false否
      */
     public static boolean isValidClassName(String invokeTarget) {
+        // 如果 . 的数量大于 1 则为包名，否则为 bean
         return StringUtils.countMatches(invokeTarget, ".") > 1;
     }
 
@@ -76,7 +78,9 @@ public class JobInvokeUtil {
      * @return bean名称
      */
     public static String getBeanName(String invokeTarget) {
+        // 获取 ( 之前的字符，ryTask.ryParams('ry') --> ryTask.ryParams
         String beanName = StringUtils.substringBefore(invokeTarget, "(");
+        // 从分隔符最后一次出现的位置向前截取，ryTask.ryParams --> ryTask
         return StringUtils.substringBeforeLast(beanName, ".");
     }
 
@@ -88,7 +92,9 @@ public class JobInvokeUtil {
      * @return method方法
      */
     public static String getMethodName(String invokeTarget) {
+        // ryTask.ryParams('ry') --> ryTask.ryParams
         String methodName = StringUtils.substringBefore(invokeTarget, "(");
+        // ryTask.ryParams --> ryParams
         return StringUtils.substringAfterLast(methodName, ".");
     }
 
@@ -100,37 +106,38 @@ public class JobInvokeUtil {
      * @return method方法相关参数列表
      */
     public static List<Object[]> getMethodParams(String invokeTarget) {
+        // ryTask.ryParams('ry') --> 'ry'
         String methodStr = StringUtils.substringBetween(invokeTarget, "(", ")");
         if (StringUtils.isEmpty(methodStr)) {
             return null;
         }
         String[] methodParams = methodStr.split(",(?=([^\"']*[\"'][^\"']*[\"'])*[^\"']*$)");
-        List<Object[]> classs = new LinkedList<>();
-        for (int i = 0; i < methodParams.length; i++) {
-            String str = StringUtils.trimToEmpty(methodParams[i]);
+        List<Object[]> classes = new LinkedList<>();
+        for (String methodParam : methodParams) {
+            String str = StringUtils.trimToEmpty(methodParam);
             // String字符串类型，以'或"开头
             if (StringUtils.startsWithAny(str, "'", "\"")) {
-                classs.add(new Object[] {StringUtils.substring(str, 1, str.length() - 1), String.class});
+                classes.add(new Object[] {StringUtils.substring(str, 1, str.length() - 1), String.class});
             }
             // boolean布尔类型，等于true或者false
             else if ("true".equalsIgnoreCase(str) || "false".equalsIgnoreCase(str)) {
-                classs.add(new Object[] {Boolean.valueOf(str), Boolean.class});
+                classes.add(new Object[] {Boolean.valueOf(str), Boolean.class});
             }
             // long长整形，以L结尾
             else if (StringUtils.endsWith(str, "L")) {
-                classs.add(new Object[] {Long.valueOf(StringUtils.substring(str, 0, str.length() - 1)), Long.class});
+                classes.add(new Object[] {Long.valueOf(StringUtils.substring(str, 0, str.length() - 1)), Long.class});
             }
             // double浮点类型，以D结尾
             else if (StringUtils.endsWith(str, "D")) {
-                classs
+                classes
                     .add(new Object[] {Double.valueOf(StringUtils.substring(str, 0, str.length() - 1)), Double.class});
             }
             // 其他类型归类为整形
             else {
-                classs.add(new Object[] {Integer.valueOf(str), Integer.class});
+                classes.add(new Object[] {Integer.valueOf(str), Integer.class});
             }
         }
-        return classs;
+        return classes;
     }
 
     /**

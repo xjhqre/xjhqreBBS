@@ -14,12 +14,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.ruoyi.quartz.util.CronUtils;
 import com.xjhqre.common.constant.ScheduleConstants;
 import com.xjhqre.common.exception.TaskException;
 import com.xjhqre.quartz.domain.QuartzJob;
 import com.xjhqre.quartz.mapper.JobMapper;
 import com.xjhqre.quartz.service.JobService;
+import com.xjhqre.quartz.util.CronUtils;
 import com.xjhqre.quartz.util.ScheduleUtils;
 
 /**
@@ -28,6 +28,7 @@ import com.xjhqre.quartz.util.ScheduleUtils;
  * @author ruoyi
  */
 @Service
+@Transactional(rollbackFor = Exception.class)
 public class JobServiceImpl implements JobService {
     @Autowired
     private Scheduler scheduler;

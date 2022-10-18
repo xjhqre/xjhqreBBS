@@ -41,6 +41,25 @@
         </where>
     </select>
 
+    <!-- 分页查询任务日志 -->
+    <select id="findJobLog" resultType="com.xjhqre.quartz.domain.JobLog">
+        <include refid="selectJobLogVo"/>
+        <where>
+            <if test="jobLog.jobName != null and jobLog.jobName != ''">
+                AND job_name like concat('%', #{jobLog.jobName}, '%')
+            </if>
+            <if test="jobLog.jobGroup != null and jobLog.jobGroup != ''">
+                AND job_group = #{jobLog.jobGroup}
+            </if>
+            <if test="jobLog.status != null and jobLog.status != ''">
+                AND status = #{jobLog.status}
+            </if>
+            <if test="jobLog.invokeTarget != null and jobLog.invokeTarget != ''">
+                AND invoke_target like concat('%', #{jobLog.invokeTarget}, '%')
+            </if>
+        </where>
+    </select>
+
     <select id="selectJobLogAll" resultType="com.xjhqre.quartz.domain.JobLog">
         <include refid="selectJobLogVo"/>
     </select>
@@ -49,6 +68,7 @@
         <include refid="selectJobLogVo"/>
         where job_log_id = #{jobLogId}
     </select>
+
 
     <delete id="deleteJobLogById" parameterType="Long">
         delete

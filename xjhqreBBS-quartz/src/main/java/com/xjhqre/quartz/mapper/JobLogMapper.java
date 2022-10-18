@@ -2,6 +2,11 @@ package com.xjhqre.quartz.mapper;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.xjhqre.quartz.domain.JobLog;
 
 /**
@@ -9,6 +14,7 @@ import com.xjhqre.quartz.domain.JobLog;
  * 
  * @author ruoyi
  */
+@Mapper
 public interface JobLogMapper {
     /**
      * 获取quartz调度器日志的计划任务
@@ -18,6 +24,15 @@ public interface JobLogMapper {
      * @return 调度任务日志集合
      */
     public List<JobLog> selectJobLogList(JobLog jobLog);
+
+    /**
+     * 分页查询任务日志
+     * 
+     * @param jobLogPage
+     * @param jobLog
+     * @return
+     */
+    IPage<JobLog> findJobLog(@Param("jobLogPage") Page<JobLog> jobLogPage, @Param("jobLog") JobLog jobLog);
 
     /**
      * 查询所有调度任务日志
@@ -66,4 +81,5 @@ public interface JobLogMapper {
      * 清空任务日志
      */
     public void cleanJobLog();
+
 }

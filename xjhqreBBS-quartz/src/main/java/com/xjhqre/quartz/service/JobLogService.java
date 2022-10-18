@@ -2,6 +2,7 @@ package com.xjhqre.quartz.service;
 
 import java.util.List;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.xjhqre.quartz.domain.JobLog;
 
 /**
@@ -17,7 +18,17 @@ public interface JobLogService {
      *            调度日志信息
      * @return 调度任务日志集合
      */
-    public List<JobLog> selectJobLogList(JobLog jobLog);
+    List<JobLog> selectJobLogList(JobLog jobLog);
+
+    /**
+     * 分页查询任务日志
+     * 
+     * @param jobLog
+     * @param pageNum
+     * @param pageSize
+     * @return
+     */
+    IPage<JobLog> findJobLog(JobLog jobLog, Integer pageNum, Integer pageSize);
 
     /**
      * 通过调度任务日志ID查询调度信息
@@ -26,7 +37,7 @@ public interface JobLogService {
      *            调度任务日志ID
      * @return 调度任务日志对象信息
      */
-    public JobLog selectJobLogById(Long jobLogId);
+    JobLog selectJobLogById(Long jobLogId);
 
     /**
      * 新增任务日志
@@ -34,7 +45,7 @@ public interface JobLogService {
      * @param jobLog
      *            调度日志信息
      */
-    public void addJobLog(JobLog jobLog);
+    void addJobLog(JobLog jobLog);
 
     /**
      * 批量删除调度日志信息
@@ -43,7 +54,7 @@ public interface JobLogService {
      *            需要删除的日志ID
      * @return 结果
      */
-    public int deleteJobLogByIds(Long[] logIds);
+    int deleteJobLogByIds(Long[] logIds);
 
     /**
      * 删除任务日志
@@ -52,10 +63,11 @@ public interface JobLogService {
      *            调度日志ID
      * @return 结果
      */
-    public int deleteJobLogById(Long jobId);
+    int deleteJobLogById(Long jobId);
 
     /**
      * 清空任务日志
      */
-    public void cleanJobLog();
+    void cleanJobLog();
+
 }
