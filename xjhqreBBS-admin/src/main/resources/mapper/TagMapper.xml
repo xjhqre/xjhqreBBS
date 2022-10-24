@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xjhqre.admin.mapper.TagMapper">
+
+    <!-- 引用数量-1 -->
+    <update id="subRefCount">
+        update t_tag
+        set ref_count = ref_count - 1
+        where tag_id = #{tagId}
+    </update>
+
+    <update id="addRefCount">
+        update t_tag
+        set ref_count = ref_count + 1
+        where tag_id = #{tagId}
+    </update>
+</mapper>

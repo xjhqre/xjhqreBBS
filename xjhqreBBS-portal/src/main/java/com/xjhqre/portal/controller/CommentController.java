@@ -5,9 +5,11 @@ import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -80,7 +82,7 @@ public class CommentController extends BaseController {
     }
 
     @ApiOperation(value = "修改评论")
-    @PostMapping(value = "/addComment")
+    @PutMapping(value = "/updateComment")
     public R<String> updateComment(@RequestBody @Validated Comment comment) {
         if (!Objects.equals(this.getUserId(), comment.getUserId())) {
             throw new ServiceException("不允许修改别人的评论");
@@ -90,7 +92,7 @@ public class CommentController extends BaseController {
     }
 
     @ApiOperation(value = "删除评论")
-    @GetMapping(value = "/deleteComment/{commentId}")
+    @DeleteMapping(value = "/deleteComment/{commentId}")
     public R<String> deleteComment(@PathVariable Long commentId) {
         if (commentId == null) {
             throw new ServiceException(ErrorCode.NULL_EXCEPTION, "不允许传入空值");

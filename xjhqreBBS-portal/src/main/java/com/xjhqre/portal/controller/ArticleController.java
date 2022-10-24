@@ -1,5 +1,7 @@
 package com.xjhqre.portal.controller;
 
+import java.util.Set;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -7,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -50,6 +53,28 @@ public class ArticleController extends BaseController {
     public R<IPage<Article>> findArticle(Article article, @PathVariable("pageNum") Integer pageNum,
         @PathVariable("pageSize") Integer pageSize) {
         return R.success(this.articleService.findArticle(article, pageNum, pageSize));
+    }
+
+    @ApiOperation(value = "根据分类id分页查询文章列表")
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "pageNum", value = "正整数，表示查询第几页", required = true, dataType = "int", example = "1"),
+        @ApiImplicitParam(name = "pageSize", value = "正整数，表示每页几条记录", required = true, dataType = "int",
+            example = "20")})
+    @GetMapping("findArticleBySortId/{pageNum}/{pageSize}")
+    public R<IPage<Article>> findArticleBySortId(Long sortId, @PathVariable("pageNum") Integer pageNum,
+        @PathVariable("pageSize") Integer pageSize) {
+        return R.success(this.articleService.findArticleBySortId(sortId, pageNum, pageSize));
+    }
+
+    @ApiOperation(value = "根据标签id分页查询文章列表")
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "pageNum", value = "正整数，表示查询第几页", required = true, dataType = "int", example = "1"),
+        @ApiImplicitParam(name = "pageSize", value = "正整数，表示每页几条记录", required = true, dataType = "int",
+            example = "20")})
+    @GetMapping("findArticleByTagId/{pageNum}/{pageSize}")
+    public R<IPage<Article>> findArticleByTagId(Long tagId, @PathVariable("pageNum") Integer pageNum,
+        @PathVariable("pageSize") Integer pageSize) {
+        return R.success(this.articleService.findArticleByTagId(tagId, pageNum, pageSize));
     }
 
     @ApiOperation(value = "根据文章编号获取文章详细")
@@ -138,4 +163,26 @@ public class ArticleController extends BaseController {
         return R.success(this.articleService.countArticleLike(articleId));
     }
 
+    /**
+     * 获取所有文章的月份
+     */
+    @ApiOperation(value = "获取所有文章的月份")
+    @GetMapping("/articleMouth")
+    public R<Set<String>> articleMouth() {
+        return R.success(this.articleService.getArticleMouth());
+    }
+
+    /**
+     * 获取对应月份的所有文章
+     */
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "pageNum", value = "正整数，表示查询第几页", required = true, dataType = "int", example = "1"),
+        @ApiImplicitParam(name = "pageSize", value = "正整数，表示每页几条记录", required = true, dataType = "int",
+            example = "20")})
+    @ApiOperation(value = "获取所有文章的月份")
+    @GetMapping("/findArticleByMonth/{pageNum}/{pageSize}")
+    public R<IPage<Article>> findArticleByMonth(@RequestParam String month, @PathVariable("pageNum") Integer pageNum,
+        @PathVariable("pageSize") Integer pageSize) {
+        return R.success(this.articleService.findArticleByMonth(month, pageNum, pageSize));
+    }
 }

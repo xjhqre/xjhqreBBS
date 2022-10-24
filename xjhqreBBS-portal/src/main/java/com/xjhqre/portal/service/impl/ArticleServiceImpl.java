@@ -1,16 +1,23 @@
 package com.xjhqre.portal.service.impl;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
+import java.util.TreeSet;
 
+import org.apache.commons.collections4.SetUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.xjhqre.common.constant.ArticleStatus;
 import com.xjhqre.common.constant.CacheConstants;
 import com.xjhqre.common.domain.portal.Article;
@@ -21,6 +28,8 @@ import com.xjhqre.common.utils.SecurityUtils;
 import com.xjhqre.common.utils.redis.RedisCache;
 import com.xjhqre.portal.mapper.ArticleMapper;
 import com.xjhqre.portal.service.ArticleService;
+import com.xjhqre.portal.service.SortService;
+import com.xjhqre.portal.service.TagService;
 
 /**
  * <p>
@@ -32,7 +41,7 @@ import com.xjhqre.portal.service.ArticleService;
  */
 @Service
 @Transactional(rollbackFor = Exception.class)
-public class ArticleServiceImpl implements ArticleService {
+public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> implements ArticleService {
 
     @Autowired
     ArticleMapper articleMapper;
@@ -40,6 +49,10 @@ public class ArticleServiceImpl implements ArticleService {
     private ConfigService configService;
     @Autowired
     RedisCache redisCache;
+    @Autowired
+    SortService sortService;
+    @Autowired
+    TagService tagService;
 
     // 文章点赞锁，防止多线程修改redis时产生线程安全问题
     final Object thumbLock = new Object();
@@ -61,6 +74,32 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     /**
+     * 根据分类id分页查询文章
+     * 
+     * @param sortId
+     * @param pageNum
+     * @param pageSize
+     * @return
+     */
+    @Override
+    public IPage<Article> findArticleBySortId(Long sortId, Integer pageNum, Integer pageSize) {
+        return this.articleMapper.findArticleBySortId(new Page<>(pageNum, pageSize), sortId);
+    }
+
+    /**
+     * 根据标签id查询文章
+     * 
+     * @param tagId
+     * @param pageNum
+     * @param pageSize
+     * @return
+     */
+    @Override
+    public IPage<Article> findArticleByTagId(Long tagId, Integer pageNum, Integer pageSize) {
+        return this.articleMapper.findArticleByTagId(new Page<>(pageNum, pageSize), tagId);
+    }
+
+    /**
      * 根据文章id查询文章详情
      * 
      * @param articleId
@@ -72,7 +111,11 @@ public class ArticleServiceImpl implements ArticleService {
             // 文章浏览量+1
             List<Long> userIds = this.redisCache.getCacheList(CacheConstants.ARTICLE_VIEW_USER_KEY + articleId);
             if (userIds == null) {
-                userIds = new ArrayList<>();
+                // 查询数据库
+                userIds = this.articleMapper.getViewUserIds(articleId);
+                if (userIds == null) {
+                    userIds = new ArrayList<>();
+                }
             }
             userIds.add(SecurityUtils.getUserId());
             this.redisCache.setCacheList(CacheConstants.ARTICLE_VIEW_USER_KEY + articleId, userIds);
@@ -106,8 +149,14 @@ public class ArticleServiceImpl implements ArticleService {
         this.articleMapper.addArticle(articleDTO);
         // 关联分类
         this.articleMapper.addArticleSort(articleDTO.getArticleId(), articleDTO.getSortId());
+        // 分类引用计数 + 1
+        this.sortService.addRefCount(articleDTO.getSortId());
         // 关联标签
         this.articleMapper.addArticleTag(articleDTO.getArticleId(), articleDTO.getTagIds());
+        // 标签引用计数 + 1
+        for (Long tagId : articleDTO.getTagIds()) {
+            this.tagService.addRefCount(tagId);
+        }
     }
 
     /**
@@ -119,13 +168,38 @@ public class ArticleServiceImpl implements ArticleService {
     public void updateArticle(ArticleDTO articleDTO) {
         articleDTO.setUpdateBy(SecurityUtils.getUsername());
         articleDTO.setUpdateTime(DateUtils.getNowDate());
-        // 先删除关联在添加
-        this.articleMapper.deleteArticleSort(articleDTO.getArticleId());
-        this.articleMapper.deleteArticleTag(articleDTO.getArticleId());
-        // 关联分类
-        this.articleMapper.addArticleSort(articleDTO.getArticleId(), articleDTO.getSortId());
-        // 关联标签
-        this.articleMapper.addArticleTag(articleDTO.getArticleId(), articleDTO.getTagIds());
+        Article oldArticle = this.articleMapper.selectArticleById(articleDTO.getArticleId());
+
+        // 如果修改了分类
+        Long oldSortId = this.articleMapper.getSortIdByArticleId(oldArticle.getArticleId());
+        if (!Objects.equals(oldSortId, articleDTO.getSortId())) {
+            // 先删除关联在添加
+            this.articleMapper.deleteArticleSort(articleDTO.getArticleId());
+            // 引用数量-1
+            this.sortService.subRefCount(oldSortId);
+            // 关联分类
+            this.articleMapper.addArticleSort(articleDTO.getArticleId(), articleDTO.getSortId());
+            // 引用数量+1
+            this.sortService.addRefCount(articleDTO.getSortId());
+        }
+
+        // 如果修改了标签
+        Set<Long> oldTagIds = this.articleMapper.getTagIdsByArticleId(oldArticle.getArticleId());
+        if (!SetUtils.isEqualSet(oldTagIds, articleDTO.getTagIds())) {
+            // 先删除关联在添加
+            this.articleMapper.deleteArticleTag(articleDTO.getArticleId());
+            // 引用数量-1
+            for (Long oldTagId : oldTagIds) {
+                this.tagService.subRefCount(oldTagId);
+            }
+            // 关联标签
+            this.articleMapper.addArticleTag(articleDTO.getArticleId(), articleDTO.getTagIds());
+            // 引用数量+1
+            for (Long newTagId : articleDTO.getTagIds()) {
+                this.tagService.addRefCount(newTagId);
+            }
+        }
+
         // 更新文章表
         this.articleMapper.updateArticle(articleDTO);
     }
@@ -141,6 +215,14 @@ public class ArticleServiceImpl implements ArticleService {
         article.setDelFlag("2"); // 逻辑删除
         article.setUpdateBy(SecurityUtils.getUsername());
         article.setUpdateTime(DateUtils.getNowDate());
+        // 分类计数-1
+        Long sortId = this.articleMapper.getSortIdByArticleId(articleId);
+        this.sortService.subRefCount(sortId);
+        // 标签计数-1
+        Set<Long> tagIds = this.articleMapper.getTagIdsByArticleId(articleId);
+        for (Long tagId : tagIds) {
+            this.tagService.subRefCount(tagId);
+        }
         this.articleMapper.updateArticle(article);
     }
 
@@ -206,6 +288,45 @@ public class ArticleServiceImpl implements ArticleService {
         } else {
             return userIds.size();
         }
+    }
+
+    /**
+     * 获取所有文章的月份
+     * 
+     * @return
+     */
+    @Override
+    public Set<String> getArticleMouth() {
+        List<Article> articles = this.articleMapper.selectList(null);
+
+        Set<String> monthSet = new TreeSet<>();
+        for (Article article : articles) {
+            Date createTime = article.getCreateTime();
+            if (createTime != null) {
+                String month = new SimpleDateFormat("yyyy年MM月").format(createTime);
+                monthSet.add(month);
+            }
+        }
+        return monthSet;
+    }
+
+    /**
+     * 获取所有文章的月份
+     * 
+     * @param month
+     * @param pageNum
+     * @param pageSize
+     * @return
+     */
+    @Override
+    public IPage<Article> findArticleByMonth(String month, Integer pageNum, Integer pageSize) {
+        Date curMonth = DateUtils.parseDate(month);
+        Date lastMonth = DateUtils.stepMonth(curMonth, 1);
+        LambdaQueryWrapper<Article> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.select(Article.class, article -> !article.getProperty().equals("content")) // 不返回文章内容
+            // 查询这个月之间的文章
+            .between(Article::getCreateTime, curMonth, lastMonth);
+        return this.articleMapper.selectPage(new Page<>(pageNum, pageSize), queryWrapper);
     }
 
     /**

@@ -1,5 +1,7 @@
 package com.xjhqre.common.domain.portal.dto;
 
+import java.util.Set;
+
 import javax.validation.constraints.NotNull;
 
 import com.xjhqre.common.domain.portal.Article;
@@ -25,5 +27,5 @@ public class ArticleDTO extends Article {
 
     @NotNull(message = "标签集合不能为空")
     @ApiModelProperty(value = "标签id")
-    private Long[] tagIds;
+    private Set<Long> tagIds;
 }

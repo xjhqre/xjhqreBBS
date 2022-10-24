@@ -5,9 +5,38 @@
 
 <mapper namespace="com.xjhqre.portal.mapper.SortMapper">
 
+    <!-- 引用数量-1 -->
+    <update id="subRefCount">
+        update t_sort
+        set ref_count = ref_count - 1
+        where sort_id = #{sortId}
+    </update>
+
+    <!-- 引用数量+1 -->
+    <insert id="addRefCount">
+        update t_sort
+        set ref_count = ref_count + 1
+        where sort_id = #{sortId}
+    </insert>
+
     <!-- 查询文章分类列表-->
-    <select id="listAllSort" resultType="com.xjhqre.common.domain.portal.Sort">
+    <select id="listSort" resultType="com.xjhqre.common.domain.portal.Sort">
         select *
         from t_sort
+        order by #{sort.sort} desc -- 根据sort值排序
+        limit #{limit}
     </select>
+
+    <!-- 分页查询分类列表 -->
+    <select id="findSort" resultType="com.xjhqre.common.domain.portal.Sort">
+        select *
+        from t_sort
+        where del_flag = '0';
+        <if test="sort.name != null and sort.name != '">
+            name = #{sort.name}
+        </if>
+        order by #{sort.sort} desc -- 根据sort值排序
+    </select>
+
+
 </mapper>

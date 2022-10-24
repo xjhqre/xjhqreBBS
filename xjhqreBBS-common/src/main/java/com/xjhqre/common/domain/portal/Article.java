@@ -38,6 +38,7 @@ public class Article extends BaseEntity {
     private String title;
 
     @ApiModelProperty(value = "博客简介")
+    @Size(max = 200, message = "博客标题简介不能超过200个字符")
     private String summary;
 
     @ApiModelProperty(value = "博客内容")

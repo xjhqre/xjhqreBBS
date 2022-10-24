@@ -9,9 +9,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import com.xjhqre.admin.security.service.PermissionService;
 import com.xjhqre.common.config.properties.OssProperties;
 import com.xjhqre.common.domain.admin.User;
-import com.xjhqre.common.security.service.PermissionService;
 import com.xjhqre.common.service.RoleService;
 import com.xjhqre.common.service.UserService;
 import com.xjhqre.common.utils.SecurityUtils;

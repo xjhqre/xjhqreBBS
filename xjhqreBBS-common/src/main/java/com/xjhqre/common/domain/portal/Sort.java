@@ -3,6 +3,9 @@
  */
 package com.xjhqre.common.domain.portal;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -33,6 +36,7 @@ public class Sort extends BaseEntity {
     private Long sortId;
 
     @ApiModelProperty(value = "名称")
+    @NotBlank(message = "分类名称不能为空")
     private String name;
 
     @ApiModelProperty(value = "描述")
@@ -47,6 +51,7 @@ public class Sort extends BaseEntity {
     @ApiModelProperty(value = "删除标志（0代表存在 2代表删除）", hidden = true)
     private String delFlag;
 
-    @ApiModelProperty(value = "排序字段", example = "0")
+    @ApiModelProperty(value = "排序字段", required = true)
+    @NotNull(message = "排序字段不能为空")
     private Integer sort;
 }

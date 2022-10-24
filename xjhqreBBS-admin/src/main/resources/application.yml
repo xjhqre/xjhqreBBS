@@ -59,7 +59,6 @@ logging:
 server:
   port: 8080
 
-
 # token配置
 token:
   # 令牌自定义标识

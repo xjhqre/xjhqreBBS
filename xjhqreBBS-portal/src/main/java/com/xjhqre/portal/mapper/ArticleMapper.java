@@ -1,10 +1,12 @@
 package com.xjhqre.portal.mapper;
 
+import java.util.List;
 import java.util.Set;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.xjhqre.common.domain.portal.Article;
@@ -18,7 +20,7 @@ import com.xjhqre.common.domain.portal.Article;
  * @since 10月 11, 2022
  */
 @Mapper
-public interface ArticleMapper {
+public interface ArticleMapper extends BaseMapper<Article> {
 
     /**
      * 根据条件分页查询文章信息
@@ -28,6 +30,24 @@ public interface ArticleMapper {
      * @return
      */
     IPage<Article> findArticle(@Param("articlePage") Page<Article> articlePage, @Param("article") Article article);
+
+    /**
+     * 根据分类id分页查询文章
+     * 
+     * @param objectPage
+     * @param sortId
+     * @return
+     */
+    IPage<Article> findArticleBySortId(@Param("articlePage") Page<Article> objectPage, @Param("sortId") Long sortId);
+
+    /**
+     * 根据标签id分页查询文章
+     * 
+     * @param objectPage
+     * @param tagId
+     * @return
+     */
+    IPage<Article> findArticleByTagId(@Param("objectPage") Page<Article> objectPage, @Param("tagId") Long tagId);
 
     /**
      * 根据文章id查询文章详情
@@ -81,7 +101,7 @@ public interface ArticleMapper {
      * @param articleId
      * @param tagIds
      */
-    void addArticleTag(Long articleId, Long[] tagIds);
+    void addArticleTag(Long articleId, Set<Long> tagIds);
 
     /**
      * 删除文章分类关联
@@ -96,4 +116,28 @@ public interface ArticleMapper {
      * @param articleId
      */
     void deleteArticleTag(Long articleId);
+
+    /**
+     * 根据文章id获取关联的分类id
+     * 
+     * @param articleId
+     * @return
+     */
+    Long getSortIdByArticleId(Long articleId);
+
+    /**
+     * 根据文章id查询关联的标签id集合
+     * 
+     * @param articleId
+     * @return
+     */
+    Set<Long> getTagIdsByArticleId(Long articleId);
+
+    /**
+     * 查询文章浏览的用户id
+     * 
+     * @param articleId
+     * @return
+     */
+    List<Long> getViewUserIds(Long articleId);
 }

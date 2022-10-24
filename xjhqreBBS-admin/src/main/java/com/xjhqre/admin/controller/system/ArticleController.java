@@ -2,6 +2,7 @@ package com.xjhqre.admin.controller.system;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -67,7 +68,7 @@ public class ArticleController extends BaseController {
     }
 
     @ApiOperation(value = "删除文章")
-    @GetMapping(value = "/delete/{articleId}")
+    @DeleteMapping(value = "/delete/{articleId}")
     @PreAuthorize("@ss.hasPermission('portal:article:delete')")
     public R<String> delete(@PathVariable Long articleId) {
         if (articleId == null) {
