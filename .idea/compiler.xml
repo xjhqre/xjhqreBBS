@@ -15,6 +15,7 @@
         <module name="xjhqreBBS-portal" />
         <module name="xjhqreBBS-admin" />
         <module name="xjhqreBBS-quartz" />
+        <module name="xjhqreBBS-picture" />
         <module name="xjhqreBBS-common" />
       </profile>
     </annotationProcessing>
@@ -29,6 +30,7 @@
       <module name="xjhqreBBS-common" options="-parameters" />
       <module name="xjhqreBBS-framework" options="-parameters" />
       <module name="xjhqreBBS-gateway" options="-parameters" />
+      <module name="xjhqreBBS-picture" options="-parameters" />
       <module name="xjhqreBBS-portal" options="-parameters" />
       <module name="xjhqreBBS-quartz" options="-parameters" />
     </option>

@@ -16,6 +16,7 @@ import com.xjhqre.common.service.RoleService;
 import com.xjhqre.common.service.UserService;
 import com.xjhqre.common.utils.SecurityUtils;
 import com.xjhqre.common.utils.SpringUtils;
+import com.xjhqre.common.utils.uuid.IdUtils;
 
 /**
  * Created by lhr on 17-7-31. user.setUsername("lhr"); user.setPassword("root");
@@ -71,4 +72,8 @@ public class AdminApplicationTest {
         System.out.println(OssProperties.KEY_SECRET);
     }
 
+    @Test
+    public void test5() {
+        System.out.println(IdUtils.simpleUUID());
+    }
 }
