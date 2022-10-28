@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>xjhqreBBS-bbs</artifactId>
+    <artifactId>xjhqreBBS-portal</artifactId>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
