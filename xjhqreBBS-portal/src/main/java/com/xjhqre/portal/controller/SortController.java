@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.xjhqre.common.common.R;
+import com.xjhqre.common.controller.BaseController;
 import com.xjhqre.common.domain.portal.Sort;
 import com.xjhqre.portal.service.SortService;
 
@@ -33,7 +34,7 @@ import io.swagger.annotations.ApiOperation;
 @Api(value = "文章分类操作接口", tags = "文章分类操作接口")
 @RestController
 @RequestMapping("/sort")
-public class SortController {
+public class SortController extends BaseController {
 
     @Autowired
     SortService sortService;
@@ -64,7 +65,7 @@ public class SortController {
     }
 
     @ApiOperation(value = "修改分类")
-    @PostMapping(value = "/add}")
+    @PostMapping(value = "/update}")
     public R<String> update(@RequestBody @Validated Sort sort) {
         this.sortService.updateSort(sort);
         return R.success("修改分类成功");

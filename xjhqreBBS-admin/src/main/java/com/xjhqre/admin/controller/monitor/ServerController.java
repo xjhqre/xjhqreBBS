@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.xjhqre.common.common.R;
+import com.xjhqre.common.controller.BaseController;
 import com.xjhqre.common.domain.monitor.Server;
 
 import io.swagger.annotations.Api;
@@ -18,7 +19,7 @@ import io.swagger.annotations.Api;
 @RestController
 @Api(value = "服务器监控", tags = "服务器监控")
 @RequestMapping("/monitor/server")
-public class ServerController {
+public class ServerController extends BaseController {
     @PreAuthorize("@ss.hasPermission('monitor:server:list')")
     @GetMapping()
     public R<Server> getInfo() throws Exception {

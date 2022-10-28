@@ -12,6 +12,7 @@ import com.xjhqre.admin.security.service.LoginService;
 import com.xjhqre.admin.security.service.PermissionService;
 import com.xjhqre.common.common.R;
 import com.xjhqre.common.constant.Constants;
+import com.xjhqre.common.controller.BaseController;
 import com.xjhqre.common.domain.admin.User;
 import com.xjhqre.common.domain.model.LoginBody;
 import com.xjhqre.common.utils.SecurityUtils;
@@ -26,7 +27,7 @@ import io.swagger.annotations.ApiOperation;
  */
 @RestController
 @Api(value = "用户登陆接口", tags = "用户登陆接口")
-public class LoginController {
+public class LoginController extends BaseController {
     @Autowired
     private LoginService loginService;
 

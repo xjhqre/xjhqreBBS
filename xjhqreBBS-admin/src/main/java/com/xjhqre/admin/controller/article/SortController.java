@@ -19,6 +19,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.xjhqre.admin.service.SortService;
 import com.xjhqre.common.annotation.Log;
 import com.xjhqre.common.common.R;
+import com.xjhqre.common.controller.BaseController;
 import com.xjhqre.common.domain.portal.Sort;
 import com.xjhqre.common.enums.BusinessType;
 
@@ -38,7 +39,7 @@ import io.swagger.annotations.ApiOperation;
 @Api(value = "文章分类操作接口", tags = "文章分类操作接口")
 @RestController
 @RequestMapping("/articleSort")
-public class SortController {
+public class SortController extends BaseController {
 
     @Autowired
     SortService sortService;

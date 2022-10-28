@@ -1,5 +1,7 @@
 package com.xjhqre.common.utils.uuid;
 
+import org.apache.commons.io.FilenameUtils;
+
 /**
  * ID生成器工具类
  * 
@@ -23,6 +25,15 @@ public class IdUtils {
      */
     public static String fastUUID() {
         return UUID.fastUUID().toString();
+    }
+
+    /**
+     * 获取pictureId
+     *
+     * @return 简化的UUID，去掉了横线
+     */
+    public static String pictureId(String originalFilename) {
+        return String.format("%s.%s", IdUtils.simpleUUID(), FilenameUtils.getExtension(originalFilename));
     }
 
 }

@@ -16,6 +16,7 @@ import com.google.code.kaptcha.Producer;
 import com.xjhqre.common.common.R;
 import com.xjhqre.common.constant.CacheConstants;
 import com.xjhqre.common.constant.Constants;
+import com.xjhqre.common.controller.BaseController;
 import com.xjhqre.common.service.ConfigService;
 import com.xjhqre.common.utils.redis.RedisCache;
 import com.xjhqre.common.utils.sign.Base64;
@@ -31,7 +32,7 @@ import io.swagger.annotations.ApiOperation;
  */
 @RestController
 @Api(value = "验证码接口", tags = "验证码接口")
-public class CaptchaController {
+public class CaptchaController extends BaseController {
     @Resource(name = "captchaProducer")
     private Producer captchaProducer;
 

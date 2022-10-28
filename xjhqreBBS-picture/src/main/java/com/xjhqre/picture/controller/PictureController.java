@@ -1,7 +1,5 @@
 package com.xjhqre.picture.controller;
 
-import java.io.File;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,9 +12,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.xjhqre.common.common.R;
+import com.xjhqre.common.controller.BaseController;
 import com.xjhqre.common.domain.picture.Picture;
 import com.xjhqre.common.exception.ServiceException;
-import com.xjhqre.common.utils.ImageUtil;
+import com.xjhqre.common.utils.DateUtils;
+import com.xjhqre.common.utils.OSSUtil;
+import com.xjhqre.common.utils.OSSUtil.FileDirType;
+import com.xjhqre.common.utils.uuid.IdUtils;
 import com.xjhqre.picture.service.PictureService;
 
 import io.swagger.annotations.Api;
@@ -35,7 +37,7 @@ import io.swagger.annotations.ApiOperation;
 @Api(value = "图片操作接口", tags = "图片操作接口")
 @RestController
 @RequestMapping("/picture/picture")
-public class PictureController {
+public class PictureController extends BaseController {
 
     @Autowired
     PictureService pictureService;
@@ -57,23 +59,22 @@ public class PictureController {
         if (mFile == null) {
             throw new ServiceException("上传图片文件为空");
         }
-        // 获取后缀
-        String suffixName = ImageUtil.getSuffix(mFile);
 
         // 获取文件id
-        String FileId = ImageUtil.getFileId();
-        picture.setPictureId(FileId);
-        picture.setPicName(mFile.getOriginalFilename());
-        picture.setUrl(ImageUtil.SAVE_IMAGE_PATH + FileId + suffixName); // 设置本地地址
-        // 保存图片到本地
-        File file = new File(picture.getUrl());
-        boolean state = ImageUtil.saveImage(mFile, file);
-        if (state) {
-            picture.setStatus(0); // 设置为待审核状态
-            this.pictureService.savePicture(picture);
-        } else {
-            throw new ServiceException("保存图片到本地失败");
+        String pictureId = IdUtils.pictureId(mFile.getOriginalFilename());
+        picture.setPictureId(pictureId);
+        if (picture.getPicName() == null) {
+            picture.setPicName(mFile.getOriginalFilename());
         }
+
+        // 上传OSS
+        String pictureUrl = OSSUtil.upload(mFile, FileDirType.PICTURE, pictureId);
+
+        picture.setUrl(pictureUrl);
+        picture.setCreateTime(DateUtils.getNowDate());
+        picture.setCreateBy(this.getUsername());
+        picture.setStatus(0); // 设置为待审核状态
+        this.pictureService.savePicture(picture);
 
         return R.success("上传图片成功");
     }

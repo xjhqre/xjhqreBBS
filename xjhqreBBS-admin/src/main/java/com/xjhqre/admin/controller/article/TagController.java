@@ -18,6 +18,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.xjhqre.admin.service.TagService;
 import com.xjhqre.common.annotation.Log;
 import com.xjhqre.common.common.R;
+import com.xjhqre.common.controller.BaseController;
 import com.xjhqre.common.domain.portal.Tag;
 import com.xjhqre.common.enums.BusinessType;
 
@@ -37,7 +38,7 @@ import io.swagger.annotations.ApiOperation;
 @Api(value = "文章标签操作接口", tags = "文章标签操作接口")
 @RestController
 @RequestMapping("/articleTag")
-public class TagController {
+public class TagController extends BaseController {
 
     @Autowired
     TagService tagService;

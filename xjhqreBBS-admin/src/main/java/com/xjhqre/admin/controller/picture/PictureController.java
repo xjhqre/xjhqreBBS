@@ -1,7 +1,6 @@
 package com.xjhqre.admin.controller.picture;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
@@ -19,9 +18,13 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.xjhqre.admin.service.PictureService;
 import com.xjhqre.common.common.R;
 import com.xjhqre.common.constant.PictureConstant;
+import com.xjhqre.common.controller.BaseController;
 import com.xjhqre.common.domain.picture.Picture;
 import com.xjhqre.common.exception.ServiceException;
-import com.xjhqre.common.utils.ImageUtil;
+import com.xjhqre.common.utils.DateUtils;
+import com.xjhqre.common.utils.OSSUtil;
+import com.xjhqre.common.utils.OSSUtil.FileDirType;
+import com.xjhqre.common.utils.uuid.IdUtils;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -39,7 +42,7 @@ import io.swagger.annotations.ApiOperation;
 @Api(value = "图片操作接口", tags = "图片操作接口")
 @RestController
 @RequestMapping("/admin/picture")
-public class PictureController {
+public class PictureController extends BaseController {
 
     @Autowired
     PictureService pictureService;
@@ -61,22 +64,22 @@ public class PictureController {
         if (mFile == null) {
             throw new ServiceException("上传图片文件为空");
         }
-        // 获取后缀
-        String suffixName = ImageUtil.getSuffix(mFile);
 
-        // 获取文件id
-        String FileId = ImageUtil.getFileId();
-        picture.setPictureId(FileId);
-
-        // 保存图片到本地
-        File file = new File(ImageUtil.getNewImagePath(FileId));
-        boolean state = ImageUtil.saveImage(mFile, file);
-        if (state) {
-            picture.setStatus(2); // 设置为发布状态
-            this.pictureService.savePicture(picture);
-        } else {
-            throw new ServiceException("保存图片到本地失败");
+        // 生成文件id
+        String pictureId = IdUtils.pictureId(mFile.getOriginalFilename());
+        picture.setPictureId(pictureId);
+        if (picture.getPicName() == null) {
+            picture.setPicName(mFile.getOriginalFilename());
         }
+
+        // 上传OSS
+        String pictureUrl = OSSUtil.upload(mFile, FileDirType.PICTURE, pictureId);
+
+        picture.setUrl(pictureUrl);
+        picture.setCreateTime(DateUtils.getNowDate());
+        picture.setCreateBy(this.getUsername());
+        picture.setStatus(2); // 设置为发布状态，管理员上传的图片不用审核
+        this.pictureService.savePicture(picture);
 
         return R.success("上传图片成功");
     }
@@ -97,7 +100,8 @@ public class PictureController {
      */
     public static void executePython() {
         try {
-            String[] args1 = new String[] {PictureConstant.INTERPRETER, PictureConstant.FEATURES};
+            // 参数1：解释器地址 参数二：Python文件地址 参数三：上传图片地址
+            String[] args1 = new String[] {PictureConstant.INTERPRETER, PictureConstant.OFFLINE};
             Process proc = Runtime.getRuntime().exec(args1);
             BufferedReader in = new BufferedReader(new InputStreamReader(proc.getInputStream()));
             String line;

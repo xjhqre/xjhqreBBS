@@ -30,20 +30,20 @@ public class Picture extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
 
-    @ApiModelProperty(value = "唯一id")
+    @ApiModelProperty(value = "唯一id", hidden = true)
     @TableId(value = "picture_id", type = IdType.INPUT)
     private String pictureId;
 
-    @ApiModelProperty(value = "图片名")
+    @ApiModelProperty(value = "图片名", hidden = true)
     private String picName;
 
-    @ApiModelProperty(value = "图片地址")
+    @ApiModelProperty(value = "图片地址", hidden = true)
     private String url;
 
     @ApiModelProperty(value = "图片描述")
     private String description;
 
-    @ApiModelProperty(value = "上传人id")
+    @ApiModelProperty(value = "上传人id", hidden = true)
     private Long uploader;
 
     @ApiModelProperty(value = "上传时间", hidden = true)

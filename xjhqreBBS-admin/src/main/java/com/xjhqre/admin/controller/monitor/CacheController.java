@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.xjhqre.common.common.R;
 import com.xjhqre.common.constant.CacheConstants;
+import com.xjhqre.common.controller.BaseController;
 import com.xjhqre.common.domain.Cache;
 import com.xjhqre.common.utils.StringUtils;
 
@@ -35,7 +36,7 @@ import io.swagger.annotations.ApiOperation;
 @RestController
 @Api(value = "缓存监控", tags = "缓存监控")
 @RequestMapping("/monitor/cache")
-public class CacheController {
+public class CacheController extends BaseController {
     @Autowired
     private RedisTemplate<String, String> redisTemplate;
 
