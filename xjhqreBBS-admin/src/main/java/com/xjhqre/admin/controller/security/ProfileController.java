@@ -22,10 +22,12 @@ import com.xjhqre.common.domain.model.LoginUser;
 import com.xjhqre.common.domain.portal.Article;
 import com.xjhqre.common.enums.BusinessType;
 import com.xjhqre.common.service.UserService;
+import com.xjhqre.common.utils.FileUtils;
 import com.xjhqre.common.utils.OSSUtil;
 import com.xjhqre.common.utils.OSSUtil.FileDirType;
 import com.xjhqre.common.utils.SecurityUtils;
 import com.xjhqre.common.utils.StringUtils;
+import com.xjhqre.common.utils.uuid.IdUtils;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -122,10 +124,11 @@ public class ProfileController extends BaseController {
     @ApiOperation(value = "上传头像")
     @Log(title = "用户头像", businessType = BusinessType.UPDATE)
     @PostMapping("/avatar")
-    public R<String> avatar(@RequestParam("avatarfile") MultipartFile file) throws Exception {
+    public R<String> avatar(@RequestParam("avatarfile") MultipartFile file) {
         if (!file.isEmpty()) {
             LoginUser loginUser = this.getLoginUser();
-            String avatarUrl = OSSUtil.upload(file, FileDirType.AVATAR);
+            String avatarUrl = OSSUtil.upload(file, FileDirType.AVATAR,
+                IdUtils.simpleUUID() + FileUtils.getExtension(file.getOriginalFilename()));
             if (this.userService.updateUserAvatar(loginUser.getUsername(), avatarUrl)) {
                 // 更新缓存用户头像
                 loginUser.getUser().setAvatar(avatarUrl);

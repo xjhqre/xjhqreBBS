@@ -2,6 +2,8 @@ package com.xjhqre.common.utils;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,6 +21,9 @@ import com.xjhqre.common.utils.uuid.IdUtils;
 public class ImageUtil {
     public final static String SAVE_IMAGE_PATH =
         "G:\\workspace\\xjhqreBBS\\xjhqreBBS-picture\\src\\main\\resources\\upload\\";
+
+    public final static List<String> SUFFIXS =
+        Arrays.asList(".jpg", ".jpeg", ".gif", ".png", ".JPG", ".JPEG", ".GIF", ".PNG");
 
     /**
      * 返回文件后缀

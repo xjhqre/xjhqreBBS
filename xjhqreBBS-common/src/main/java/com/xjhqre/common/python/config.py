@@ -1,15 +1,15 @@
 """
 以图搜图配置文件
 """
-
+# TODO 修改保存地址
 save_path = 'G:\\workspace\\xjhqreBBS\\xjhqreBBS-picture\\src\\main\\resources\\upload\\'
 
 types = [".jpg", ".jpeg", ".gif", ".png", ".JPG", ".JPEG", ".GIF", ".PNG"]
 
 elasticsearch_index = "imgsearch"
 
-elasticsearch_url = '116.62.103.149'
-elasticsearch_port = 9200
+elasticsearch_url = '1.15.88.204'
+elasticsearch_port = 9201
 
 # OSS
 AccessKeyId = "LTAI5tRA8NFprYduUmGAuXAi"

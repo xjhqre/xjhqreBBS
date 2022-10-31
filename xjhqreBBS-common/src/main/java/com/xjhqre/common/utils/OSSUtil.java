@@ -4,7 +4,6 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.Date;
 
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +19,6 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import com.xjhqre.common.config.properties.OssProperties;
 import com.xjhqre.common.exception.ServiceException;
 import com.xjhqre.common.utils.file.MimeTypeUtils;
-import com.xjhqre.common.utils.uuid.IdUtils;
 
 /**
  * OSS上传工具类
@@ -86,21 +84,10 @@ public class OSSUtil {
      * @param pictureId
      * @return 文件的访问地址
      */
-    public static String upload(MultipartFile file, FileDirType fileDir) {
-        OSSUtil.createBucket();
-        String fileName = OSSUtil.uploadFile(file, fileDir, null);
-        String fileOssURL = OSSUtil.getImgUrl(fileName, fileDir);
-        int firstChar = fileOssURL.indexOf("?");
-        if (firstChar > 0) {
-            fileOssURL = fileOssURL.substring(0, firstChar);
-        }
-        return fileOssURL;
-    }
-
     public static String upload(MultipartFile file, FileDirType fileDir, String pictureId) {
         OSSUtil.createBucket();
-        String fileName = OSSUtil.uploadFile(file, fileDir, pictureId);
-        String fileOssURL = OSSUtil.getImgUrl(fileName, fileDir);
+        String fileName = OSSUtil.uploadFile(file, fileDir, pictureId); // 返回唯一文件名
+        String fileOssURL = OSSUtil.getImgUrl(fileName, fileDir); // 返回OSS地址
         int firstChar = fileOssURL.indexOf("?");
         if (firstChar > 0) {
             fileOssURL = fileOssURL.substring(0, firstChar);
@@ -135,31 +122,25 @@ public class OSSUtil {
      * @param fileDir
      *            上传到OSS上文件的路径
      * @param pictureId
-     * @return 文件的访问地址
+     * @return 唯一文件名，例如：asdasfwafa.jpg
      */
     private static String uploadFile(MultipartFile file, FileDirType fileDir, String pictureId) {
         // 生成文件名为 UUID.ext 的形式
-        String fileName;
-        if (pictureId == null) {
-            fileName = IdUtils.pictureId(file.getOriginalFilename());
-        } else {
-            fileName = pictureId;
-        }
         try (InputStream inputStream = file.getInputStream()) {
             // 创建上传Object的Metadata
             ObjectMetadata objectMetadata = new ObjectMetadata();
             objectMetadata.setContentLength(inputStream.available());
             objectMetadata.setCacheControl("no-cache");
             objectMetadata.setHeader("Pragma", "no-cache");
-            objectMetadata.setContentType(getContentType(FilenameUtils.getExtension("." + file.getOriginalFilename())));
-            objectMetadata.setContentDisposition("inline;filename=" + fileName);
+            objectMetadata.setContentType(getContentType(FileUtils.getExtension(file.getOriginalFilename())));
+            objectMetadata.setContentDisposition("inline;filename=" + pictureId);
             // 上传文件
-            PutObjectResult putResult = OSSUtil.getOSSClient().putObject(OSS_BUCKET_NAME, fileDir.getDir() + fileName,
+            PutObjectResult putResult = OSSUtil.getOSSClient().putObject(OSS_BUCKET_NAME, fileDir.getDir() + pictureId,
                 inputStream, objectMetadata);
         } catch (Exception e) {
             throw new ServiceException("上传图片到OSS失败");
         }
-        return fileName;
+        return pictureId;
     }
 
     /**

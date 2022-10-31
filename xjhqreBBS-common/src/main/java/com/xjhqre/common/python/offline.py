@@ -36,17 +36,15 @@ if __name__ == '__main__':
     for i in range(1, len(sys.argv)):
         a.append((str(sys.argv[i])))
 
-    img_url = "https://xjhqre-bbs.oss-cn-hangzhou.aliyuncs.com/test/wallhaven-8ogod1.jpg"
+    img_id = a[0]
+    img_url = a[1]
     imageName = os.path.basename(img_url)  # 文件名称（包含后缀）
-    _, file_suffix = os.path.splitext(imageName)  # 文件后缀
 
     # 保存图片到本地
     response = requests.get(img_url)
     image = Image.open(BytesIO(response.content))
     image.save(config.save_path + imageName)
 
-    if file_suffix not in config.types:
-        print("格式出错：" + imageName)
     try:
         feature = fe.execute(config.save_path + imageName)
     except Exception as e:
@@ -56,9 +54,7 @@ if __name__ == '__main__':
         status = upload_2_oss(config.folder + imageName, config.save_path + imageName).resp.status
         if status == 200:
             # 上传es
-            imgOssUrl = config.pic_oss_url + imageName
-            doc = {'url': imgOssUrl, 'feature': feature,
-                   'name': imageName}
+            doc = {'feature': feature, 'id': img_id}
             es.index(config.elasticsearch_index, body=doc)  # 保存到elasticsearch
             print(200)
         else:

@@ -3,13 +3,21 @@ package com.xjhqre.picture.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.xjhqre.common.domain.picture.Picture;
+import com.xjhqre.common.exception.ServiceException;
+import com.xjhqre.common.utils.DateUtils;
+import com.xjhqre.common.utils.FileUtils;
+import com.xjhqre.common.utils.ImageUtil;
+import com.xjhqre.common.utils.OSSUtil;
+import com.xjhqre.common.utils.OSSUtil.FileDirType;
 import com.xjhqre.common.utils.SecurityUtils;
+import com.xjhqre.common.utils.uuid.IdUtils;
 import com.xjhqre.picture.mapper.PictureMapper;
 import com.xjhqre.picture.service.PictureService;
 
@@ -29,7 +37,27 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
     PictureMapper pictureMapper;
 
     @Override
-    public void savePicture(Picture picture) {
+    public void savePicture(Picture picture, MultipartFile mFile) {
+        String extension = FileUtils.getExtension(mFile.getOriginalFilename());
+
+        if (!ImageUtil.SUFFIXS.contains(extension)) {
+            throw new ServiceException("上传图片格式不支持！");
+        }
+
+        // 获取文件id
+        String pictureId = IdUtils.simpleUUID();
+        picture.setPictureId(pictureId);
+        if (picture.getPicName() == null) {
+            picture.setPicName(mFile.getOriginalFilename());
+        }
+
+        // 上传OSS
+        String pictureUrl = OSSUtil.upload(mFile, FileDirType.PICTURE, pictureId + extension);
+
+        picture.setUrl(pictureUrl);
+        picture.setCreateTime(DateUtils.getNowDate());
+        picture.setCreateBy(SecurityUtils.getUsername());
+        picture.setStatus(0); // 设置为待审核状态
         this.pictureMapper.insert(picture);
     }
 
