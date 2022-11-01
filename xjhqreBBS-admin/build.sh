@@ -6,7 +6,7 @@ IMG_NAME="$2"
 IMG_VERSION="$3"
 IMG_PORT="$4"
 # RUN_EVN="$5"
-IMG_PATH="$5"
+#IMG_PATH="$5"
 
 echo "服务地址：$IMG_SERVER"
 echo "工程镜像名称：$IMG_NAME"
@@ -60,11 +60,11 @@ if [ "$IMG_SERVER" != "" ] && [ "$IMG_NAME" != "" ] && [ "$IMG_VERSION" != "" ] 
     # docker push $REGISTRY_URL/$IMG_NAME:$IMG_VERSION
 
     # 判断是否存在文件夹
-    if [ -d "$IMG_PATH" ];then
-         echo "已经存在:"$IMG_PATH
-    else
-        mkdir -p $IMG_PATH
-    fi
+#    if [ -d "$IMG_PATH" ];then
+#         echo "已经存在:"$IMG_PATH
+#    else
+#        mkdir -p $IMG_PATH
+#    fi
 
     # 保存编译之后镜像文件存放到指定路径
     # docker save $IMG_NAME -o $IMG_TAR_GZ_PATH/$IMG_NAME.tar.gz
