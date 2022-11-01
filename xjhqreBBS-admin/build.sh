@@ -50,7 +50,7 @@ if [ "$IMG_SERVER" != "" ] && [ "$IMG_NAME" != "" ] && [ "$IMG_VERSION" != "" ] 
 
     #方法2、跟据不同Dockerfile文件的后缀进行编译不同环境的文件
     # docker build -t $IMG_NAME:$IMG_VERSION -f $IMG_PATH"env/"Dockerfile_$RUN_EVN $IMG_PATH
-    docker build -t $IMG_NAME:$IMG_VERSION -f $IMG_PATH"Dockerfile" $IMG_PATH
+    docker build -t $IMG_NAME:$IMG_VERSION ./
 
 
     # 将镜像打一下标签，然后安照标签进行推送到私服里面，标签名就以服务名即可
@@ -70,7 +70,7 @@ if [ "$IMG_SERVER" != "" ] && [ "$IMG_NAME" != "" ] && [ "$IMG_VERSION" != "" ] 
     # docker save $IMG_NAME -o $IMG_TAR_GZ_PATH/$IMG_NAME.tar.gz
 
     echo " .......进入Runing操作 ....."
-    docker run -d --network default_network --restart=always --expose=$IMG_PORT --name=$IMG_NAME  -p $IMG_PORT:$IMG_PORT $IMG_NAME:$IMG_VERSION
+    docker run -d --restart=always --expose=$IMG_PORT --name=$IMG_NAME -p $IMG_PORT:$IMG_PORT $IMG_NAME:$IMG_VERSION
 
     echo " .......Build & Run Finish Success~...."
 else
