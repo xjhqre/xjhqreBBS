@@ -5,5 +5,8 @@ WORKDIR /home/xjhqreBBS
 # 将targer目录下的jar包复制到docker容器/home/springboot目录下面目录下面
 ADD ./target/xjhqreBBS-admin-0.0.1-SNAPSHOT.jar /home/xjhqreBBS/xjhqreBBS-admin.jar
 EXPOSE 8080
+
+ENV JAVA_OPTS="-Xmx150m"
 # 执行命令
 CMD ["java","-jar","/home/xjhqreBBS/xjhqreBBS-admin.jar"]
+ENTRYPOINT java ${JAVA_OPTS} -jar /home/xjhqreBBS/xjhqreBBS-admin.jar
