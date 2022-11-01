@@ -16,7 +16,7 @@ echo "工程端口：$IMG_PORT"
 
 #私服访问url路径和编译之后镜像文件存放到指定路径固定,不动态参数进行处理传值.
 # REGISTRY_URL="192.168.1.235:5000"
-IMG_TAR_GZ_PATH="/home/img_tar_gz_path/"
+# IMG_TAR_GZ_PATH="/home/img_tar_gz_path/"
 
 # 判断动态参数不为空字符串的时候才执行下面操作
 if [ "$IMG_SERVER" != "" ] && [ "$IMG_NAME" != "" ] && [ "$IMG_VERSION" != "" ] && [ "$IMG_PORT" != "" ]; then
@@ -67,10 +67,10 @@ if [ "$IMG_SERVER" != "" ] && [ "$IMG_NAME" != "" ] && [ "$IMG_VERSION" != "" ] 
     fi
 
     # 保存编译之后镜像文件存放到指定路径
-    docker save $IMG_NAME -o $IMG_TAR_GZ_PATH/$IMG_NAME.tar.gz
+    # docker save $IMG_NAME -o $IMG_TAR_GZ_PATH/$IMG_NAME.tar.gz
 
     echo " .......进入Runing操作 ....."
-    docker run -d --network default_network --restart=always --env-file=./.env --expose=$IMG_PORT --name=$IMG_NAME  -p $IMG_PORT:$IMG_PORT $IMG_NAME:$IMG_VERSION
+    docker run -d --network default_network --restart=always --expose=$IMG_PORT --name=$IMG_NAME  -p $IMG_PORT:$IMG_PORT $IMG_NAME:$IMG_VERSION
 
     echo " .......Build & Run Finish Success~...."
 else
