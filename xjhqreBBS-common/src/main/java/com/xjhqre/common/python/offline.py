@@ -1,61 +1,118 @@
 import os
-import shutil
-import sys
 from io import BytesIO
 
+import numpy as np
+import oss2
 import requests
+import tensorflow as tf
 from PIL import Image
 from elasticsearch import Elasticsearch
-
-import config
-from feature_extractor import FeatureExtractor
-from upload_oss import upload_2_oss
+from keras_applications.resnet50 import ResNet50
+from numpy import linalg as LA
+from tensorflow.keras.applications.resnet50 import preprocess_input
+from tensorflow.keras.preprocessing import image
+from tensorflow.python import keras
+from tensorflow.python.keras.backend import set_session
 
 '''
     提取图片特征向量上传阿里云OSS
 '''
 
-es = Elasticsearch([{'host': config.elasticsearch_url, 'port': config.elasticsearch_port}], timeout=3600)
-fe = FeatureExtractor()
+"""
+以图搜图配置文件
+"""
+# TODO 修改保存地址
+save_path = 'G:\\workspace\\xjhqreBBS\\xjhqreBBS-picture\\src\\main\\resources\\upload\\'
+
+types = [".jpg", ".jpeg", ".gif", ".png", ".JPG", ".JPEG", ".GIF", ".PNG"]
+
+elasticsearch_index = "xjhqrebbs-imgsearch"
+
+elasticsearch_url = '1.15.88.204'
+elasticsearch_port = "9201"
+elasticsearch_name = "elastic"
+elasticsearch_pass = "xjhqre"
+
+# OSS
+AccessKeyId = "LTAI5tRA8NFprYduUmGAuXAi"
+AccessKeySecret = "UgorzXce3lbW8n8hUMgomakhRtbfVO"
+EndPoint = "oss-cn-hangzhou.aliyuncs.com"
+bucket = "xjhqre-bbs"
+folder = 'test/'
+pic_oss_url = "https://xjhqre-bbs.oss-cn-hangzhou.aliyuncs.com/" + folder
+
+# 阿里云账号AccessKey拥有所有API的访问权限，风险很高。强烈建议您创建并使用RAM用户进行API访问或日常运维，请登录RAM控制台创建RAM用户。
+auth = oss2.Auth(AccessKeyId, AccessKeySecret)
+# yourEndpoint填写Bucket所在地域对应的Endpoint。以华东1（杭州）为例，Endpoint填写为https://oss-cn-hangzhou.aliyuncs.com。
+# 填写Bucket名称。
+bucket = oss2.Bucket(auth, EndPoint, bucket)
 
 
-def moveFile(srcfile, dstPath):  # 移动函数
-    if not os.path.isfile(srcfile):
-        print("%s not exist!" % (srcfile))
-    else:
-        fpath, fname = os.path.split(srcfile)  # 分离文件名和路径
-        if not os.path.exists(dstPath):
-            os.makedirs(dstPath)  # 创建路径
-        shutil.move(srcfile, dstPath + fname)  # 移动文件
-        print("move %s -> %s" % (srcfile, dstPath + fname))
+# 上传文件到指定bucket
+def upload_2_oss(file_name, file_path):
+    # 例  file_name：test/imageName.jpg
+    return bucket.put_object_from_file(file_name, file_path)
+
+
+class FeatureExtractor:
+    def __init__(self):
+        # Milvus
+        self.session = tf.compat.v1.Session()
+        set_session(self.session)
+        self.graph = tf.compat.v1.get_default_graph()
+        self.model = ResNet50(
+            weights='imagenet',
+            include_top=False,
+            pooling='avg',
+            backend=keras.backend,
+            layers=keras.layers,
+            models=keras.models,
+            utils=keras.utils
+        )
+
+    def execute(self, img_path):
+        img = image.load_img(img_path, target_size=(224, 224))
+        x = image.img_to_array(img)
+        x = np.expand_dims(x, axis=0)
+        x = preprocess_input(x)
+        with self.graph.as_default():
+            with self.session.as_default():
+                features = self.model.predict(x)
+                norm_feature = features[0] / LA.norm(features[0])
+                norm_feature = [i.item() for i in norm_feature]
+                return norm_feature[::2]
 
 
 if __name__ == '__main__':
     # 获取 java 里传来的参数，a[0]: 图片的OSS地址
-    a = []
-    for i in range(1, len(sys.argv)):
-        a.append((str(sys.argv[i])))
+    img_id = "69a9987d073247bf8c7a2443167f5dad"
+    # img_id = str(sys.argv[1])
+    img_url = "https://xjhqre-bbs.oss-cn-hangzhou.aliyuncs.com/picture/69a9987d073247bf8c7a2443167f5dad.jpg"
+    # img_url = str(sys.argv[2])
 
-    img_id = a[0]
-    img_url = a[1]
+    es = Elasticsearch(
+        hosts=[
+            "http://" + elasticsearch_name + ":" + elasticsearch_pass + "@" + elasticsearch_url
+            + ":" + elasticsearch_port + "/"], timeout=3600)
+    fe = FeatureExtractor()
+
     imageName = os.path.basename(img_url)  # 文件名称（包含后缀）
+    img_path = save_path + imageName  # 本地地址
 
-    # 保存图片到本地
+    # 保存OSS图片到本地
     response = requests.get(img_url)
-    image = Image.open(BytesIO(response.content))
-    image.save(config.save_path + imageName)
+    local_image = Image.open(BytesIO(response.content))
+    local_image.save(img_path)
 
-    try:
-        feature = fe.execute(config.save_path + imageName)
-    except Exception as e:
-        print("出现异常：" + str(e))
+    feature = fe.execute(img_path)
+
+    # 删除本地图片
+    if os.path.exists(img_path):
+        os.remove(img_path)
     else:
-        # 上传OSS
-        status = upload_2_oss(config.folder + imageName, config.save_path + imageName).resp.status
-        if status == 200:
-            # 上传es
-            doc = {'feature': feature, 'id': img_id}
-            es.index(config.elasticsearch_index, body=doc)  # 保存到elasticsearch
-            print(200)
-        else:
-            print("上传OSS异常")
+        print('删除图片失败:', img_path)
+
+    # 上传es
+    doc = {'id': img_id, 'feature': feature}
+    es.index(elasticsearch_index, body=doc)  # 保存到elasticsearch
+    print(200, end='')

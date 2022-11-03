@@ -19,8 +19,8 @@ import com.xjhqre.common.utils.uuid.IdUtils;
  * @since 10月 25, 2022
  */
 public class ImageUtil {
-    public final static String SAVE_IMAGE_PATH =
-        "G:\\workspace\\xjhqreBBS\\xjhqreBBS-picture\\src\\main\\resources\\upload\\";
+    // public final static String SAVE_IMAGE_PATH =
+    // "G:\\workspace\\xjhqreBBS\\xjhqreBBS-picture\\src\\main\\resources\\upload\\";
 
     public final static List<String> SUFFIXS =
         Arrays.asList(".jpg", ".jpeg", ".gif", ".png", ".JPG", ".JPEG", ".GIF", ".PNG");
@@ -73,14 +73,14 @@ public class ImageUtil {
         return IdUtils.simpleUUID();
     }
 
-    /**
-     * 返回图片保存地址
-     * 
-     * @param name
-     * @return
-     */
-    public static String getNewImagePath(String name) {
-        return SAVE_IMAGE_PATH + name;
-    }
+    // /**
+    // * 返回图片保存地址
+    // *
+    // * @param name
+    // * @return
+    // */
+    // public static String getNewImagePath(String name) {
+    // return SAVE_IMAGE_PATH + name;
+    // }
 
 }

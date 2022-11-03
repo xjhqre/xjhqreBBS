@@ -14,7 +14,7 @@ from tensorflow.keras.preprocessing import image
 from tensorflow.python import keras
 from tensorflow.python.keras.backend import set_session
 
-from com.xjhqre.picture.python import config
+from com.xjhqre.common.python import config
 
 
 class FeatureExtractor:

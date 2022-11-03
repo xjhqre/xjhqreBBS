@@ -6,10 +6,12 @@ save_path = 'G:\\workspace\\xjhqreBBS\\xjhqreBBS-picture\\src\\main\\resources\\
 
 types = [".jpg", ".jpeg", ".gif", ".png", ".JPG", ".JPEG", ".GIF", ".PNG"]
 
-elasticsearch_index = "imgsearch"
+elasticsearch_index = "xjhqrebbs-imgsearch"
 
 elasticsearch_url = '1.15.88.204'
-elasticsearch_port = 9201
+elasticsearch_port = "9201"
+elasticsearch_name = "elastic"
+elasticsearch_pass = "xjhqre"
 
 # OSS
 AccessKeyId = "LTAI5tRA8NFprYduUmGAuXAi"
