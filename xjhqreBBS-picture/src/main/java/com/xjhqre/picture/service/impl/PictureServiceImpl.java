@@ -1,5 +1,8 @@
 package com.xjhqre.picture.service.impl;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -76,5 +79,10 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
         queryWrapper.eq(picture.getPicName() != null, Picture::getPicName, picture.getPicName());
         queryWrapper.eq(picture.getStatus() != null, Picture::getStatus, picture.getStatus());
         return this.pictureMapper.selectPage(new Page<>(pageNum, pageSize), queryWrapper);
+    }
+
+    @Override
+    public List<Picture> selectBatch(String[] pictureIds) {
+        return this.pictureMapper.selectBatchIds(Arrays.asList(pictureIds));
     }
 }

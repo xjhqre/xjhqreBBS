@@ -5,6 +5,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -65,6 +66,14 @@ public class PictureController extends BaseController {
 
         this.pictureService.audit(pictureId, result);
         return R.success("审核成功");
+    }
+
+    @ApiOperation(value = "批量审核图片")
+    @PostMapping(value = "/batchAudit/{result}")
+    public R<String> batchAudit(@RequestBody String[] pictureIds, @PathVariable Integer result) {
+
+        this.pictureService.batchAudit(pictureIds, result);
+        return R.success("批量审核成功");
     }
 
 }

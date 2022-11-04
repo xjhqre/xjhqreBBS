@@ -18,6 +18,8 @@ public class PictureConstant {
     // offline.py
     public static final String OFFLINE =
         "G:\\workspace\\xjhqreBBS\\xjhqreBBS-common\\src\\main\\java\\com\\xjhqre\\common\\python\\offline.py";
+    public static final String OFFLINE_2 =
+        "G:\\workspace\\xjhqreBBS\\xjhqreBBS-common\\src\\main\\java\\com\\xjhqre\\common\\python\\offline2.py";
 
     // 待审核，用户提交后图片的状态。
     public static final Integer TO_BE_REVIEWED = 0;

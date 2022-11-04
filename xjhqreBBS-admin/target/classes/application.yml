@@ -33,6 +33,15 @@ spring:
       mail.smtp.socketFactory.port: 465
       mail.smtp.socketFactory.class: javax.net.ssl.SSLSocketFactory
       mail.smtp.socketFactory.fallback: false
+  rabbitmq:
+    ####连接地址
+    host: 116.62.103.149
+    ####端口号
+    port: 5672
+    ####账号
+    username: admin
+    ####密码
+    password: admin
 
 
 # MyBatis-plus配置

@@ -62,7 +62,7 @@ public class LoginService {
      */
     public String login(String username, String password, String code, String uuid) {
         // boolean captchaEnabled = this.configService.selectCaptchaEnabled();
-        // 验证码开关
+        // TODO 验证码开关
         // if (captchaEnabled) {
         // this.validateCaptcha(username, code, uuid);
         // }

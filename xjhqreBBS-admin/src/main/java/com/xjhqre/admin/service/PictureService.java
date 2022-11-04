@@ -32,4 +32,12 @@ public interface PictureService extends IService<Picture> {
     IPage<Picture> findPicture(Picture picture, Integer pageNum, Integer pageSize);
 
     void audit(String pictureId, Integer result);
+
+    /**
+     * 批量审核
+     * 
+     * @param pictureIds
+     * @param result
+     */
+    void batchAudit(String[] pictureIds, Integer result);
 }

@@ -1,5 +1,7 @@
 package com.xjhqre.picture.service;
 
+import java.util.List;
+
 import org.springframework.web.multipart.MultipartFile;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -30,4 +32,12 @@ public interface PictureService extends IService<Picture> {
      * @return
      */
     IPage<Picture> findPicture(Picture picture, Integer pageNum, Integer pageSize);
+
+    /**
+     * 批量查找
+     * 
+     * @param pictureIds
+     */
+    List<Picture> selectBatch(String[] pictureIds);
+
 }

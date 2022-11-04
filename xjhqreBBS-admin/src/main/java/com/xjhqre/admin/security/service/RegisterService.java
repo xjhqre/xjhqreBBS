@@ -31,7 +31,7 @@ public class RegisterService {
         User user = new User();
         user.setUserName(username);
 
-        // 验证码开关
+        // TODO 验证码开关
         // boolean captchaEnabled = this.configService.selectCaptchaEnabled();
         // if (captchaEnabled) {
         // this.validateCaptcha(username, registerBody.getCode(), registerBody.getUuid());

@@ -1,10 +1,11 @@
 package com.xjhqre.picture;
 
-import java.io.IOException;
-
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 
-import com.xjhqre.picture.utils.ElasticSearchUtils;
+import com.xjhqre.picture.mqConsumer.SinglePictureProcess;
 
 /**
  * <p>
@@ -14,12 +15,16 @@ import com.xjhqre.picture.utils.ElasticSearchUtils;
  * @author xjhqre
  * @since 10月 24, 2022
  */
+@SpringBootTest
+@RunWith(SpringRunner.class)
+// @ContextConfiguration(classes = CloudServiceApp.class)
 public class Test {
-    @Autowired
-    ElasticSearchUtils elasticSearchUtils;
 
-    @org.junit.jupiter.api.Test
-    public void Test1() throws IOException {
-        this.elasticSearchUtils.createIndex("test");
+    @Autowired
+    SinglePictureProcess processing;
+
+    @org.junit.Test
+    public void test1() {
+        this.processing.process("3a8ee2cc23f34edb8d8916285740fe9b");
     }
 }

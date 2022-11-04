@@ -61,6 +61,7 @@ public class LoginService {
      * @return token
      */
     public String login(String username, String password, String code, String uuid) {
+        // TODO 验证码开关
         // boolean captchaEnabled = this.configService.selectCaptchaEnabled();
         // 验证码开关
         // if (captchaEnabled) {

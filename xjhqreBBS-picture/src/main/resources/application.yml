@@ -1,6 +1,6 @@
 spring:
-  #  profiles:
-  #    active: druid
+  profiles:
+    active: druid
   application:
     name: picture
   # 文件上传
@@ -18,6 +18,15 @@ spring:
     port: 6379
     # 连接超时时间 2s
     timeout: 2000
+  rabbitmq:
+    ####连接地址
+    host: 116.62.103.149
+    ####端口号
+    port: 5672
+    ####账号
+    username: admin
+    ####密码
+    password: admin
 
 # MyBatis-plus配置
 mybatis-plus:

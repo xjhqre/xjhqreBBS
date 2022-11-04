@@ -1,6 +1,9 @@
 package com.xjhqre.admin.mapper;
 
+import java.util.List;
+
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.xjhqre.common.domain.picture.Picture;
@@ -16,4 +19,10 @@ import com.xjhqre.common.domain.picture.Picture;
 @Mapper
 public interface PictureMapper extends BaseMapper<Picture> {
 
+    /**
+     * 批量修改
+     * 
+     * @param pictures
+     */
+    void updateBatchByIds(@Param("list") List<Picture> pictures);
 }

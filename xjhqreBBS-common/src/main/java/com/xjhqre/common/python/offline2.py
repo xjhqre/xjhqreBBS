@@ -86,8 +86,8 @@ class FeatureExtractor:
 
 if __name__ == '__main__':
     # 获取 java 里传来的参数，a[0]: 图片的OSS地址
-    img_id = str(sys.argv[1])
-    img_url = str(sys.argv[2])
+    ids = str(sys.argv[1])[1:-1].split(', ')
+    urls = str(sys.argv[2])[1:-1].split(', ')
 
     es = Elasticsearch(
         hosts=[
@@ -95,23 +95,24 @@ if __name__ == '__main__':
             + ":" + elasticsearch_port + "/"], timeout=3600)
     fe = FeatureExtractor()
 
-    imageName = os.path.basename(img_url)  # 文件名称（包含后缀）
-    img_path = save_path + imageName  # 本地地址
+    try:
+        for index in range(len(ids)):
+            imageName = os.path.basename(urls[index])  # 文件名称（包含后缀）
+            img_path = save_path + imageName  # 本地地址
+            # 保存OSS图片到本地
+            response = requests.get(urls[index])
+            local_image = Image.open(BytesIO(response.content))
+            local_image.save(img_path)
+            feature = fe.execute(img_path)
+            # 删除本地图片
+            if os.path.exists(img_path):
+                os.remove(img_path)
+            else:
+                print('删除图片失败:', img_path)
 
-    # 保存OSS图片到本地
-    response = requests.get(img_url)
-    local_image = Image.open(BytesIO(response.content))
-    local_image.save(img_path)
-
-    feature = fe.execute(img_path)
-
-    # 删除本地图片
-    if os.path.exists(img_path):
-        os.remove(img_path)
-    else:
-        print('删除图片失败:', img_path)
-
-    # 上传es
-    doc = {'id': img_id, 'feature': feature}
-    es.index(elasticsearch_index, body=doc)  # 保存到elasticsearch
-    print(200, end='')
+            # 上传es
+            doc = {'id': ids[index], 'feature': feature}
+            es.index(elasticsearch_index, body=doc)  # 保存到elasticsearch
+        print(200, end='')
+    except:
+        print("解析图片出错")

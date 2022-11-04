@@ -1,9 +1,9 @@
 package com.xjhqre.admin.service.impl;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.util.Arrays;
+import java.util.List;
 
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +15,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.xjhqre.admin.mapper.PictureMapper;
 import com.xjhqre.admin.service.PictureService;
+import com.xjhqre.common.config.RabbitMQConfig;
 import com.xjhqre.common.constant.PictureConstant;
 import com.xjhqre.common.domain.picture.Picture;
 import com.xjhqre.common.exception.ServiceException;
@@ -43,6 +44,8 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
 
     @Autowired
     PictureMapper pictureMapper;
+    @Autowired
+    RabbitTemplate rabbitTemplate;
 
     /**
      * 上传图片，管理员上传无需审核
@@ -106,17 +109,13 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
         Picture picture = this.pictureMapper.selectById(pictureId);
         if (result == 1) {
             // 传输图片的本地地址给 Python 程序，返回 OSS url地址
-            // TODO 异步执行
             picture.setStatus(PictureConstant.PROCESSING);
             this.pictureMapper.updateById(picture); // 处理过程较长，大约几秒，先保存状态
-            String response = this.executePython(pictureId, picture.getUrl());
-            if (response.contains("200")) {
-                // 审核通过
-                picture.setStatus(PictureConstant.PASS);
-            } else {
-                // 审核出现异常，回到待审核状态
-                picture.setStatus(PictureConstant.TO_BE_REVIEWED);
-            }
+
+            // 发送到消息队列
+            this.rabbitTemplate.convertAndSend(RabbitMQConfig.DIRECT_EXCHANGE, RabbitMQConfig.DIRECT_ROUTING_A,
+                pictureId);
+
         } else {
             picture.setStatus(PictureConstant.FAILED);
         }
@@ -124,30 +123,32 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
     }
 
     /**
-     * 调用 Python 程序，上传本地到 OSS，解析图片向量保存到es
+     * 批量审核图片
      * 
-     * @param pictureId
-     *            图片id
-     * 
-     * @param pictureUrl
-     *            图片OSS地址
+     * @param pictureIds
+     * @param result
      */
-    public String executePython(String pictureId, String pictureUrl) {
-        StringBuilder response = new StringBuilder();
-        try {
-            // 参数1：解释器地址 参数二：Python程序地址 参数三：图片id 参数四：图片OSS地址。调用Python上传图片特征
-            String[] args = new String[] {PictureConstant.INTERPRETER, PictureConstant.OFFLINE, pictureId, pictureUrl};
-            Process proc = Runtime.getRuntime().exec(args);
-            BufferedReader in = new BufferedReader(new InputStreamReader(proc.getInputStream()));
-            String line;
-            while ((line = in.readLine()) != null) {
-                response.append(line).append('\n');
-            }
-            in.close();
-            proc.waitFor();
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
+    @Override
+    public void batchAudit(String[] pictureIds, Integer result) {
+        List<Picture> pictures = this.pictureMapper.selectBatchIds(Arrays.asList(pictureIds));
+        if (pictures.size() == 0) {
+            throw new ServiceException("错误：获取图片为空");
         }
-        return response.toString();
+        if (result == 1) {
+            // 传输图片的本地地址给 Python 程序，返回 OSS url地址
+            for (Picture picture : pictures) {
+                picture.setStatus(PictureConstant.PROCESSING);
+            }
+            this.pictureMapper.updateBatchByIds(pictures);
+            // 发送到消息队列
+            this.rabbitTemplate.convertAndSend(RabbitMQConfig.DIRECT_EXCHANGE, RabbitMQConfig.DIRECT_ROUTING_B,
+                pictureIds);
+
+        } else {
+            for (Picture picture : pictures) {
+                picture.setStatus(PictureConstant.FAILED);
+            }
+        }
+        this.pictureMapper.updateBatchByIds(pictures);
     }
 }

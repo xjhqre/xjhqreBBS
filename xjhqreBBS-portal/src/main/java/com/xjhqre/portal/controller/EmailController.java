@@ -1,4 +1,4 @@
-package com.xjhqre.common.controller;
+package com.xjhqre.portal.controller;
 
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
