@@ -12,6 +12,7 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="xjhqreBBS-sms" />
         <module name="xjhqreBBS-portal" />
         <module name="xjhqreBBS-admin" />
         <module name="xjhqreBBS-quartz" />
@@ -33,6 +34,7 @@
       <module name="xjhqreBBS-picture" options="-parameters" />
       <module name="xjhqreBBS-portal" options="-parameters" />
       <module name="xjhqreBBS-quartz" options="-parameters" />
+      <module name="xjhqreBBS-sms" options="-parameters" />
     </option>
   </component>
 </project>

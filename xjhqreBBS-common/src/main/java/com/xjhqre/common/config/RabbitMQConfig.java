@@ -24,6 +24,14 @@ public class RabbitMQConfig {
     public static final String DIRECT_ROUTING_A = "directRouting_A";
     public static final String DIRECT_ROUTING_B = "directRouting_B";
 
+    public static final String MOGU_BLOG = "mogu.blog";
+    public static final String MOGU_EMAIL = "mogu.email";
+    public static final String MOGU_SMS = "mogu.sms";
+    public static final String EXCHANGE_DIRECT = "exchange.direct";
+    public static final String ROUTING_KEY_BLOG = "mogu.blog";
+    public static final String ROUTING_KEY_EMAIL = "mogu.email";
+    public static final String ROUTING_KEY_SMS = "mogu.sms";
+
     @Bean
     public Queue directQueueA() {
         // durable:是否持久化,默认是false,持久化队列：会被存储在磁盘上，当消息代理重启时仍然存在，暂存队列：当前连接有效

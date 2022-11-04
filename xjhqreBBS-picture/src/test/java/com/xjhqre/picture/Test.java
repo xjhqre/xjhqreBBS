@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.xjhqre.picture.mqConsumer.SinglePictureProcess;
+import com.xjhqre.picture.listener.PictureProcessListener;
 
 /**
  * <p>
@@ -21,7 +21,7 @@ import com.xjhqre.picture.mqConsumer.SinglePictureProcess;
 public class Test {
 
     @Autowired
-    SinglePictureProcess processing;
+    PictureProcessListener processing;
 
     @org.junit.Test
     public void test1() {
