@@ -3,7 +3,10 @@ package com.xjhqre.common.config;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.DirectExchange;
+import org.springframework.amqp.core.ExchangeBuilder;
 import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
+import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -24,13 +27,31 @@ public class RabbitMQConfig {
     public static final String DIRECT_ROUTING_A = "directRouting_A";
     public static final String DIRECT_ROUTING_B = "directRouting_B";
 
-    public static final String MOGU_BLOG = "mogu.blog";
-    public static final String MOGU_EMAIL = "mogu.email";
-    public static final String MOGU_SMS = "mogu.sms";
-    public static final String EXCHANGE_DIRECT = "exchange.direct";
-    public static final String ROUTING_KEY_BLOG = "mogu.blog";
-    public static final String ROUTING_KEY_EMAIL = "mogu.email";
-    public static final String ROUTING_KEY_SMS = "mogu.sms";
+    // 消息交换机
+    public static final String MESSAGE_EXCHANGE = "messageExchange";
+    // 点赞收藏队列
+    public static final String THUMB_COLLECT = "thumb_collect";
+    // 评论和@队列
+    public static final String COMMENT = "comment";
+    // 粉丝队列
+    public static final String FOLLOW = "follow";
+    // 路由密钥
+    public static final String ROUTING_KEY_THUMB_COLLECT = "thumb_collect_key";
+    public static final String ROUTING_KEY_COMMENT = "comment_key";
+    public static final String ROUTING_KEY_FOLLOW = "follow_key";
+
+    // 图片处理Direct交换机
+    @Bean
+    DirectExchange directExchange() {
+        // 声明路由交换机，durable:在rabbitmq重启后，交换机还在
+        return ExchangeBuilder.directExchange(DIRECT_EXCHANGE).durable(true).build();
+    }
+
+    // 用户消息Direct交换机
+    @Bean
+    DirectExchange MESSAGE_EXCHANGE() {
+        return ExchangeBuilder.directExchange(MESSAGE_EXCHANGE).durable(true).build();
+    }
 
     @Bean
     public Queue directQueueA() {
@@ -47,11 +68,19 @@ public class RabbitMQConfig {
         return new Queue(DIRECT_QUEUE_B, true);
     }
 
-    // Direct交换机
     @Bean
-    DirectExchange directExchange() {
-        // return new DirectExchange("TestDirectExchange",true,true);
-        return new DirectExchange(DIRECT_EXCHANGE, true, false);
+    public Queue THUMB_COLLECT() {
+        return new Queue(THUMB_COLLECT, true);
+    }
+
+    @Bean
+    public Queue COMMENT() {
+        return new Queue(COMMENT, true);
+    }
+
+    @Bean
+    public Queue FOLLOW() {
+        return new Queue(FOLLOW, true);
     }
 
     // 绑定 将队列和交换机绑定, 并设置用于匹配键
@@ -66,8 +95,8 @@ public class RabbitMQConfig {
     }
 
     @Bean
-    DirectExchange lonelyDirectExchange() {
-        return new DirectExchange("lonelyDirectExchange");
+    public MessageConverter messageConverter() {
+        return new Jackson2JsonMessageConverter();
     }
 
 }
