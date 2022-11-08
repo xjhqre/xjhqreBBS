@@ -69,7 +69,7 @@ public class SortController extends BaseController {
     @PreAuthorize("@ss.hasPermission('article:sort:insert')")
     @Log(title = "分类管理", businessType = BusinessType.INSERT)
     public R<String> addSort(@RequestBody @Validated Sort sort) {
-        this.sortService.add(sort);
+        this.sortService.save(sort);
         return R.success("添加分类成功");
     }
 
@@ -78,7 +78,7 @@ public class SortController extends BaseController {
     @PreAuthorize("@ss.hasPermission('article:sort:update')")
     @Log(title = "分类管理", businessType = BusinessType.UPDATE)
     public R<String> update(@RequestBody @Validated Sort sort) {
-        this.sortService.update(sort);
+        this.sortService.updateById(sort);
         return R.success("修改分类成功");
     }
 

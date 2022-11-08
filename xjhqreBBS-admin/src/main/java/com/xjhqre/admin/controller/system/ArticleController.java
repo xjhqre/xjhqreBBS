@@ -8,7 +8,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.xjhqre.common.common.R;
 import com.xjhqre.common.constant.ArticleStatus;
 import com.xjhqre.common.constant.ErrorCode;
@@ -41,7 +43,12 @@ public class ArticleController extends BaseController {
     @GetMapping("findArticle/{pageNum}/{pageSize}")
     public R<IPage<Article>> findArticle(Article article, @PathVariable("pageNum") Integer pageNum,
         @PathVariable("pageSize") Integer pageSize) {
-        return R.success(this.articleService.findArticle(article, pageNum, pageSize));
+        LambdaQueryWrapper<Article> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(article.getArticleId() != null, Article::getArticleId, article.getArticleId())
+            .eq(article.getStatus() != null, Article::getStatus, ArticleStatus.PUBLISH)
+            .eq(article.getAuthor() != null, Article::getAuthor, article.getAuthor())
+            .like(article.getCreateBy() != null, Article::getCreateBy, article.getCreateBy());
+        return R.success(this.articleService.page(new Page<>(pageNum, pageSize), queryWrapper));
     }
 
     @ApiOperation(value = "根据文章编号获取文章详细")
@@ -50,20 +57,20 @@ public class ArticleController extends BaseController {
         if (articleId == null) {
             throw new ServiceException(ErrorCode.NULL_EXCEPTION, "不允许传入空值");
         }
-        return R.success(this.articleService.selectArticleById(articleId));
+        return R.success(this.articleService.getById(articleId));
     }
 
     @ApiOperation(value = "审核文章")
     @GetMapping(value = "/audit/{articleId}/{isPass}")
     @PreAuthorize("@ss.hasPermission('portal:article:audit')")
     public R<String> audit(@PathVariable Long articleId, @PathVariable String isPass) {
-        Article article = this.articleService.selectArticleById(articleId);
-        if ("1".equals(isPass)) {
+        Article article = this.articleService.getById(articleId);
+        if ("Y".equals(isPass)) {
             article.setStatus(ArticleStatus.PUBLISH);
         } else {
             article.setStatus(ArticleStatus.GOBACK);
         }
-        this.articleService.updateArticle(article);
+        this.articleService.updateById(article);
         return R.success("审核完成");
     }
 

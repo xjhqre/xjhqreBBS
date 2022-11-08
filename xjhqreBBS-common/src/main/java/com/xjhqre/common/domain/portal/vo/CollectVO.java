@@ -24,8 +24,11 @@ public class CollectVO extends Collect {
     @Size(max = 200, message = "博客标题简介不能超过200个字符")
     private String summary;
 
+    @ApiModelProperty(value = "作者(用户id)")
+    private Long author;
+
     @ApiModelProperty(value = "作者(用户名)")
-    private String author;
+    private String authorName;
 
     @ApiModelProperty(value = "博客浏览数", hidden = true)
     private Integer viewCount;

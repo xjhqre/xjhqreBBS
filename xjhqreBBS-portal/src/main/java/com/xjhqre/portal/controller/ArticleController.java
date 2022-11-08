@@ -22,8 +22,8 @@ import com.xjhqre.common.controller.BaseController;
 import com.xjhqre.common.domain.portal.Article;
 import com.xjhqre.common.domain.portal.dto.ArticleDTO;
 import com.xjhqre.common.exception.ServiceException;
+import com.xjhqre.common.service.ArticleService;
 import com.xjhqre.common.utils.SecurityUtils;
-import com.xjhqre.portal.service.ArticleService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -115,8 +115,8 @@ public class ArticleController extends BaseController {
     @ApiOperation(value = "修改文章")
     @PostMapping(value = "/update")
     public R<String> update(@RequestBody @Validated ArticleDTO articleDTO) {
-        String author = articleDTO.getAuthor();
-        if (!SecurityUtils.getUsername().equals(author)) {
+        Long author = articleDTO.getAuthor();
+        if (!SecurityUtils.getUserId().equals(author)) {
             throw new ServiceException("没有权限修改别人的文章");
         }
         this.articleService.updateArticle(articleDTO);
@@ -130,8 +130,8 @@ public class ArticleController extends BaseController {
             throw new ServiceException(ExceptionConstants.NOT_NULL);
         }
         Article article = this.articleService.viewArticle(articleId);
-        String author = article.getAuthor();
-        if (!SecurityUtils.getUsername().equals(author)) {
+        Long author = article.getAuthor();
+        if (!SecurityUtils.getUserId().equals(author)) {
             throw new ServiceException("没有权限删除别人的文章");
         }
         this.articleService.deleteArticleById(articleId);

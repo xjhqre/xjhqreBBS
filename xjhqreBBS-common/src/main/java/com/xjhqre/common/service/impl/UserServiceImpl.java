@@ -414,8 +414,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     public IPage<Message3> findMessage3(Long userId, Integer pageNum, Integer pageSize) {
         LambdaQueryWrapper<Message3> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(Message3::getCollectedId, userId);
-        return this.message3Service.page(new Page<>(pageNum, pageSize), queryWrapper);
+        queryWrapper.eq(Message3::getCollectedId, userId).eq(Message3::getDelFlag, "0");
+        Page<Message3> page = this.message3Service.page(new Page<>(pageNum, pageSize), queryWrapper);
+        List<Message3> records = page.getRecords();
+        for (Message3 message3 : records) {
+            message3.setStatus("1"); // 设置已读
+        }
+        this.message3Service.updateBatchById(records);
+        return page;
     }
 
 }

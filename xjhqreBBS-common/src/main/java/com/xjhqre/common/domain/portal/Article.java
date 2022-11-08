@@ -44,8 +44,8 @@ public class Article extends BaseEntity {
     @ApiModelProperty(value = "博客内容")
     private String content;
 
-    @ApiModelProperty(value = "作者(用户名)")
-    private String author;
+    @ApiModelProperty(value = "作者(用户id)")
+    private Long author;
 
     @ApiModelProperty(value = "博客浏览数", hidden = true)
     private Integer viewCount;

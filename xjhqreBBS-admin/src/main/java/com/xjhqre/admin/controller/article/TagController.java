@@ -68,7 +68,7 @@ public class TagController extends BaseController {
     @PreAuthorize("@ss.hasPermission('article:tag:insert')")
     @Log(title = "标签管理", businessType = BusinessType.INSERT)
     public R<String> add(@RequestBody @Validated Tag tag) {
-        this.tagService.addTag(tag);
+        this.tagService.save(tag);
         return R.success("添加标签成功");
     }
 
@@ -77,7 +77,7 @@ public class TagController extends BaseController {
     @PreAuthorize("@ss.hasPermission('article:tag:update')")
     @Log(title = "标签管理", businessType = BusinessType.UPDATE)
     public R<String> update(@RequestBody @Validated Tag tag) {
-        this.tagService.updateTag(tag);
+        this.tagService.updateById(tag);
         return R.success("修改标签成功");
     }
 

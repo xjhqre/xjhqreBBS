@@ -1,5 +1,8 @@
 package com.xjhqre.common.domain.sms;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -30,19 +33,29 @@ public class Message3 extends BaseEntity {
     private Integer messageId;
 
     @ApiModelProperty(value = "点赞收藏人id", example = "0")
+    @NotNull
     private Long collectorId;
 
     @ApiModelProperty(value = "点赞收藏人名称")
     private String collectorName;
 
     @ApiModelProperty(value = "被点赞收藏人id", example = "0")
+    @NotNull
     private Long collectedId;
 
     @ApiModelProperty(value = "被点赞收藏人名称")
     private String collectedName;
 
     @ApiModelProperty(value = "0点赞1收藏")
+    @NotBlank
     private String messageType;
+
+    @ApiModelProperty(value = "文章id")
+    @NotNull
+    private Long articleId;
+
+    @ApiModelProperty(value = "文章标题")
+    private String articleTitle;
 
     @ApiModelProperty(value = "状态")
     private String status;

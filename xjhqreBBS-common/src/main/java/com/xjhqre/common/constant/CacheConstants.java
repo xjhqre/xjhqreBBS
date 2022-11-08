@@ -57,17 +57,17 @@ public class CacheConstants {
     public static final String USER_TOTAL_THUMB_COUNT_KEY = "user_total_thumb_count:";
 
     /**
-     * 用户点赞的文章 HashMap<String, Set<Long>>
+     * 用户点赞的文章 HashMap<用户id, Set<文章id>>
      */
     public static final String USER_THUMB_ARTICLE_KEY = "user_thumb_article:";
 
     /**
-     * 文章点赞的用户信息 HashMap<String, Set<Long>>
+     * 文章点赞的用户信息 HashMap<文章id, Set<用户id>>
      */
     public static final String ARTICLE_LIKED_USER_KEY = "article_liked_user:";
 
     /**
-     * 浏览量 HashMap<String, List<Long>>，键为文章id，值为浏览用户id集合，可重复
+     * 浏览量 HashMap<文章id, Set<用户id>>
      */
     public static final String ARTICLE_VIEW_USER_KEY = "article_view_user_key:";
 }
