@@ -1,13 +1,12 @@
-import os
-import sys
-from io import BytesIO
-
 import numpy as np
+import os
 import oss2
 import requests
+import sys
 import tensorflow as tf
 from PIL import Image
 from elasticsearch import Elasticsearch
+from io import BytesIO
 from keras_applications.resnet50 import ResNet50
 from numpy import linalg as LA
 from tensorflow.keras.applications.resnet50 import preprocess_input
@@ -20,7 +19,7 @@ from tensorflow.python.keras.backend import set_session
 '''
 
 """
-以图搜图配置文件
+以图搜图配置文件，批量处理
 """
 # TODO 修改保存地址
 save_path = 'G:\\workspace\\xjhqreBBS\\xjhqreBBS-picture\\src\\main\\resources\\upload\\'

@@ -19,6 +19,7 @@ import com.xjhqre.common.controller.BaseController;
 import com.xjhqre.common.domain.admin.User;
 import com.xjhqre.common.domain.model.LoginUser;
 import com.xjhqre.common.domain.portal.Article;
+import com.xjhqre.common.domain.sms.Message3;
 import com.xjhqre.common.enums.BusinessType;
 import com.xjhqre.common.service.UserService;
 import com.xjhqre.common.utils.FileUtils;
@@ -41,7 +42,7 @@ import io.swagger.annotations.ApiOperation;
  */
 @RestController
 @Api(value = "个人信息接口", tags = "个人信息接口")
-@RequestMapping("/system/user/profile")
+@RequestMapping("/portal/profile")
 public class ProfileController extends BaseController {
     @Autowired
     private UserService userService;
@@ -148,5 +149,16 @@ public class ProfileController extends BaseController {
     public R<IPage<Article>> findMyArticle(Article article, @PathVariable("pageNum") Integer pageNum,
         @PathVariable("pageSize") Integer pageSize) {
         return R.success(this.userService.findUserArticle(article, pageNum, pageSize));
+    }
+
+    @ApiOperation(value = "查询用户消息-点赞或收藏")
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "pageNum", value = "正整数，表示查询第几页", required = true, dataType = "int", example = "1"),
+        @ApiImplicitParam(name = "pageSize", value = "正整数，表示每页几条记录", required = true, dataType = "int",
+            example = "20")})
+    @GetMapping("findMessage3/{pageNum}/{pageSize}")
+    public R<IPage<Message3>> findMessage3(Long userId, @PathVariable("pageNum") Integer pageNum,
+        @PathVariable("pageSize") Integer pageSize) {
+        return R.success(this.userService.findMessage3(userId, pageNum, pageSize));
     }
 }

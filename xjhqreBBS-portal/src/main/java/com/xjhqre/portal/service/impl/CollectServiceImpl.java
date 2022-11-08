@@ -60,7 +60,7 @@ public class CollectServiceImpl extends ServiceImpl<CollectMapper, Collect> impl
         List<CollectVO> collectVOS = collectPage.getRecords().stream().map(record -> {
             CollectVO collectVO = new CollectVO();
             Long articleId = record.getArticleId();
-            Article article = this.articleService.selectArticleById(articleId);
+            Article article = this.articleService.viewArticle(articleId);
             BeanUtils.copyProperties(record, collectVO);
             collectVO.setSummary(article.getSummary());
             collectVO.setAuthor(article.getAuthor());

@@ -16,7 +16,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.xjhqre.common.common.R;
 import com.xjhqre.common.controller.BaseController;
 import com.xjhqre.common.domain.portal.Sort;
-import com.xjhqre.portal.service.SortService;
+import com.xjhqre.common.service.SortService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -33,7 +33,7 @@ import io.swagger.annotations.ApiOperation;
  */
 @Api(value = "文章分类操作接口", tags = "文章分类操作接口")
 @RestController
-@RequestMapping("/sort")
+@RequestMapping("/portal/sort")
 public class SortController extends BaseController {
 
     @Autowired
@@ -60,21 +60,21 @@ public class SortController extends BaseController {
     @ApiOperation(value = "添加分类")
     @PostMapping(value = "/add}")
     public R<String> add(@RequestBody @Validated Sort sort) {
-        this.sortService.addSort(sort);
+        this.sortService.save(sort);
         return R.success("添加分类成功");
     }
 
     @ApiOperation(value = "修改分类")
     @PostMapping(value = "/update}")
     public R<String> update(@RequestBody @Validated Sort sort) {
-        this.sortService.updateSort(sort);
+        this.sortService.updateById(sort);
         return R.success("修改分类成功");
     }
 
     @ApiOperation(value = "删除分类")
     @PostMapping(value = "/delete}")
     public R<String> delete(Long sortId) {
-        this.sortService.deleteSort(sortId);
+        this.sortService.delete(sortId);
         return R.success("删除分类成功");
     }
 }

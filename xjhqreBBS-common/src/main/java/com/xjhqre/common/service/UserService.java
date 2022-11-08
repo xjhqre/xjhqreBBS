@@ -5,6 +5,7 @@ import java.util.List;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.xjhqre.common.domain.admin.User;
 import com.xjhqre.common.domain.portal.Article;
+import com.xjhqre.common.domain.sms.Message3;
 
 /**
  * 用户 业务层
@@ -216,4 +217,14 @@ public interface UserService {
      * @return
      */
     IPage<Article> findUserArticle(Article article, Integer pageNum, Integer pageSize);
+
+    /**
+     * 分页查询用户信息-点赞收藏
+     * 
+     * @param userId
+     * @param pageNum
+     * @param pageSize
+     * @return
+     */
+    IPage<Message3> findMessage3(Long userId, Integer pageNum, Integer pageSize);
 }

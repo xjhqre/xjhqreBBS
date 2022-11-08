@@ -1,4 +1,4 @@
-package com.xjhqre.admin.service.impl;
+package com.xjhqre.common.service.impl;
 
 import java.util.List;
 
@@ -10,10 +10,10 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.xjhqre.admin.mapper.TagMapper;
-import com.xjhqre.admin.service.TagService;
 import com.xjhqre.common.domain.portal.Tag;
 import com.xjhqre.common.exception.ServiceException;
+import com.xjhqre.common.mapper.TagMapper;
+import com.xjhqre.common.service.TagService;
 
 /**
  * <p>
@@ -46,7 +46,7 @@ public class TagServiceImpl extends ServiceImpl<TagMapper, Tag> implements TagSe
 
     /**
      * 分页查询标签列表
-     * 
+     *
      * @param tag
      * @param pageNum
      * @param pageSize
@@ -56,49 +56,14 @@ public class TagServiceImpl extends ServiceImpl<TagMapper, Tag> implements TagSe
     public IPage<Tag> findTag(Tag tag, Integer pageNum, Integer pageSize) {
         LambdaQueryWrapper<Tag> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(tag.getTagId() != null, Tag::getTagId, tag.getTagId())
-            .eq(tag.getName() != null, Tag::getName, tag.getName())
-            .eq(tag.getSort() != null, Tag::getSort, tag.getSort());
-        return this.tagMapper.selectPage(new Page<>(pageNum, pageSize), queryWrapper);
-    }
-
-    /**
-     * 减少引用数量
-     * 
-     * @param tagId
-     */
-    @Override
-    public void subRefCount(Long tagId) {
-        this.tagMapper.subRefCount(tagId);
-    }
-
-    /**
-     * 引用数量+1
-     * 
-     * @param tagId
-     */
-    @Override
-    public void addRefCount(Long tagId) {
-        this.tagMapper.addRefCount(tagId);
-    }
-
-    /**
-     * 添加标签
-     * 
-     * @param tag
-     */
-    @Override
-    public void addTag(Tag tag) {
-        this.tagMapper.insert(tag);
-    }
-
-    /**
-     * 修改标签
-     * 
-     * @param tag
-     */
-    @Override
-    public void updateTag(Tag tag) {
-        this.tagMapper.updateById(tag);
+            .eq(tag.getName() != null, Tag::getName, tag.getName()).orderByDesc(Tag::getSort);
+        Page<Tag> tagPage = this.tagMapper.selectPage(new Page<>(pageNum, pageSize), queryWrapper);
+        // 统计标签引用
+        for (Tag item : tagPage.getRecords()) {
+            int count = this.tagMapper.countRef(item.getTagId());
+            item.setRefCount(count);
+        }
+        return tagPage;
     }
 
     /**
@@ -107,9 +72,13 @@ public class TagServiceImpl extends ServiceImpl<TagMapper, Tag> implements TagSe
      * @param tag
      */
     @Override
-    public void deleteTag(Tag tag) {
+    public void delete(Tag tag) {
+        Integer refCount = tag.getRefCount();
+        if (refCount == 0) {
+            refCount = this.tagMapper.countRef(tag.getTagId());
+        }
         // 引用计数校验
-        if (tag.getRefCount() > 0) {
+        if (refCount > 0) {
             throw new ServiceException("标签被引用，无法删除");
         }
         this.tagMapper.deleteById(tag);

@@ -1,6 +1,3 @@
-/*
- * Copyright (c) 2019, CCSSOFT All Rights Reserved.
- */
 package com.xjhqre.common.domain.portal;
 
 import javax.validation.constraints.NotBlank;
@@ -43,7 +40,7 @@ public class Sort extends BaseEntity {
     private String description;
 
     @ApiModelProperty(value = "引用统计", hidden = true)
-    private Long refCount;
+    private Integer refCount;
 
     @ApiModelProperty(value = "状态")
     private Integer status;

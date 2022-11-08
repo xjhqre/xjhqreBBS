@@ -3,98 +3,18 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.xjhqre.admin.mapper.SortMapper">
+<mapper namespace="com.xjhqre.common.mapper.SortMapper">
 
-    <!-- 查询文章分类列表-->
-    <select id="listSort" resultType="com.xjhqre.common.domain.portal.Sort">
-        select *
-        from t_sort
-        limit #{limit}
+    <!-- 统计分类引用次数，只统计发布状态的文章 -->
+    <select id="countRef" resultType="java.lang.Integer">
+        select count(*)
+        from t_article_sort tas,
+             t_article ta,
+             t_sort ts
+        where tas.article_id = ta.article_id
+          and tas.sort_id = ts.sort_id
+          and ts.sort_id = #{sortId}
+          and ta.status = '2'
     </select>
 
-    <!-- 根据条件分页查询文章分类 -->
-    <select id="findSort" resultType="com.xjhqre.common.domain.portal.Sort">
-        select * from t_sort
-        <where>
-            <if test="sort.sortId != null">
-                and sort_id = #{sort.sortId}
-            </if>
-            <if test="sort.name != null and sort.name != ''">
-                and name like concat('%', #{sort.name}, '%')
-            </if>
-        </where>
-    </select>
-
-    <!-- 添加分类 -->
-    <insert id="add">
-        insert into t_sort(
-        <if test="sort.sortId != null">sort_id,</if>
-        <if test="sort.name != null and sort.name != ''">name,</if>
-        <if test="sort.description != null and sort.description!= ''">description,</if>
-        <if test="sort.ref_count != null">ref_count,</if>
-        <if test="sort.status != null">status,</if>
-        <if test="sort.del_flag != null and sort.del_flag != ''">del_flag,</if>
-        <if test="sort.sort != null">sort,</if>
-        <if test="sort.create_by != null">create_by,</if>
-        create_time,
-        <if test="sort.remark != null">remark</if>
-        )values (
-        <if test="sort.sortId != null">#{sort.sortId},</if>
-        <if test="sort.name != null and sort.name != ''">#{sort.name},</if>
-        <if test="sort.description != null and sort.description!= ''">#{sort.description},</if>
-        <if test="sort.ref_count != null">#{sort.refCount},</if>
-        <if test="sort.status != null">#{sort.status},</if>
-        <if test="sort.del_flag != null and sort.del_flag != ''">#{sort.delFlag},</if>
-        <if test="sort.sort != null">#{sort.sort},</if>
-        <if test="sort.create_by != null">#{sort.createBy},</if>
-        sysdate(),
-        <if test="sort.remark != null">#{sort.remark}</if>
-        )
-    </insert>
-
-    <!-- 修改分类 -->
-    <update id="update">
-        update t_sort
-        <set>
-            <if test="">name = #{name},</if>
-            <if test="">description = #{description},</if>
-            <if test="">status = #{status},</if>
-            <if test="">delFlag= #{delFlag},</if>
-            <if test="">sort = #{sort},</if>
-            <if test="">updateBy = #{updateBy},</if>
-            updateTime = sysdate(),
-            <if test="">remark = #{remark}</if>
-        </set>
-    </update>
-
-    <update id="updateDictData">
-        update t_dict_data
-        <set>
-            <if test="dictSort != null">dict_sort = #{dictSort},</if>
-            <if test="dictLabel != null and dictLabel != ''">dict_label = #{dictLabel},</if>
-            <if test="dictValue != null and dictValue != ''">dict_value = #{dictValue},</if>
-            <if test="dictType != null and dictType != ''">dict_type = #{dictType},</if>
-            <if test="cssClass != null">css_class = #{cssClass},</if>
-            <if test="listClass != null">list_class = #{listClass},</if>
-            <if test="isDefault != null and isDefault != ''">is_default = #{isDefault},</if>
-            <if test="status != null">status = #{status},</if>
-            <if test="remark != null">remark = #{remark},</if>
-            <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
-            update_time = sysdate()
-        </set>
-        where dict_code = #{dictCode}
-    </update>
-
-    <!-- 引用数量-1 -->
-    <update id="subRefCount">
-        update t_sort
-        set ref_count = ref_count - 1
-        where sort_id = #{tagId}
-    </update>
-
-    <update id="addRefCount">
-        update t_sort
-        set ref_count = ref_count + 1
-        where sort_id = #{tagId}
-    </update>
 </mapper>

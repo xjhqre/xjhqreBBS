@@ -17,28 +17,25 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RabbitMQConfig {
 
-    // 简单队列，处理单个审核
-    public static final String DIRECT_QUEUE_A = "directQueue_A";
-    // 处理多个审核
-    public static final String DIRECT_QUEUE_B = "directQueue_B";
-    // 直连交换机
-    public static final String DIRECT_EXCHANGE = "directExchange";
-    // 直连路由
-    public static final String DIRECT_ROUTING_A = "directRouting_A";
-    public static final String DIRECT_ROUTING_B = "directRouting_B";
+    // 队列
+    public static final String DIRECT_QUEUE_A = "directQueue_A"; // 单个图片审核
+    public static final String DIRECT_QUEUE_B = "directQueue_B"; // 批量图片审核
+    public static final String THUMB_COLLECT = "thumb_collect"; // 点赞收藏队列
+    public static final String COMMENT = "comment"; // 评论和@队列
+    public static final String FOLLOW = "follow"; // 粉丝队列
 
-    // 消息交换机
-    public static final String MESSAGE_EXCHANGE = "messageExchange";
-    // 点赞收藏队列
-    public static final String THUMB_COLLECT = "thumb_collect";
-    // 评论和@队列
-    public static final String COMMENT = "comment";
-    // 粉丝队列
-    public static final String FOLLOW = "follow";
+    // 交换机
+    public static final String DIRECT_EXCHANGE = "directExchange"; // 图片处理交换机
+    public static final String MESSAGE_EXCHANGE = "messageExchange"; // 消息交换机
+
     // 路由密钥
-    public static final String ROUTING_KEY_THUMB_COLLECT = "thumb_collect_key";
-    public static final String ROUTING_KEY_COMMENT = "comment_key";
-    public static final String ROUTING_KEY_FOLLOW = "follow_key";
+    public static final String DIRECT_ROUTING_A = "directRouting_A"; // 处理图片
+    public static final String DIRECT_ROUTING_B = "directRouting_B";
+    public static final String ROUTING_KEY_THUMB_COLLECT = "thumb_collect_key"; // 点赞收藏密钥
+    public static final String ROUTING_KEY_COMMENT = "comment_key"; // 评论密钥
+    public static final String ROUTING_KEY_FOLLOW = "follow_key"; // 关注密钥
+
+    ///////////////////////////////////////// 交换机声明 ///////////////////////////////////////////
 
     // 图片处理Direct交换机
     @Bean
@@ -49,9 +46,11 @@ public class RabbitMQConfig {
 
     // 用户消息Direct交换机
     @Bean
-    DirectExchange MESSAGE_EXCHANGE() {
+    DirectExchange messageExchange() {
         return ExchangeBuilder.directExchange(MESSAGE_EXCHANGE).durable(true).build();
     }
+
+    ///////////////////////////////////////// 队列声明 ///////////////////////////////////////////
 
     @Bean
     public Queue directQueueA() {
@@ -69,19 +68,21 @@ public class RabbitMQConfig {
     }
 
     @Bean
-    public Queue THUMB_COLLECT() {
+    public Queue thumbCollectQueue() {
         return new Queue(THUMB_COLLECT, true);
     }
 
     @Bean
-    public Queue COMMENT() {
+    public Queue commentQueue() {
         return new Queue(COMMENT, true);
     }
 
     @Bean
-    public Queue FOLLOW() {
+    public Queue followQueue() {
         return new Queue(FOLLOW, true);
     }
+
+    ///////////////////////////////////////// 绑定队列和交换机 ///////////////////////////////////////////
 
     // 绑定 将队列和交换机绑定, 并设置用于匹配键
     @Bean
@@ -92,6 +93,21 @@ public class RabbitMQConfig {
     @Bean
     Binding bindingDirectB() {
         return BindingBuilder.bind(this.directQueueB()).to(this.directExchange()).with(DIRECT_ROUTING_B);
+    }
+
+    @Bean
+    Binding bindingThumbCollect() {
+        return BindingBuilder.bind(this.thumbCollectQueue()).to(this.messageExchange()).with(ROUTING_KEY_THUMB_COLLECT);
+    }
+
+    @Bean
+    Binding bindingComment() {
+        return BindingBuilder.bind(this.commentQueue()).to(this.messageExchange()).with(ROUTING_KEY_COMMENT);
+    }
+
+    @Bean
+    Binding bindingFollow() {
+        return BindingBuilder.bind(this.followQueue()).to(this.messageExchange()).with(ROUTING_KEY_FOLLOW);
     }
 
     @Bean

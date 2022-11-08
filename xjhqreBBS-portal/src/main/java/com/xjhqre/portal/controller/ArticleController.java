@@ -12,14 +12,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.xjhqre.common.common.R;
 import com.xjhqre.common.constant.ArticleStatus;
+import com.xjhqre.common.constant.ExceptionConstants;
 import com.xjhqre.common.controller.BaseController;
 import com.xjhqre.common.domain.portal.Article;
 import com.xjhqre.common.domain.portal.dto.ArticleDTO;
 import com.xjhqre.common.exception.ServiceException;
-import com.xjhqre.common.utils.DateUtils;
 import com.xjhqre.common.utils.SecurityUtils;
 import com.xjhqre.portal.service.ArticleService;
 
@@ -38,7 +40,7 @@ import io.swagger.annotations.ApiOperation;
  */
 @Api(value = "文章操作接口", tags = "文章操作接口")
 @RestController
-@RequestMapping("/article")
+@RequestMapping("/portal/article")
 public class ArticleController extends BaseController {
 
     @Autowired
@@ -52,7 +54,12 @@ public class ArticleController extends BaseController {
     @GetMapping("findArticle/{pageNum}/{pageSize}")
     public R<IPage<Article>> findArticle(Article article, @PathVariable("pageNum") Integer pageNum,
         @PathVariable("pageSize") Integer pageSize) {
-        return R.success(this.articleService.findArticle(article, pageNum, pageSize));
+        LambdaQueryWrapper<Article> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(article.getArticleId() != null, Article::getArticleId, article.getArticleId())
+            .eq(article.getAuthor() != null, Article::getAuthor, article.getAuthor())
+            .eq(Article::getStatus, ArticleStatus.PUBLISH)
+            .eq(article.getTitle() != null, Article::getTitle, article.getTitle());
+        return R.success(this.articleService.page(new Page<>(pageNum, pageSize), queryWrapper));
     }
 
     @ApiOperation(value = "根据分类id分页查询文章列表")
@@ -81,35 +88,28 @@ public class ArticleController extends BaseController {
     @GetMapping(value = "/{articleId}")
     public R<Article> getArticleDetails(@PathVariable Long articleId) {
         if (articleId == null) {
-            throw new ServiceException("不允许传入空值");
+            throw new ServiceException(ExceptionConstants.NOT_NULL);
         }
-        return R.success(this.articleService.selectArticleById(articleId));
+        return R.success(this.articleService.getById(articleId));
+    }
+
+    @ApiOperation(value = "浏览文章")
+    @GetMapping(value = "/{articleId}")
+    public R<Article> viewArticle(@PathVariable Long articleId) {
+        if (articleId == null) {
+            throw new ServiceException(ExceptionConstants.NOT_NULL);
+        }
+        return R.success(this.articleService.viewArticle(articleId));
     }
 
     @ApiOperation(value = "发布文章")
-    @PostMapping(value = "/uploadArticle")
-    public R<String> uploadArticle(@RequestBody @Validated ArticleDTO articleDTO) {
+    @PostMapping(value = "/postArticle")
+    public R<String> postArticle(@RequestBody @Validated ArticleDTO articleDTO) {
         if (SecurityUtils.getLoginUser() == null) {
             throw new ServiceException("登陆之后才能发布文章！！！");
         }
-        this.articleService.addArticle(articleDTO);
+        this.articleService.postArticle(articleDTO);
         return R.success("发布文章成功");
-    }
-
-    @ApiOperation(value = "保存为草稿")
-    @PostMapping(value = "/saveDrafts")
-    public R<String> saveDrafts(@RequestBody @Validated ArticleDTO articleDTO) {
-        articleDTO.setStatus(ArticleStatus.DRAFT); // 草稿
-        articleDTO.setAuthor(this.getUsername());
-        articleDTO.setCollectCount(0);
-        articleDTO.setThumbCount(0);
-        articleDTO.setViewCount(0);
-        articleDTO.setSort(5);
-        articleDTO.setIsPublish("1");
-        articleDTO.setCreateBy(this.getUsername());
-        articleDTO.setCreateTime(DateUtils.getNowDate());
-        this.articleService.addArticle(articleDTO);
-        return R.success("保存草稿成功");
     }
 
     @ApiOperation(value = "修改文章")
@@ -127,9 +127,9 @@ public class ArticleController extends BaseController {
     @GetMapping(value = "/delete/{articleId}")
     public R<String> delete(@PathVariable Long articleId) {
         if (articleId == null) {
-            throw new ServiceException("不允许传入空值");
+            throw new ServiceException(ExceptionConstants.NOT_NULL);
         }
-        Article article = this.articleService.selectArticleById(articleId);
+        Article article = this.articleService.viewArticle(articleId);
         String author = article.getAuthor();
         if (!SecurityUtils.getUsername().equals(author)) {
             throw new ServiceException("没有权限删除别人的文章");

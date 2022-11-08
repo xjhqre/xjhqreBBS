@@ -14,17 +14,21 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.xjhqre.common.constant.Constants;
 import com.xjhqre.common.domain.admin.Role;
 import com.xjhqre.common.domain.admin.User;
 import com.xjhqre.common.domain.admin.UserRole;
 import com.xjhqre.common.domain.portal.Article;
+import com.xjhqre.common.domain.sms.Message3;
 import com.xjhqre.common.exception.ServiceException;
 import com.xjhqre.common.mapper.RoleMapper;
 import com.xjhqre.common.mapper.UserMapper;
 import com.xjhqre.common.mapper.UserRoleMapper;
+import com.xjhqre.common.service.Message3Service;
 import com.xjhqre.common.service.UserService;
 import com.xjhqre.common.utils.SecurityUtils;
 import com.xjhqre.common.utils.StringUtils;
@@ -36,17 +40,17 @@ import com.xjhqre.common.utils.StringUtils;
  */
 @Service
 @Transactional(rollbackFor = Exception.class)
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
     private static final Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
 
     @Autowired
     private UserMapper userMapper;
-
     @Autowired
     private RoleMapper roleMapper;
-
     @Autowired
     private UserRoleMapper userRoleMapper;
+    @Autowired
+    private Message3Service message3Service;
 
     // @Autowired
     // private ISysConfigService configService;
@@ -397,6 +401,21 @@ public class UserServiceImpl implements UserService {
     @Override
     public IPage<Article> findUserArticle(Article article, Integer pageNum, Integer pageSize) {
         return this.userMapper.findUserArticle(new Page<Article>(pageNum, pageSize), article);
+    }
+
+    /**
+     * 分页查询用户信息-点赞收藏
+     * 
+     * @param userId
+     * @param pageNum
+     * @param pageSize
+     * @return
+     */
+    @Override
+    public IPage<Message3> findMessage3(Long userId, Integer pageNum, Integer pageSize) {
+        LambdaQueryWrapper<Message3> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Message3::getCollectedId, userId);
+        return this.message3Service.page(new Page<>(pageNum, pageSize), queryWrapper);
     }
 
 }

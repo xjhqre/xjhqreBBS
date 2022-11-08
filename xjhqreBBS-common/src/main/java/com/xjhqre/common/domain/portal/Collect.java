@@ -1,6 +1,3 @@
-/*
- * Copyright (c) 2019, CCSSOFT All Rights Reserved.
- */
 package com.xjhqre.common.domain.portal;
 
 import javax.validation.constraints.NotBlank;

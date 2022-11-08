@@ -9,13 +9,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.xjhqre.admin.service.ArticleService;
 import com.xjhqre.common.common.R;
 import com.xjhqre.common.constant.ArticleStatus;
 import com.xjhqre.common.constant.ErrorCode;
 import com.xjhqre.common.controller.BaseController;
 import com.xjhqre.common.domain.portal.Article;
 import com.xjhqre.common.exception.ServiceException;
+import com.xjhqre.common.service.ArticleService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;

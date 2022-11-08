@@ -38,7 +38,7 @@ import io.swagger.annotations.ApiOperation;
  */
 @Api(value = "评论操作接口", tags = "评论操作接口")
 @RestController
-@RequestMapping("/comment")
+@RequestMapping("/portal/comment")
 public class CommentController extends BaseController {
 
     @Autowired
@@ -66,7 +66,7 @@ public class CommentController extends BaseController {
     @GetMapping(value = "/{commentId}")
     public R<Comment> getCommentDetails(@PathVariable Long commentId) {
         if (commentId == null) {
-            throw new ServiceException("不允许传入空值");
+            throw new ServiceException(ExceptionConstants.NOT_NULL);
         }
         return R.success(this.commentService.selectCommentById(commentId));
     }

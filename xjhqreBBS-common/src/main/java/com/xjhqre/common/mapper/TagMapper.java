@@ -1,6 +1,7 @@
-package com.xjhqre.admin.mapper;
+package com.xjhqre.common.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.xjhqre.common.domain.portal.Tag;
@@ -17,16 +18,10 @@ import com.xjhqre.common.domain.portal.Tag;
 public interface TagMapper extends BaseMapper<Tag> {
 
     /**
-     * 引用数量-1
-     * 
+     * 统计标签引用
+     *
      * @param tagId
+     * @return
      */
-    void subRefCount(Long tagId);
-
-    /**
-     * 引用数量+1
-     * 
-     * @param tagId
-     */
-    void addRefCount(Long tagId);
+    Integer countRef(@Param("tagId") Long tagId);
 }

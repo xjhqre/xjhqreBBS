@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.apache.commons.collections4.SetUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,13 +24,13 @@ import com.xjhqre.common.constant.CacheConstants;
 import com.xjhqre.common.domain.portal.Article;
 import com.xjhqre.common.domain.portal.dto.ArticleDTO;
 import com.xjhqre.common.service.ConfigService;
+import com.xjhqre.common.service.SortService;
+import com.xjhqre.common.service.TagService;
 import com.xjhqre.common.utils.DateUtils;
 import com.xjhqre.common.utils.SecurityUtils;
 import com.xjhqre.common.utils.redis.RedisCache;
 import com.xjhqre.portal.mapper.ArticleMapper;
 import com.xjhqre.portal.service.ArticleService;
-import com.xjhqre.portal.service.SortService;
-import com.xjhqre.portal.service.TagService;
 
 /**
  * <p>
@@ -60,20 +61,6 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     final Object viewLock = new Object();
 
     /**
-     * 根据条件分页查询文章列表
-     * 
-     * @param article
-     * @param pageNum
-     * @param pageSize
-     * @return
-     */
-    @Override
-    public IPage<Article> findArticle(Article article, Integer pageNum, Integer pageSize) {
-        article.setStatus(2); // 查询已发布的文章
-        return this.articleMapper.findArticle(new Page<>(pageNum, pageSize), article);
-    }
-
-    /**
      * 根据分类id分页查询文章
      * 
      * @param sortId
@@ -100,13 +87,13 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     }
 
     /**
-     * 根据文章id查询文章详情
+     * 浏览文章
      * 
      * @param articleId
      * @return
      */
     @Override
-    public Article selectArticleById(Long articleId) {
+    public Article viewArticle(Long articleId) {
         synchronized (this.viewLock) {
             // 文章浏览量+1
             List<Long> userIds = this.redisCache.getCacheList(CacheConstants.ARTICLE_VIEW_USER_KEY + articleId);
@@ -120,19 +107,23 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
             userIds.add(SecurityUtils.getUserId());
             this.redisCache.setCacheList(CacheConstants.ARTICLE_VIEW_USER_KEY + articleId, userIds);
         }
-        return this.articleMapper.selectArticleById(articleId);
+        return this.articleMapper.selectById(articleId);
     }
 
     /**
-     * 发布新文章
+     * 发布文章
      * 
      * @param articleDTO
      * @return
      */
     @Override
-    public void addArticle(ArticleDTO articleDTO) {
+    public void postArticle(ArticleDTO articleDTO) {
+        articleDTO.setCreateBy(SecurityUtils.getUsername());
+        articleDTO.setCreateTime(DateUtils.getNowDate());
         // 是否开启文章审核
-        if (this.configService.selectArticleAuditEnabled()) {
+        if ("N".equals(articleDTO.getIsPublish())) {
+            articleDTO.setStatus(ArticleStatus.DRAFT); // 草稿状态
+        } else if (this.configService.selectArticleAuditEnabled()) {
             articleDTO.setStatus(ArticleStatus.PENDING_REVIEW); // 待审核状态
         } else {
             articleDTO.setStatus(ArticleStatus.PUBLISH); // 发布状态
@@ -146,17 +137,11 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         articleDTO.setCreateBy(SecurityUtils.getUsername());
         articleDTO.setCreateTime(DateUtils.getNowDate());
         // 添加文章
-        this.articleMapper.addArticle(articleDTO);
+        this.articleMapper.insert(articleDTO);
         // 关联分类
         this.articleMapper.addArticleSort(articleDTO.getArticleId(), articleDTO.getSortId());
-        // 分类引用计数 + 1
-        this.sortService.addRefCount(articleDTO.getSortId());
         // 关联标签
         this.articleMapper.addArticleTag(articleDTO.getArticleId(), articleDTO.getTagIds());
-        // 标签引用计数 + 1
-        for (Long tagId : articleDTO.getTagIds()) {
-            this.tagService.addRefCount(tagId);
-        }
     }
 
     /**
@@ -166,42 +151,34 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
      */
     @Override
     public void updateArticle(ArticleDTO articleDTO) {
-        articleDTO.setUpdateBy(SecurityUtils.getUsername());
-        articleDTO.setUpdateTime(DateUtils.getNowDate());
-        Article oldArticle = this.articleMapper.selectArticleById(articleDTO.getArticleId());
+        Article article = this.articleMapper.selectById(articleDTO.getArticleId());
+        BeanUtils.copyProperties(articleDTO, article);
+        // 是否开启文章审核
+        if (this.configService.selectArticleAuditEnabled()) {
+            article.setStatus(ArticleStatus.PENDING_REVIEW); // 待审核状态
+        } else {
+            article.setStatus(ArticleStatus.PUBLISH); // 发布状态
+        }
+        article.setUpdateBy(SecurityUtils.getUsername());
+        article.setUpdateTime(DateUtils.getNowDate());
+
+        // 更新文章表
+        this.articleMapper.updateArticle(article);
 
         // 如果修改了分类
-        Long oldSortId = this.articleMapper.getSortIdByArticleId(oldArticle.getArticleId());
+        Long oldSortId = this.articleMapper.getSortIdByArticleId(article.getArticleId());
         if (!Objects.equals(oldSortId, articleDTO.getSortId())) {
-            // 先删除关联在添加
-            this.articleMapper.deleteArticleSort(articleDTO.getArticleId());
-            // 引用数量-1
-            this.sortService.subRefCount(oldSortId);
-            // 关联分类
-            this.articleMapper.addArticleSort(articleDTO.getArticleId(), articleDTO.getSortId());
-            // 引用数量+1
-            this.sortService.addRefCount(articleDTO.getSortId());
+            this.articleMapper.updateArticleSort(articleDTO.getArticleId(), articleDTO.getSortId());
         }
 
         // 如果修改了标签
-        Set<Long> oldTagIds = this.articleMapper.getTagIdsByArticleId(oldArticle.getArticleId());
+        Set<Long> oldTagIds = this.articleMapper.getTagIdsByArticleId(article.getArticleId());
         if (!SetUtils.isEqualSet(oldTagIds, articleDTO.getTagIds())) {
             // 先删除关联在添加
             this.articleMapper.deleteArticleTag(articleDTO.getArticleId());
-            // 引用数量-1
-            for (Long oldTagId : oldTagIds) {
-                this.tagService.subRefCount(oldTagId);
-            }
             // 关联标签
             this.articleMapper.addArticleTag(articleDTO.getArticleId(), articleDTO.getTagIds());
-            // 引用数量+1
-            for (Long newTagId : articleDTO.getTagIds()) {
-                this.tagService.addRefCount(newTagId);
-            }
         }
-
-        // 更新文章表
-        this.articleMapper.updateArticle(articleDTO);
     }
 
     /**
@@ -211,18 +188,10 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
      */
     @Override
     public void deleteArticleById(Long articleId) {
-        Article article = this.selectArticleById(articleId);
+        Article article = this.articleMapper.selectById(articleId);
         article.setDelFlag("2"); // 逻辑删除
         article.setUpdateBy(SecurityUtils.getUsername());
         article.setUpdateTime(DateUtils.getNowDate());
-        // 分类计数-1
-        Long sortId = this.articleMapper.getSortIdByArticleId(articleId);
-        this.sortService.subRefCount(sortId);
-        // 标签计数-1
-        Set<Long> tagIds = this.articleMapper.getTagIdsByArticleId(articleId);
-        for (Long tagId : tagIds) {
-            this.tagService.subRefCount(tagId);
-        }
         this.articleMapper.updateArticle(article);
     }
 
@@ -236,12 +205,12 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         // 只有未点赞的用户才可以进行点赞
         Boolean isThumb = this.likeArticleLogicValidate(articleId);
 
-        synchronized (this.viewLock) {
+        synchronized (this.thumbLock) {
             Set<Long> articleIds =
                 this.redisCache.getCacheSet(CacheConstants.USER_THUMB_ARTICLE_KEY + SecurityUtils.getUserId());
-            if (isThumb) {
+            if (Boolean.TRUE.equals(isThumb)) {
                 // 用户已点赞文章，取消点赞
-                if (articleIds == null) { // 应该不会走这里
+                if (articleIds == null) { // 应该不会走f这里
                     // 修改数据库，删除点赞的文章记录
                     this.articleMapper.deleteThumbArticle(SecurityUtils.getUserId(), articleId);
                 } else {

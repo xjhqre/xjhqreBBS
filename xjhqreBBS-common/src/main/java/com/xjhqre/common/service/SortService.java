@@ -1,4 +1,4 @@
-package com.xjhqre.admin.service;
+package com.xjhqre.common.service;
 
 import java.util.List;
 
@@ -32,20 +32,6 @@ public interface SortService extends IService<Sort> {
      * @return
      */
     IPage<Sort> findSort(Sort sort, Integer pageNum, Integer pageSize);
-
-    /**
-     * 添加分类
-     * 
-     * @param sort
-     */
-    void add(Sort sort);
-
-    /**
-     * 修改分类
-     * 
-     * @param sort
-     */
-    void update(Sort sort);
 
     /**
      * 删除分类

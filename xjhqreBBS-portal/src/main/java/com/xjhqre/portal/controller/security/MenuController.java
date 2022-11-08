@@ -4,23 +4,15 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.xjhqre.common.annotation.Log;
 import com.xjhqre.common.common.R;
-import com.xjhqre.common.constant.Constants;
 import com.xjhqre.common.controller.BaseController;
 import com.xjhqre.common.domain.admin.Menu;
-import com.xjhqre.common.enums.BusinessType;
 import com.xjhqre.common.service.MenuService;
 
 import io.swagger.annotations.Api;
@@ -86,55 +78,4 @@ public class MenuController extends BaseController {
         return R.success("加载对应角色菜单列表树成功").add("roleIds", roleIds).add("menus", menus);
     }
 
-    /**
-     * 新增菜单
-     */
-    @ApiOperation(value = "新增菜单")
-    @PreAuthorize("@ss.hasPermission('system:menu:add')")
-    @Log(title = "菜单管理", businessType = BusinessType.INSERT)
-    @PostMapping
-    public R<String> add(@Validated @RequestBody Menu menu) {
-        if (Constants.NOT_UNIQUE.equals(this.menuService.checkMenuNameUnique(menu))) {
-            return R.error("新增菜单'" + menu.getMenuName() + "'失败，菜单名称已存在");
-        }
-        menu.setCreateBy(this.getUsername());
-        this.menuService.insertMenu(menu);
-        return R.success("新增菜单成功");
-    }
-
-    /**
-     * 修改菜单
-     */
-    @ApiOperation(value = "修改菜单")
-    @PreAuthorize("@ss.hasPermission('system:menu:edit')")
-    @Log(title = "菜单管理", businessType = BusinessType.UPDATE)
-    @PutMapping
-    public R<String> edit(@Validated @RequestBody Menu menu) {
-        if (Constants.NOT_UNIQUE.equals(this.menuService.checkMenuNameUnique(menu))) {
-            return R.error("修改菜单'" + menu.getMenuName() + "'失败，菜单名称已存在");
-        } else if (menu.getMenuId().equals(menu.getParentId())) {
-            return R.error("修改菜单'" + menu.getMenuName() + "'失败，上级菜单不能选择自己");
-        }
-        menu.setUpdateBy(this.getUsername());
-        this.menuService.updateMenu(menu);
-        return R.success("修改菜单");
-    }
-
-    /**
-     * 删除菜单
-     */
-    @ApiOperation(value = "删除菜单")
-    @PreAuthorize("@ss.hasPermission('system:menu:remove')")
-    @Log(title = "菜单管理", businessType = BusinessType.DELETE)
-    @DeleteMapping("/{menuId}")
-    public R<String> remove(@PathVariable("menuId") Long menuId) {
-        if (this.menuService.hasChildByMenuId(menuId)) {
-            return R.error("存在子菜单,不允许删除");
-        }
-        if (this.menuService.checkMenuExistRole(menuId)) {
-            return R.error("菜单已分配,不允许删除");
-        }
-        this.menuService.deleteMenuById(menuId);
-        return R.success("删除菜单成功");
-    }
 }

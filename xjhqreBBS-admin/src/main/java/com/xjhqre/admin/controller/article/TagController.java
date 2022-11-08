@@ -15,12 +15,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.xjhqre.admin.service.TagService;
 import com.xjhqre.common.annotation.Log;
 import com.xjhqre.common.common.R;
 import com.xjhqre.common.controller.BaseController;
 import com.xjhqre.common.domain.portal.Tag;
 import com.xjhqre.common.enums.BusinessType;
+import com.xjhqre.common.service.TagService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -86,7 +86,7 @@ public class TagController extends BaseController {
     @PreAuthorize("@ss.hasPermission('article:tag:delete')")
     @Log(title = "标签管理", businessType = BusinessType.DELETE)
     public R<String> delete(@RequestBody @Validated Tag tag) {
-        this.tagService.deleteTag(tag);
+        this.tagService.delete(tag);
         return R.success("删除标签成功");
     }
 }

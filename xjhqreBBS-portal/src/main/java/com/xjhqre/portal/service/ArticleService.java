@@ -15,16 +15,6 @@ import com.xjhqre.common.domain.portal.dto.ArticleDTO;
 public interface ArticleService extends IService<Article> {
 
     /**
-     * 根据条件分页查询文章列表
-     *
-     * @param article
-     * @param pageNum
-     * @param pageSize
-     * @return
-     */
-    IPage<Article> findArticle(Article article, Integer pageNum, Integer pageSize);
-
-    /**
      * 根据分类id分页查询文章
      *
      * @param sortId
@@ -45,20 +35,12 @@ public interface ArticleService extends IService<Article> {
     IPage<Article> findArticleByTagId(Long tagId, Integer pageNum, Integer pageSize);
 
     /**
-     * 根据文章id查询文章详情
-     *
-     * @param articleId
-     * @return
-     */
-    Article selectArticleById(Long articleId);
-
-    /**
      * 添加文章
      *
      * @param articleDTO
      * @return
      */
-    void addArticle(ArticleDTO articleDTO);
+    void postArticle(ArticleDTO articleDTO);
 
     /**
      * 修改文章
@@ -105,4 +87,7 @@ public interface ArticleService extends IService<Article> {
      * @return
      */
     IPage<Article> findArticleByMonth(String month, Integer pageNum, Integer pageSize);
+
+    Article viewArticle(Long articleId);
+
 }

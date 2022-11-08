@@ -1,6 +1,4 @@
-package com.xjhqre.admin.mapper;
-
-import java.util.List;
+package com.xjhqre.common.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -22,27 +20,6 @@ import com.xjhqre.common.domain.portal.Sort;
 public interface SortMapper extends BaseMapper<Sort> {
 
     /**
-     * 查询所有文章分类
-     *
-     * @return
-     */
-    List<Sort> listSort(Integer limit);
-
-    /**
-     * 引用数量-1
-     *
-     * @param sortId
-     */
-    void subRefCount(Long sortId);
-
-    /**
-     * 引用数量+1
-     *
-     * @param sortId
-     */
-    void addRefCount(Long sortId);
-
-    /**
      * 根据条件分页查询文章分类
      * 
      * @param sortPage
@@ -50,5 +27,13 @@ public interface SortMapper extends BaseMapper<Sort> {
      * @return
      */
     IPage<Sort> findSort(@Param("sortPage") Page<Sort> sortPage, @Param("sort") Sort sort);
+
+    /**
+     * 统计引用次数
+     *
+     * @param sortId
+     * @return
+     */
+    Integer countRef(@Param("sortId") Long sortId);
 
 }

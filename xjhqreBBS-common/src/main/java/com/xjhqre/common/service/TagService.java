@@ -1,4 +1,4 @@
-package com.xjhqre.admin.service;
+package com.xjhqre.common.service;
 
 import java.util.List;
 
@@ -28,37 +28,9 @@ public interface TagService extends IService<Tag> {
     IPage<Tag> findTag(Tag tag, Integer pageNum, Integer pageSize);
 
     /**
-     * 减少引用数量
-     * 
-     * @param tagId
-     */
-    void subRefCount(Long tagId);
-
-    /**
-     * 引用数量+1
-     * 
-     * @param tagId
-     */
-    void addRefCount(Long tagId);
-
-    /**
-     * 添加标签
-     * 
-     * @param tag
-     */
-    void addTag(Tag tag);
-
-    /**
-     * 修改标签
-     * 
-     * @param tag
-     */
-    void updateTag(Tag tag);
-
-    /**
      * 删除标签
      * 
      * @param tag
      */
-    void deleteTag(Tag tag);
+    void delete(Tag tag);
 }

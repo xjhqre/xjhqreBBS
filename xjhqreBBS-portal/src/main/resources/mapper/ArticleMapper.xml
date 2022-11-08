@@ -82,12 +82,6 @@
           and a.status = 2 /* 查询已发布的文章 */
     </select>
 
-    <!-- 根据文章id查询文章详情 -->
-    <select id="selectArticleById" resultType="com.xjhqre.common.domain.portal.Article">
-        <include refid="selectArticleVo"/>
-        where article_id = #{articleId}
-    </select>
-
     <!-- 查询用户点赞的文章id -->
     <select id="selectUserLikedArticle" resultType="java.lang.Long">
         select article_id
@@ -120,42 +114,6 @@
         where article_id = #{articleId}
     </select>
 
-
-    <!-- 发布文章 -->
-    <insert id="addArticle">
-        insert into t_article(
-        <if test="title != null and title != ''">title,</if>
-        <if test="summary != null and summary != ''">summary,</if>
-        <if test="content != null and content != ''">content,</if>
-        <if test="author != null and author != ''">author,</if>
-        <if test="viewCount != null and viewCount != 0">view_count,</if>
-        <if test="thumbCount != null and thumbCount != 0">thumb_count,</if>
-        <if test="collectCount != null and collectCount != 0">collect_count,</if>
-        <if test="cover != null and cover != ''">cover,</if>
-        <if test="status != null">status,</if>
-        <if test="is_publish != null">is_publish,</if>
-        <if test="sort != null">sort,</if>
-        <if test="open_comment != null">open_comment,</if>
-        <if test="createBy != null and createBy != ''">create_by,</if>
-        <if test="createTime != null">create_time,</if>
-        )values(
-        <if test="title != null and title != ''">#{title},</if>
-        <if test="summary != null and summary != ''">#{summary},</if>
-        <if test="content != null and content != ''">#{content},</if>
-        <if test="author != null and author != ''">#{author},</if>
-        <if test="viewCount != null and viewCount != 0">#{viewCount},</if>
-        <if test="thumbCount != null and thumbCount != 0">#{thumbCount},</if>
-        <if test="collectCount != null and collectCount != 0">#{collectCount},</if>
-        <if test="cover != null and cover != ''">#{cover},</if>
-        <if test="status != null">#{status},</if>
-        <if test="is_publish != null">#{isPublish},</if>
-        <if test="sort != null">#{sort},</if>
-        <if test="open_comment != null">#{openComment},</if>
-        <if test="createBy != null and createBy != ''">#{createBy},</if>
-        <if test="createTime != null and createTime != ''">#{createTime},</if>
-        )
-    </insert>
-
     <!-- 添加文章分类关联 -->
     <insert id="addArticleSort">
         insert into t_article_sort(
@@ -166,6 +124,13 @@
         <if test="sortId != null">#{sortId}</if>
         )
     </insert>
+
+    <!-- 修改分类 -->
+    <update id="updateArticleSort">
+        update t_article_sort
+        set sort_id = #{sortId}
+        where article_id = #{articleId}
+    </update>
 
     <!-- 添加文章标签关联 -->
     <insert id="addArticleTag">
@@ -200,5 +165,6 @@
         </set>
         where article_id = #{articleId}
     </update>
+
 
 </mapper>

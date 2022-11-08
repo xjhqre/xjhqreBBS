@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.xjhqre.common.common.R;
@@ -26,6 +27,7 @@ import io.swagger.annotations.ApiOperation;
  */
 @RestController
 @Api(value = "用户注册接口", tags = "用户注册接口")
+@RequestMapping("/portal")
 public class RegisterController extends BaseController {
     @Autowired
     private RegisterService registerService;

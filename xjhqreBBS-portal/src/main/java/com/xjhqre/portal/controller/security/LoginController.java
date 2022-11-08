@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.xjhqre.common.common.R;
@@ -26,6 +27,7 @@ import io.swagger.annotations.ApiOperation;
  */
 @RestController
 @Api(value = "用户登陆接口", tags = "用户登陆接口")
+@RequestMapping("/portal")
 public class LoginController {
     @Autowired
     private LoginService loginService;
@@ -65,15 +67,4 @@ public class LoginController {
         return R.success("获取信息成功").add("user", user).add("roles", roles).add("permissions", permissions);
     }
 
-    // /**
-    // * 获取路由信息
-    // *
-    // * @return 路由信息
-    // */
-    // @GetMapping("getRouters")
-    // public R<String> getRouters() {
-    // Long userId = SecurityUtils.getUserId();
-    // List<Menu> menus = this.menuService.selectMenuTreeByUserId(userId);
-    // return R.success(this.menuService.buildMenus(menus));
-    // }
 }

@@ -23,15 +23,6 @@ import com.xjhqre.common.domain.portal.Article;
 public interface ArticleMapper extends BaseMapper<Article> {
 
     /**
-     * 根据条件分页查询文章信息
-     * 
-     * @param articlePage
-     * @param article
-     * @return
-     */
-    IPage<Article> findArticle(@Param("articlePage") Page<Article> articlePage, @Param("article") Article article);
-
-    /**
      * 根据分类id分页查询文章
      * 
      * @param objectPage
@@ -48,21 +39,6 @@ public interface ArticleMapper extends BaseMapper<Article> {
      * @return
      */
     IPage<Article> findArticleByTagId(@Param("objectPage") Page<Article> objectPage, @Param("tagId") Long tagId);
-
-    /**
-     * 根据文章id查询文章详情
-     * 
-     * @param articleId
-     * @return
-     */
-    Article selectArticleById(@Param("articleId") Long articleId);
-
-    /**
-     * 发布文章
-     * 
-     * @param article
-     */
-    int addArticle(Article article);
 
     /**
      * 修改文章
@@ -140,4 +116,13 @@ public interface ArticleMapper extends BaseMapper<Article> {
      * @return
      */
     List<Long> getViewUserIds(Long articleId);
+
+    /**
+     * 修改分类
+     * 
+     * @param articleId
+     * @param sortId
+     */
+    void updateArticleSort(@Param("articleId") Long articleId, @Param("sortId") Long sortId);
+
 }

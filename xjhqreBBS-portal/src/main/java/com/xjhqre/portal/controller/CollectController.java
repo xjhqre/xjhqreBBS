@@ -32,7 +32,7 @@ import io.swagger.annotations.ApiOperation;
  */
 @Api(value = "收藏操作接口", tags = "收藏操作接口")
 @RestController
-@RequestMapping("/collect")
+@RequestMapping("/portal/collect")
 public class CollectController extends BaseController {
 
     @Autowired
