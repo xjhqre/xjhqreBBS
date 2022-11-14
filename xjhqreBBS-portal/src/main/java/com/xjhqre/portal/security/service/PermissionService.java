@@ -9,8 +9,7 @@ import org.springframework.stereotype.Component;
 
 import com.xjhqre.common.domain.admin.Role;
 import com.xjhqre.common.domain.admin.User;
-import com.xjhqre.common.service.MenuService;
-import com.xjhqre.common.service.RoleService;
+import com.xjhqre.portal.service.MenuService;
 
 /**
  * 用户权限处理
@@ -21,28 +20,7 @@ import com.xjhqre.common.service.RoleService;
 public class PermissionService {
 
     @Autowired
-    private RoleService roleService;
-
-    @Autowired
     private MenuService menuService;
-
-    /**
-     * 获取角色数据权限
-     * 
-     * @param user
-     *            用户信息
-     * @return 角色权限信息
-     */
-    public Set<String> getRolePermission(User user) {
-        Set<String> roles = new HashSet<>();
-        // 管理员拥有所有权限
-        if (user.isSuperAdmin()) {
-            roles.add("superAdmin");
-        } else {
-            roles.addAll(this.roleService.selectRolePermissionByUserId(user.getUserId()));
-        }
-        return roles;
-    }
 
     /**
      * 获取菜单数据权限

@@ -1,7 +1,6 @@
 package com.xjhqre.portal.service.impl;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.springframework.beans.BeanUtils;
@@ -9,16 +8,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.xjhqre.common.domain.admin.User;
 import com.xjhqre.common.domain.portal.Comment;
 import com.xjhqre.common.domain.portal.vo.CommentVO;
-import com.xjhqre.common.service.UserService;
 import com.xjhqre.common.utils.DateUtils;
 import com.xjhqre.common.utils.SecurityUtils;
 import com.xjhqre.portal.mapper.CommentMapper;
 import com.xjhqre.portal.service.CommentService;
+import com.xjhqre.portal.service.UserService;
 
 /**
  * <p>
@@ -30,7 +31,7 @@ import com.xjhqre.portal.service.CommentService;
  */
 @Service
 @Transactional(rollbackFor = Exception.class)
-public class CommentServiceImpl implements CommentService {
+public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> implements CommentService {
 
     @Autowired
     private CommentMapper commentMapper;
@@ -48,12 +49,24 @@ public class CommentServiceImpl implements CommentService {
      */
     @Override
     public IPage<Comment> findComment(Comment comment, Integer pageNum, Integer pageSize) {
-        return this.commentMapper.findComment(new Page<>(pageNum, pageSize), comment);
+        LambdaQueryWrapper<Comment> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(comment.getUserId() != null, Comment::getUserId, comment.getUserId())
+            .eq(comment.getArticleId() != null, Comment::getArticleId, comment.getArticleId())
+            .eq(comment.getParentId() != null, Comment::getParentId, comment.getParentId())
+            .eq(comment.getStatus() != null, Comment::getStatus, comment.getStatus())
+            .orderByDesc(Comment::getCreateTime);
+        return this.commentMapper.selectPage(new Page<>(pageNum, pageSize), wrapper);
     }
 
+    /**
+     * 查询评论详情
+     * 
+     * @param commentId
+     * @return
+     */
     @Override
     public Comment selectCommentById(Long commentId) {
-        return this.commentMapper.selectCommentById(commentId);
+        return this.commentMapper.selectById(commentId);
     }
 
     /**
@@ -71,7 +84,7 @@ public class CommentServiceImpl implements CommentService {
         comment.setCreateBy(SecurityUtils.getUsername());
         comment.setCreateTime(DateUtils.getNowDate());
         comment.setSort(5);
-        this.commentMapper.addComment(comment);
+        this.commentMapper.insert(comment);
     }
 
     /**
@@ -82,7 +95,9 @@ public class CommentServiceImpl implements CommentService {
      */
     @Override
     public List<Comment> selectRootComment(Integer articleId) {
-        return this.commentMapper.selectRootComment(articleId);
+        LambdaQueryWrapper<Comment> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(Comment::getParentId, 0).orderByDesc(Comment::getThumbCount);
+        return this.commentMapper.selectList(wrapper);
     }
 
     /**
@@ -94,7 +109,7 @@ public class CommentServiceImpl implements CommentService {
     public void updateComment(Comment comment) {
         comment.setUpdateBy(SecurityUtils.getUsername());
         comment.setUpdateTime(DateUtils.getNowDate());
-        this.commentMapper.updateComment(comment);
+        this.commentMapper.updateById(comment);
     }
 
     /**
@@ -104,25 +119,21 @@ public class CommentServiceImpl implements CommentService {
      */
     @Override
     public void deleteComment(Comment comment) {
-        comment.setUpdateBy(SecurityUtils.getUsername());
-        comment.setUpdateTime(DateUtils.getNowDate());
-        comment.setDelFlag("2");
-        this.commentMapper.updateComment(comment);
+        this.commentMapper.deleteById(comment);
     }
 
     /**
      * 根据根评论的ID获取所有子评论，创建时间倒序排序
      *
      * @param list
-     *            分类表
+     *            所有评论
      * @param root
      *            传入的父节点ID
      * @return String
      */
-    public List<CommentVO> getChildPerms(List<Comment> list, int root) {
+    public List<CommentVO> getChildComment(List<Comment> list, int root) {
         List<CommentVO> returnList = new ArrayList<>();
-        for (Iterator<Comment> iterator = list.iterator(); iterator.hasNext();) {
-            Comment cur = iterator.next();
+        for (Comment cur : list) {
             // 一、根据传入的某个父节点ID,遍历该父节点的所有子节点
             if (cur.getParentId() == root) {
                 this.recursionFn(list, cur, returnList);
@@ -138,9 +149,9 @@ public class CommentServiceImpl implements CommentService {
      * 递归列表
      *
      * @param allCommentList
-     *            权限列表
+     *            所有评论
      * @param cur
-     *            上一级权限
+     *            当前评论
      * @param returnList
      *            返回的子评论
      */
@@ -150,7 +161,7 @@ public class CommentServiceImpl implements CommentService {
         returnList.addAll(childList);
         for (Comment tChild : childList) {
             // 判断 tChild 是否还有子节点
-            if (this.getChildList(allCommentList, tChild).size() > 0) {
+            if (!this.getChildList(allCommentList, tChild).isEmpty()) {
                 // 递归
                 this.recursionFn(allCommentList, tChild, returnList);
             }

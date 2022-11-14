@@ -33,7 +33,7 @@ public class LoginBody {
     private String code;
 
     /**
-     * 唯一标识
+     * 唯一标识，作为redis存储的key
      */
     private String uuid;
 }

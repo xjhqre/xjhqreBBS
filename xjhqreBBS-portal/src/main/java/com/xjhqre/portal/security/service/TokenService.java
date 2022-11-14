@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 
 import com.xjhqre.common.constant.CacheConstants;
 import com.xjhqre.common.constant.Constants;
-import com.xjhqre.common.domain.model.LoginUser;
+import com.xjhqre.common.domain.LoginUser;
 import com.xjhqre.common.utils.ServletUtils;
 import com.xjhqre.common.utils.StringUtils;
 import com.xjhqre.common.utils.ip.IpUtils;

@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.xjhqre.common.common.R;
 import com.xjhqre.common.constant.CacheConstants;
-import com.xjhqre.common.controller.BaseController;
+import com.xjhqre.common.core.BaseController;
 import com.xjhqre.common.domain.Cache;
 import com.xjhqre.common.utils.StringUtils;
 
@@ -41,7 +41,7 @@ public class CacheController extends BaseController {
     private RedisTemplate<String, String> redisTemplate;
 
     private final static List<Cache> caches = new ArrayList<>();
-    {
+    static {
         caches.add(new Cache(CacheConstants.LOGIN_TOKEN_KEY, "用户信息"));
         caches.add(new Cache(CacheConstants.SYS_CONFIG_KEY, "配置信息"));
         caches.add(new Cache(CacheConstants.SYS_DICT_KEY, "数据字典"));
@@ -60,7 +60,7 @@ public class CacheController extends BaseController {
     @ApiOperation(value = "获取 redis 相关性能数据")
     @PreAuthorize("@ss.hasPermission('monitor:cache:list')")
     @GetMapping()
-    public R<Map<String, Object>> getInfo() throws Exception {
+    public R<Map<String, Object>> getInfo() {
         Properties info = (Properties)this.redisTemplate.execute((RedisCallback<Object>)RedisServerCommands::info);
         Properties commandStats = (Properties)this.redisTemplate
             .execute((RedisCallback<Object>)connection -> connection.info("commandstats"));
@@ -170,7 +170,7 @@ public class CacheController extends BaseController {
     @DeleteMapping("/clearCacheAll")
     public R<String> clearCacheAll() {
         Collection<String> cacheKeys = this.redisTemplate.keys("*");
-        if (cacheKeys != null) {
+        if (cacheKeys != null && !cacheKeys.isEmpty()) {
             this.redisTemplate.delete(cacheKeys);
         }
         return R.success("删除所有缓存成功");

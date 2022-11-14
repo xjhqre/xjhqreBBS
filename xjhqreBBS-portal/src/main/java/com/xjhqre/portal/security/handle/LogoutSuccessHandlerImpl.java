@@ -12,11 +12,11 @@ import com.alibaba.fastjson2.JSON;
 import com.xjhqre.common.common.R;
 import com.xjhqre.common.constant.Constants;
 import com.xjhqre.common.constant.HttpStatus;
-import com.xjhqre.common.domain.model.LoginUser;
-import com.xjhqre.common.manager.AsyncFactory;
-import com.xjhqre.common.manager.AsyncManager;
+import com.xjhqre.common.domain.LoginUser;
 import com.xjhqre.common.utils.ServletUtils;
 import com.xjhqre.common.utils.StringUtils;
+import com.xjhqre.portal.manager.AsyncFactory;
+import com.xjhqre.portal.manager.AsyncManager;
 import com.xjhqre.portal.security.service.TokenService;
 
 /**

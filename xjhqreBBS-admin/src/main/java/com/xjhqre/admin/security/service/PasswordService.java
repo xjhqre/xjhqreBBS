@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
+import com.xjhqre.admin.manager.AsyncFactory;
+import com.xjhqre.admin.manager.AsyncManager;
 import com.xjhqre.admin.security.context.AuthenticationContextHolder;
 import com.xjhqre.common.constant.CacheConstants;
 import com.xjhqre.common.constant.Constants;
@@ -14,8 +16,6 @@ import com.xjhqre.common.constant.ErrorCode;
 import com.xjhqre.common.constant.UserStatus;
 import com.xjhqre.common.domain.admin.User;
 import com.xjhqre.common.exception.ServiceException;
-import com.xjhqre.common.manager.AsyncFactory;
-import com.xjhqre.common.manager.AsyncManager;
 import com.xjhqre.common.utils.SecurityUtils;
 import com.xjhqre.common.utils.StringUtils;
 import com.xjhqre.common.utils.redis.RedisCache;

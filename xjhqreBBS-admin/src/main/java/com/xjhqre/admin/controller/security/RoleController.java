@@ -15,20 +15,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.xjhqre.admin.security.service.PermissionService;
-import com.xjhqre.admin.security.service.TokenService;
+import com.xjhqre.admin.service.RoleService;
+import com.xjhqre.admin.service.UserService;
 import com.xjhqre.common.annotation.Log;
 import com.xjhqre.common.common.R;
 import com.xjhqre.common.constant.Constants;
-import com.xjhqre.common.controller.BaseController;
+import com.xjhqre.common.core.BaseController;
 import com.xjhqre.common.domain.admin.Role;
 import com.xjhqre.common.domain.admin.User;
-import com.xjhqre.common.domain.admin.UserRole;
-import com.xjhqre.common.domain.model.LoginUser;
 import com.xjhqre.common.enums.BusinessType;
-import com.xjhqre.common.service.RoleService;
-import com.xjhqre.common.service.UserService;
-import com.xjhqre.common.utils.StringUtils;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -46,10 +41,6 @@ import io.swagger.annotations.ApiOperation;
 public class RoleController extends BaseController {
     @Autowired
     private RoleService roleService;
-    @Autowired
-    private TokenService tokenService;
-    @Autowired
-    private PermissionService permissionService;
     @Autowired
     private UserService userService;
 
@@ -98,7 +89,7 @@ public class RoleController extends BaseController {
     /**
      * 修改保存角色
      */
-    @ApiOperation(value = "修改保存角色")
+    @ApiOperation(value = "修改角色")
     @PreAuthorize("@ss.hasPermission('system:role:edit')")
     @Log(title = "角色管理", businessType = BusinessType.UPDATE)
     @PutMapping
@@ -109,19 +100,8 @@ public class RoleController extends BaseController {
         } else if (Constants.NOT_UNIQUE.equals(this.roleService.checkRoleKeyUnique(role))) {
             return R.error("修改角色'" + role.getRoleName() + "'失败，角色权限已存在");
         }
-        role.setUpdateBy(this.getUsername());
-
-        if (this.roleService.updateRole(role) > 0) {
-            // 更新缓存用户权限
-            LoginUser loginUser = this.getLoginUser();
-            if (StringUtils.isNotNull(loginUser.getUser()) && !loginUser.getUser().isSuperAdmin()) {
-                loginUser.setPermissions(this.permissionService.getMenuPermission(loginUser.getUser()));
-                loginUser.setUser(this.userService.selectUserByUserName(loginUser.getUser().getUserName()));
-                this.tokenService.setLoginUser(loginUser);
-            }
-            return R.success("修改角色成功");
-        }
-        return R.error("修改角色'" + role.getRoleName() + "'失败，请联系管理员");
+        this.roleService.updateRole(role);
+        return R.success("修改角色成功");
     }
 
     /**
@@ -157,7 +137,7 @@ public class RoleController extends BaseController {
     @PreAuthorize("@ss.hasPermission('system:role:query')")
     @GetMapping("/optionSelect")
     public R<List<Role>> optionSelect() {
-        List<Role> roles = this.roleService.selectRoleAll();
+        List<Role> roles = this.roleService.selectRoleList(new Role());
         return R.success(roles);
     }
 
@@ -170,53 +150,6 @@ public class RoleController extends BaseController {
     @PreAuthorize("@ss.hasPermission('system:role:list')")
     public R<IPage<User>> allocatedList(User user, @PathVariable("pageNum") Integer pageNum,
         @PathVariable("pageSize") Integer pageSize) {
-        return R.success(this.userService.selectAllocatedList(user, pageNum, pageSize));
-    }
-
-    // /**
-    // * 查询未分配用户角色列表
-    // */
-    // @PreAuthorize("@ss.hasPermission('system:role:list')")
-    // @GetMapping("/authUser/unallocatedList")
-    // public TableDataInfo unallocatedList(SysUser user) {
-    // startPage();
-    // List<SysUser> list = this.userService.selectUnallocatedList(user);
-    // return getDataTable(list);
-    // }
-
-    /**
-     * 取消分配给用户的角色
-     */
-    @ApiOperation(value = "取消分配给用户的角色")
-    @PreAuthorize("@ss.hasPermission('system:role:edit')")
-    @Log(title = "角色管理", businessType = BusinessType.GRANT)
-    @PutMapping("/authUser/cancel")
-    public R<String> cancelAuthUser(@RequestBody UserRole userRole) {
-        this.roleService.deleteAuthUser(userRole);
-        return R.success("取消角色成功");
-    }
-
-    /**
-     * 批量取消授权用户
-     */
-    @ApiOperation(value = "批量取消授权用户")
-    @PreAuthorize("@ss.hasPermission('system:role:edit')")
-    @Log(title = "角色管理", businessType = BusinessType.GRANT)
-    @PutMapping("/authUser/cancelAll")
-    public R<String> cancelAuthUserAll(Long roleId, Long[] userIds) {
-        this.roleService.deleteAuthUsers(roleId, userIds);
-        return R.success("批量取消授权成功");
-    }
-
-    /**
-     * 批量选择用户授权
-     */
-    @ApiOperation(value = "批量选择用户授权")
-    @PreAuthorize("@ss.hasPermission('system:role:edit')")
-    @Log(title = "角色管理", businessType = BusinessType.GRANT)
-    @PutMapping("/authUser/selectAll")
-    public R<String> selectAuthUserAll(Long roleId, Long[] userIds) {
-        this.roleService.insertAuthUsers(roleId, userIds);
-        return R.success("批量授权成功");
+        return R.success(this.userService.selectAllocatedUserList(user, pageNum, pageSize));
     }
 }

@@ -12,18 +12,19 @@ import org.springframework.stereotype.Component;
 import com.xjhqre.common.constant.CacheConstants;
 import com.xjhqre.common.constant.Constants;
 import com.xjhqre.common.constant.ErrorCode;
+import com.xjhqre.common.domain.LoginUser;
 import com.xjhqre.common.domain.admin.User;
-import com.xjhqre.common.domain.model.LoginUser;
 import com.xjhqre.common.exception.ServiceException;
-import com.xjhqre.common.manager.AsyncFactory;
-import com.xjhqre.common.manager.AsyncManager;
-import com.xjhqre.common.service.UserService;
 import com.xjhqre.common.utils.DateUtils;
 import com.xjhqre.common.utils.ServletUtils;
 import com.xjhqre.common.utils.StringUtils;
 import com.xjhqre.common.utils.ip.IpUtils;
 import com.xjhqre.common.utils.redis.RedisCache;
+import com.xjhqre.portal.manager.AsyncFactory;
+import com.xjhqre.portal.manager.AsyncManager;
 import com.xjhqre.portal.security.context.AuthenticationContextHolder;
+import com.xjhqre.portal.service.ConfigService;
+import com.xjhqre.portal.service.UserService;
 
 /**
  * 登录校验方法
@@ -33,19 +34,15 @@ import com.xjhqre.portal.security.context.AuthenticationContextHolder;
 @Component
 public class LoginService {
     @Autowired
-    private TokenService tokenService;
-
+    TokenService tokenService;
     @Resource
-    private AuthenticationManager authenticationManager;
-
+    AuthenticationManager authenticationManager;
     @Autowired
-    private RedisCache redisCache;
-
+    RedisCache redisCache;
     @Autowired
-    private UserService userService;
-
-    // @Autowired
-    // private ConfigService configService;
+    UserService userService;
+    @Autowired
+    ConfigService configService;
 
     /**
      * 登录验证
@@ -61,11 +58,10 @@ public class LoginService {
      * @return token
      */
     public String login(String username, String password, String code, String uuid) {
-        // boolean captchaEnabled = this.configService.selectCaptchaEnabled();
-        // TODO 验证码开关
-        // if (captchaEnabled) {
-        // this.validateCaptcha(username, code, uuid);
-        // }
+        boolean captchaEnabled = this.configService.selectCaptchaEnabled();
+        if (captchaEnabled) {
+            this.validateCaptcha(username, code, uuid);
+        }
         // 用户验证
         Authentication authentication = null;
         try {
@@ -129,6 +125,6 @@ public class LoginService {
         user.setUserId(userId);
         user.setLoginIp(IpUtils.getIpAddr(ServletUtils.getRequest()));
         user.setLoginDate(DateUtils.getNowDate());
-        this.userService.updateUserProfile(user);
+        this.userService.updateById(user);
     }
 }

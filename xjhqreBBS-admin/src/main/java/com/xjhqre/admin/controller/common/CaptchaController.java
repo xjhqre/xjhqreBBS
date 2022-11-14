@@ -13,11 +13,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.code.kaptcha.Producer;
+import com.xjhqre.admin.service.ConfigService;
 import com.xjhqre.common.common.R;
 import com.xjhqre.common.constant.CacheConstants;
 import com.xjhqre.common.constant.Constants;
-import com.xjhqre.common.controller.BaseController;
-import com.xjhqre.common.service.ConfigService;
+import com.xjhqre.common.core.BaseController;
 import com.xjhqre.common.utils.redis.RedisCache;
 import com.xjhqre.common.utils.sign.Base64;
 import com.xjhqre.common.utils.uuid.IdUtils;

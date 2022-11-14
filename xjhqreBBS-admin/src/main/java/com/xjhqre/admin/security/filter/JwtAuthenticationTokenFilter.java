@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.xjhqre.admin.security.service.TokenService;
-import com.xjhqre.common.domain.model.LoginUser;
+import com.xjhqre.common.domain.LoginUser;
 import com.xjhqre.common.utils.SecurityUtils;
 import com.xjhqre.common.utils.StringUtils;
 

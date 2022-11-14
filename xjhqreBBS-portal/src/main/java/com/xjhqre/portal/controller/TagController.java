@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.xjhqre.common.common.R;
-import com.xjhqre.common.controller.BaseController;
+import com.xjhqre.common.core.BaseController;
 import com.xjhqre.common.domain.portal.Tag;
-import com.xjhqre.common.service.TagService;
+import com.xjhqre.portal.service.TagService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;

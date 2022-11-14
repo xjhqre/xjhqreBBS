@@ -15,13 +15,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.xjhqre.admin.service.MenuService;
 import com.xjhqre.common.annotation.Log;
 import com.xjhqre.common.common.R;
 import com.xjhqre.common.constant.Constants;
-import com.xjhqre.common.controller.BaseController;
+import com.xjhqre.common.core.BaseController;
+import com.xjhqre.common.domain.TreeSelect;
 import com.xjhqre.common.domain.admin.Menu;
 import com.xjhqre.common.enums.BusinessType;
-import com.xjhqre.common.service.MenuService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -64,14 +65,15 @@ public class MenuController extends BaseController {
     }
 
     /**
-     * 获取菜单下拉树列表
+     * 获取菜单下拉树列表，用于新增角色时显示，只显示当前用户所拥有的权限
      */
     @ApiOperation(value = "获取菜单下拉树列表")
     @GetMapping("/treeSelect")
-    public R<List<Menu>> treeSelect(Menu menu) {
+    public R<List<TreeSelect>> treeSelect(Menu menu) {
+        // 查询当前用户的权限信息
         List<Menu> menus = this.menuService.selectMenuList(menu, this.getUserId());
-        menus = this.menuService.buildMenuTree(menus);
-        return R.success(menus);
+        List<TreeSelect> treeSelects = this.menuService.buildMenuTreeSelect(menus);
+        return R.success(treeSelects);
     }
 
     /**
@@ -80,10 +82,9 @@ public class MenuController extends BaseController {
     @ApiOperation(value = "加载对应角色菜单列表树")
     @GetMapping(value = "/roleMenuTreeSelect/{roleId}")
     public R<String> roleMenuTreeSelect(@PathVariable("roleId") Long roleId) {
-        List<Menu> menus = this.menuService.selectMenuList(this.getUserId());
-        List<Long> roleIds = this.menuService.selectMenuListByRoleId(roleId);
+        List<Menu> menus = this.menuService.selectMenuListByRoleId(roleId);
         menus = this.menuService.buildMenuTree(menus);
-        return R.success("加载对应角色菜单列表树成功").add("roleIds", roleIds).add("menus", menus);
+        return R.success("加载对应角色菜单列表树成功").add("menus", menus);
     }
 
     /**

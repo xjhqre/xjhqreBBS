@@ -9,16 +9,17 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
+import com.xjhqre.admin.manager.AsyncFactory;
+import com.xjhqre.admin.manager.AsyncManager;
 import com.xjhqre.admin.security.context.AuthenticationContextHolder;
+import com.xjhqre.admin.service.ConfigService;
+import com.xjhqre.admin.service.UserService;
 import com.xjhqre.common.constant.CacheConstants;
 import com.xjhqre.common.constant.Constants;
 import com.xjhqre.common.constant.ErrorCode;
+import com.xjhqre.common.domain.LoginUser;
 import com.xjhqre.common.domain.admin.User;
-import com.xjhqre.common.domain.model.LoginUser;
 import com.xjhqre.common.exception.ServiceException;
-import com.xjhqre.common.manager.AsyncFactory;
-import com.xjhqre.common.manager.AsyncManager;
-import com.xjhqre.common.service.UserService;
 import com.xjhqre.common.utils.DateUtils;
 import com.xjhqre.common.utils.ServletUtils;
 import com.xjhqre.common.utils.StringUtils;
@@ -44,12 +45,12 @@ public class LoginService {
     @Autowired
     private UserService userService;
 
-    // @Autowired
-    // private ConfigService configService;
+    @Autowired
+    private ConfigService configService;
 
     /**
      * 登录验证
-     * 
+     *
      * @param username
      *            用户名
      * @param password
@@ -61,12 +62,11 @@ public class LoginService {
      * @return token
      */
     public String login(String username, String password, String code, String uuid) {
-        // TODO 验证码开关
-        // boolean captchaEnabled = this.configService.selectCaptchaEnabled();
+        boolean captchaEnabled = this.configService.selectCaptchaEnabled();
         // 验证码开关
-        // if (captchaEnabled) {
-        // this.validateCaptcha(username, code, uuid);
-        // }
+        if (captchaEnabled) {
+            this.validateCaptcha(code, uuid);
+        }
         // 用户验证
         Authentication authentication = null;
         try {
@@ -96,25 +96,21 @@ public class LoginService {
 
     /**
      * 校验验证码
-     * 
-     * @param username
-     *            用户名
+     *
      * @param code
      *            验证码
      * @param uuid
      *            唯一标识
      * @return 结果
      */
-    public void validateCaptcha(String username, String code, String uuid) {
+    public void validateCaptcha(String code, String uuid) {
         String verifyKey = CacheConstants.CAPTCHA_CODE_KEY + StringUtils.nvl(uuid, "");
         String captcha = this.redisCache.getCacheObject(verifyKey);
         this.redisCache.deleteObject(verifyKey);
         if (captcha == null) {
-            AsyncManager.me().execute(AsyncFactory.recordLoginInfo(username, Constants.LOGIN_FAIL, "验证码已失效"));
             throw new ServiceException("验证码已失效");
         }
         if (!code.equalsIgnoreCase(captcha)) {
-            AsyncManager.me().execute(AsyncFactory.recordLoginInfo(username, Constants.LOGIN_FAIL, "验证码错误"));
             throw new ServiceException("验证码错误");
         }
     }
@@ -130,6 +126,6 @@ public class LoginService {
         user.setUserId(userId);
         user.setLoginIp(IpUtils.getIpAddr(ServletUtils.getRequest()));
         user.setLoginDate(DateUtils.getNowDate());
-        this.userService.updateUserProfile(user);
+        this.userService.updateById(user);
     }
 }

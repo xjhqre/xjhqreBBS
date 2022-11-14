@@ -1,21 +1,21 @@
 package com.xjhqre.admin.security.service;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import com.xjhqre.admin.service.UserService;
 import com.xjhqre.common.constant.CacheConstants;
+import com.xjhqre.common.domain.LoginUser;
 import com.xjhqre.common.domain.admin.User;
-import com.xjhqre.common.domain.model.LoginUser;
 import com.xjhqre.common.enums.UserStatus;
 import com.xjhqre.common.exception.ServiceException;
-import com.xjhqre.common.service.UserService;
 import com.xjhqre.common.utils.StringUtils;
 import com.xjhqre.common.utils.redis.RedisCache;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 用户验证处理
@@ -23,8 +23,8 @@ import com.xjhqre.common.utils.redis.RedisCache;
  * @author xjhqre
  */
 @Service
+@Slf4j
 public class UserDetailsServiceImpl implements UserDetailsService {
-    private static final Logger log = LoggerFactory.getLogger(UserDetailsServiceImpl.class);
 
     @Autowired
     private UserService userService;

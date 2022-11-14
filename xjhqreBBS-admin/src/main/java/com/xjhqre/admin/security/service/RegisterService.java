@@ -3,14 +3,18 @@ package com.xjhqre.admin.security.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.xjhqre.admin.manager.AsyncFactory;
+import com.xjhqre.admin.manager.AsyncManager;
+import com.xjhqre.admin.service.ConfigService;
+import com.xjhqre.admin.service.UserService;
+import com.xjhqre.common.constant.CacheConstants;
 import com.xjhqre.common.constant.Constants;
 import com.xjhqre.common.domain.admin.User;
 import com.xjhqre.common.domain.model.RegisterBody;
 import com.xjhqre.common.exception.ServiceException;
-import com.xjhqre.common.manager.AsyncFactory;
-import com.xjhqre.common.manager.AsyncManager;
-import com.xjhqre.common.service.UserService;
 import com.xjhqre.common.utils.SecurityUtils;
+import com.xjhqre.common.utils.StringUtils;
+import com.xjhqre.common.utils.redis.RedisCache;
 
 /**
  * 注册校验方法
@@ -20,22 +24,37 @@ import com.xjhqre.common.utils.SecurityUtils;
 @Component
 public class RegisterService {
     @Autowired
-    private UserService userService;
+    UserService userService;
+    @Autowired
+    RedisCache redisCache;
+    @Autowired
+    ConfigService configService;
 
     /**
      * 注册
      */
     public void register(RegisterBody registerBody) {
+        if (!("true".equals(this.configService.selectConfigByKey("registerUser")))) {
+            throw new ServiceException("当前系统没有开启注册功能！");
+        }
+
+        // 是否开启验证码功能
+        String emailCode = this.redisCache.getCacheObject(CacheConstants.EMAIL_CODE_KEY + registerBody.getEmail());
+        if (StringUtils.isEmpty(emailCode)) {
+            throw new ServiceException("验证码已失效！！！");
+        }
+        if (!StringUtils.equals(registerBody.getCode(), emailCode)) {
+            throw new ServiceException("验证码输入错误！！！");
+        }
+
+        // 清除验证码缓存
+        this.redisCache.deleteObject(CacheConstants.EMAIL_CODE_KEY + registerBody.getEmail());
+
         String username = registerBody.getUsername();
         String password = registerBody.getPassword();
         User user = new User();
         user.setUserName(username);
 
-        // TODO 验证码开关
-        // boolean captchaEnabled = this.configService.selectCaptchaEnabled();
-        // if (captchaEnabled) {
-        // this.validateCaptcha(username, registerBody.getCode(), registerBody.getUuid());
-        // }
         if (Constants.NOT_UNIQUE.equals(this.userService.checkUserNameUnique(user))) {
             throw new ServiceException("该用户名已存在");
         } else if (Constants.NOT_UNIQUE.equals(this.userService.checkEmailUnique(user))) {
@@ -52,25 +71,4 @@ public class RegisterService {
         }
     }
 
-    // /**
-    // * 校验验证码
-    // *
-    // * @param username
-    // * 用户名
-    // * @param code
-    // * 验证码
-    // * @param uuid
-    // * 唯一标识
-    // */
-    // public void validateCaptcha(String username, String code, String uuid) {
-    // String verifyKey = CacheConstants.CAPTCHA_CODE_KEY + StringUtils.nvl(uuid, "");
-    // String captcha = this.redisCache.getCacheObject(verifyKey);
-    // this.redisCache.deleteObject(verifyKey);
-    // if (captcha == null) {
-    // throw new ServiceException("验证码已失效");
-    // }
-    // if (!code.equalsIgnoreCase(captcha)) {
-    // throw new ServiceException("验证码已错误");
-    // }
-    // }
 }

@@ -3,6 +3,7 @@ package com.xjhqre.portal.service;
 import java.util.List;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.xjhqre.common.domain.portal.Comment;
 
 /**
@@ -10,7 +11,7 @@ import com.xjhqre.common.domain.portal.Comment;
  *
  * @author xjhqre
  */
-public interface CommentService {
+public interface CommentService extends IService<Comment> {
 
     /**
      * 根据条件分页查询评论信息

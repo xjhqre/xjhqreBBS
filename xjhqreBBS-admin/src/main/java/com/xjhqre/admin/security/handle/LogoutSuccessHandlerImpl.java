@@ -9,13 +9,13 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 
 import com.alibaba.fastjson2.JSON;
+import com.xjhqre.admin.manager.AsyncFactory;
+import com.xjhqre.admin.manager.AsyncManager;
 import com.xjhqre.admin.security.service.TokenService;
 import com.xjhqre.common.common.R;
 import com.xjhqre.common.constant.Constants;
 import com.xjhqre.common.constant.HttpStatus;
-import com.xjhqre.common.domain.model.LoginUser;
-import com.xjhqre.common.manager.AsyncFactory;
-import com.xjhqre.common.manager.AsyncManager;
+import com.xjhqre.common.domain.LoginUser;
 import com.xjhqre.common.utils.ServletUtils;
 import com.xjhqre.common.utils.StringUtils;
 

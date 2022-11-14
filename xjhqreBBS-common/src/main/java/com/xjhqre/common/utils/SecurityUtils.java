@@ -5,7 +5,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.xjhqre.common.constant.HttpStatus;
-import com.xjhqre.common.domain.model.LoginUser;
+import com.xjhqre.common.domain.LoginUser;
 import com.xjhqre.common.exception.ServiceException;
 
 /**
@@ -14,6 +14,9 @@ import com.xjhqre.common.exception.ServiceException;
  * @author xjhqre
  */
 public class SecurityUtils {
+
+    private SecurityUtils() {}
+
     /**
      * 用户ID
      **/

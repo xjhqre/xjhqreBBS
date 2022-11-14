@@ -13,11 +13,11 @@ import com.xjhqre.common.constant.ErrorCode;
 import com.xjhqre.common.constant.UserStatus;
 import com.xjhqre.common.domain.admin.User;
 import com.xjhqre.common.exception.ServiceException;
-import com.xjhqre.common.manager.AsyncFactory;
-import com.xjhqre.common.manager.AsyncManager;
 import com.xjhqre.common.utils.SecurityUtils;
 import com.xjhqre.common.utils.StringUtils;
 import com.xjhqre.common.utils.redis.RedisCache;
+import com.xjhqre.portal.manager.AsyncFactory;
+import com.xjhqre.portal.manager.AsyncManager;
 import com.xjhqre.portal.security.context.AuthenticationContextHolder;
 
 /**

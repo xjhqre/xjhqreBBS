@@ -3,14 +3,15 @@ package com.xjhqre.admin.security.service;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.xjhqre.admin.service.MenuService;
+import com.xjhqre.admin.service.RoleService;
 import com.xjhqre.common.domain.admin.Role;
 import com.xjhqre.common.domain.admin.User;
-import com.xjhqre.common.service.MenuService;
-import com.xjhqre.common.service.RoleService;
 
 /**
  * 用户权限处理
@@ -34,14 +35,15 @@ public class PermissionService {
      * @return 角色权限信息
      */
     public Set<String> getRolePermission(User user) {
-        Set<String> roles = new HashSet<>();
+        Set<String> roleKeys = new HashSet<>();
         // 管理员拥有所有权限
         if (user.isSuperAdmin()) {
-            roles.add("superAdmin");
+            roleKeys.add("superAdmin");
         } else {
-            roles.addAll(this.roleService.selectRolePermissionByUserId(user.getUserId()));
+            List<Role> roles = this.roleService.selectRolesByUserId(user.getUserId());
+            roleKeys = roles.stream().map(Role::getRoleKey).collect(Collectors.toSet());
         }
-        return roles;
+        return roleKeys;
     }
 
     /**
@@ -62,7 +64,7 @@ public class PermissionService {
                 // 多角色设置permissions属性，以便数据权限匹配权限
                 for (Role role : roles) {
                     // 使用Set对权限进行去重
-                    Set<String> rolePerms = this.menuService.selectMenuPermsByRoleId(role.getRoleId());
+                    Set<String> rolePerms = this.menuService.selectMenuPermSetByRoleId(role.getRoleId());
                     role.setPermissions(rolePerms);
                     perms.addAll(rolePerms);
                 }

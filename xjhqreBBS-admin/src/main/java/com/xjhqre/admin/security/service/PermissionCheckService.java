@@ -5,9 +5,8 @@ import java.util.Set;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import com.xjhqre.admin.security.context.PermissionContextHolder;
+import com.xjhqre.common.domain.LoginUser;
 import com.xjhqre.common.domain.admin.Role;
-import com.xjhqre.common.domain.model.LoginUser;
 import com.xjhqre.common.utils.SecurityUtils;
 import com.xjhqre.common.utils.StringUtils;
 
@@ -43,44 +42,7 @@ public class PermissionCheckService {
         if (StringUtils.isNull(loginUser) || CollectionUtils.isEmpty(loginUser.getPermissions())) {
             return false;
         }
-        PermissionContextHolder.setContext(permission);
         return this.hasPermissions(loginUser.getPermissions(), permission);
-    }
-
-    /**
-     * 验证用户是否不具备某权限，与 hasPermi逻辑相反
-     *
-     * @param permission
-     *            权限字符串
-     * @return 用户是否不具备某权限
-     */
-    public boolean lacksPermi(String permission) {
-        return !this.hasPermission(permission);
-    }
-
-    /**
-     * 验证用户是否具有以下任意一个权限
-     *
-     * @param permissions
-     *            以 PERMISSION_NAMES_DELIMETER 为分隔符的权限列表
-     * @return 用户是否具有以下任意一个权限
-     */
-    public boolean hasAnyPermi(String permissions) {
-        if (StringUtils.isEmpty(permissions)) {
-            return false;
-        }
-        LoginUser loginUser = SecurityUtils.getLoginUser();
-        if (StringUtils.isNull(loginUser) || CollectionUtils.isEmpty(loginUser.getPermissions())) {
-            return false;
-        }
-        PermissionContextHolder.setContext(permissions);
-        Set<String> authorities = loginUser.getPermissions();
-        for (String permission : permissions.split(PERMISSION_DELIMETER)) {
-            if (permission != null && this.hasPermissions(authorities, permission)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     /**
@@ -102,40 +64,6 @@ public class PermissionCheckService {
             String roleKey = userRole.getRoleKey();
             // 如果用户时超级管理员或者具有该角色
             if (SUPER_ADMIN.equals(roleKey) || roleKey.equals(StringUtils.trim(role))) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * 验证用户是否不具备某角色，与 isRole逻辑相反。
-     *
-     * @param role
-     *            角色名称
-     * @return 用户是否不具备某角色
-     */
-    public boolean lacksRole(String role) {
-        return this.hasRole(role) != true;
-    }
-
-    /**
-     * 验证用户是否具有以下任意一个角色
-     *
-     * @param roles
-     *            以 ROLE_NAMES_DELIMETER 为分隔符的角色列表
-     * @return 用户是否具有以下任意一个角色
-     */
-    public boolean hasAnyRoles(String roles) {
-        if (StringUtils.isEmpty(roles)) {
-            return false;
-        }
-        LoginUser loginUser = SecurityUtils.getLoginUser();
-        if (StringUtils.isNull(loginUser) || CollectionUtils.isEmpty(loginUser.getUser().getRoles())) {
-            return false;
-        }
-        for (String role : roles.split(ROLE_DELIMETER)) {
-            if (this.hasRole(role)) {
                 return true;
             }
         }

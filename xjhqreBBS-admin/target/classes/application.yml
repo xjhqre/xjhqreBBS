@@ -42,6 +42,10 @@ spring:
     username: admin
     ####密码
     password: admin
+  security:
+    user:
+      name: admin
+      password: xjhqre
 
 
 # MyBatis-plus配置

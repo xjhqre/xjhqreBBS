@@ -5,11 +5,10 @@ import java.util.Set;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import com.xjhqre.common.domain.LoginUser;
 import com.xjhqre.common.domain.admin.Role;
-import com.xjhqre.common.domain.model.LoginUser;
 import com.xjhqre.common.utils.SecurityUtils;
 import com.xjhqre.common.utils.StringUtils;
-import com.xjhqre.portal.security.context.PermissionContextHolder;
 
 /**
  * RuoYi首创 自定义权限实现，ss取自SpringSecurity首字母
@@ -43,7 +42,6 @@ public class PermissionCheckService {
         if (StringUtils.isNull(loginUser) || CollectionUtils.isEmpty(loginUser.getPermissions())) {
             return false;
         }
-        PermissionContextHolder.setContext(permission);
         return this.hasPermissions(loginUser.getPermissions(), permission);
     }
 
@@ -73,7 +71,6 @@ public class PermissionCheckService {
         if (StringUtils.isNull(loginUser) || CollectionUtils.isEmpty(loginUser.getPermissions())) {
             return false;
         }
-        PermissionContextHolder.setContext(permissions);
         Set<String> authorities = loginUser.getPermissions();
         for (String permission : permissions.split(PERMISSION_DELIMETER)) {
             if (permission != null && this.hasPermissions(authorities, permission)) {

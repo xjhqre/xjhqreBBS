@@ -13,12 +13,15 @@ import com.xjhqre.common.utils.StringUtils;
 import com.xjhqre.common.utils.redis.RedisCache;
 import com.xjhqre.quartz.service.ArticleQuartzService;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * 定时任务调度测试
  * 
  * @author ruoyi
  */
 @Component("myTask")
+@Slf4j
 public class MyTask {
 
     @Autowired
@@ -27,15 +30,15 @@ public class MyTask {
     ArticleQuartzService articleQuartzService;
 
     public void ryMultipleParams(String s, Boolean b, Long l, Double d, Integer i) {
-        System.out.println(StringUtils.format("执行多参方法： 字符串类型{}，布尔类型{}，长整型{}，浮点型{}，整形{}", s, b, l, d, i));
+        log.info(StringUtils.format("执行多参方法： 字符串类型{}，布尔类型{}，长整型{}，浮点型{}，整形{}", s, b, l, d, i));
     }
 
     public void ryParams(String params) {
-        System.out.println("执行有参方法：" + params);
+        log.info("执行有参方法：" + params);
     }
 
     public void ryNoParams() {
-        System.out.println("执行无参方法");
+        log.info("执行无参方法");
     }
 
     /**

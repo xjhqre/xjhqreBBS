@@ -2,6 +2,8 @@ package com.xjhqre.portal.controller;
 
 import java.util.Set;
 
+import org.apache.dubbo.config.annotation.DubboReference;
+import org.apache.dubbo.rpc.RpcException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,17 +20,20 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.xjhqre.common.common.R;
 import com.xjhqre.common.constant.ArticleStatus;
 import com.xjhqre.common.constant.ExceptionConstants;
-import com.xjhqre.common.controller.BaseController;
+import com.xjhqre.common.core.BaseController;
 import com.xjhqre.common.domain.portal.Article;
 import com.xjhqre.common.domain.portal.dto.ArticleDTO;
 import com.xjhqre.common.exception.ServiceException;
-import com.xjhqre.common.service.ArticleService;
 import com.xjhqre.common.utils.SecurityUtils;
+import com.xjhqre.portal.service.ArticleService;
+import com.xjhqre.portal.service.ConfigService;
+import com.xjhqre.search.service.SearchService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * <p>
@@ -40,11 +45,16 @@ import io.swagger.annotations.ApiOperation;
  */
 @Api(value = "文章操作接口", tags = "文章操作接口")
 @RestController
+@Slf4j
 @RequestMapping("/portal/article")
 public class ArticleController extends BaseController {
 
     @Autowired
     private ArticleService articleService;
+    @DubboReference(check = false, url = "${provider.host}")
+    SearchService searchService;
+    @Autowired
+    ConfigService configService;
 
     @ApiOperation(value = "分页查询文章列表")
     @ApiImplicitParams({
@@ -60,6 +70,25 @@ public class ArticleController extends BaseController {
             .eq(Article::getStatus, ArticleStatus.PUBLISH)
             .eq(article.getTitle() != null, Article::getTitle, article.getTitle());
         return R.success(this.articleService.page(new Page<>(pageNum, pageSize), queryWrapper));
+    }
+
+    @ApiOperation(value = "全文检索文章")
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "pageNum", value = "正整数，表示查询第几页", required = true, dataType = "int", example = "1"),
+        @ApiImplicitParam(name = "pageSize", value = "正整数，表示每页几条记录", required = true, dataType = "int",
+            example = "20")})
+    @GetMapping("SearchArticle/{pageNum}/{pageSize}")
+    public R<IPage<Article>> searchArticle(String keywords, @PathVariable("pageNum") Integer pageNum,
+        @PathVariable("pageSize") Integer pageSize) {
+        boolean esSearch = this.configService.selectEsSearch();
+        if (esSearch) {
+            try {
+                return R.success(this.searchService.searchArticleByES(keywords, pageNum, pageSize));
+            } catch (RpcException ignored) {
+                log.info("dubbo调用失败，使用SQL查询");
+            }
+        }
+        return R.success(this.articleService.findArticleByKeywords(keywords, pageNum, pageSize));
     }
 
     @ApiOperation(value = "根据分类id分页查询文章列表")
@@ -85,7 +114,7 @@ public class ArticleController extends BaseController {
     }
 
     @ApiOperation(value = "根据文章编号获取文章详细")
-    @GetMapping(value = "/{articleId}")
+    @GetMapping(value = "getArticleDetails/{articleId}")
     public R<Article> getArticleDetails(@PathVariable Long articleId) {
         if (articleId == null) {
             throw new ServiceException(ExceptionConstants.NOT_NULL);
@@ -94,7 +123,7 @@ public class ArticleController extends BaseController {
     }
 
     @ApiOperation(value = "浏览文章")
-    @GetMapping(value = "/{articleId}")
+    @GetMapping(value = "viewArticle/{articleId}")
     public R<Article> viewArticle(@PathVariable Long articleId) {
         if (articleId == null) {
             throw new ServiceException(ExceptionConstants.NOT_NULL);

@@ -9,13 +9,13 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.xjhqre.common.constant.CacheConstants;
+import com.xjhqre.common.domain.LoginUser;
 import com.xjhqre.common.domain.admin.User;
-import com.xjhqre.common.domain.model.LoginUser;
 import com.xjhqre.common.enums.UserStatus;
 import com.xjhqre.common.exception.ServiceException;
-import com.xjhqre.common.service.UserService;
 import com.xjhqre.common.utils.StringUtils;
 import com.xjhqre.common.utils.redis.RedisCache;
+import com.xjhqre.portal.service.UserService;
 
 /**
  * 用户验证处理
@@ -61,6 +61,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         // 自定义密码校验
         this.passwordService.validate(user);
 
+        // 设置LoginUser，包含用户权限信息
         return new LoginUser(user.getUserId(), user, this.permissionService.getMenuPermission(user));
     }
 }

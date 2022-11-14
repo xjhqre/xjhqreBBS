@@ -6,13 +6,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.xjhqre.admin.security.service.LoginService;
 import com.xjhqre.admin.security.service.PermissionService;
 import com.xjhqre.common.common.R;
 import com.xjhqre.common.constant.Constants;
-import com.xjhqre.common.controller.BaseController;
+import com.xjhqre.common.core.BaseController;
 import com.xjhqre.common.domain.admin.User;
 import com.xjhqre.common.domain.model.LoginBody;
 import com.xjhqre.common.utils.SecurityUtils;
@@ -27,6 +28,7 @@ import io.swagger.annotations.ApiOperation;
  */
 @RestController
 @Api(value = "用户登陆接口", tags = "用户登陆接口")
+@RequestMapping("/admin")
 public class LoginController extends BaseController {
     @Autowired
     private LoginService loginService;

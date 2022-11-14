@@ -12,7 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.xjhqre.common.common.R;
-import com.xjhqre.common.controller.BaseController;
+import com.xjhqre.common.core.BaseController;
 import com.xjhqre.common.domain.picture.Picture;
 import com.xjhqre.common.exception.ServiceException;
 import com.xjhqre.picture.service.PictureService;

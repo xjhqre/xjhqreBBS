@@ -10,11 +10,9 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.xjhqre.admin.security.service.PermissionService;
+import com.xjhqre.admin.service.RoleService;
+import com.xjhqre.admin.service.UserService;
 import com.xjhqre.common.config.properties.OssProperties;
-import com.xjhqre.common.domain.admin.User;
-import com.xjhqre.common.service.RoleService;
-import com.xjhqre.common.service.UserService;
-import com.xjhqre.common.utils.SecurityUtils;
 import com.xjhqre.common.utils.SpringUtils;
 import com.xjhqre.common.utils.uuid.IdUtils;
 
@@ -50,17 +48,6 @@ public class AdminApplicationTest {
     public void test2() {
         Object redisCache = SpringUtils.getBean("globalExceptionHandler");
         System.out.println(redisCache);
-    }
-
-    // 新增用户
-    @Test
-    public void test3() {
-        User user = new User();
-        user.setUserName("xjhqre");
-        user.setNickName("xjhqre");
-        user.setCreateBy("xjhqre");
-        user.setPassword(SecurityUtils.encryptPassword("123456"));
-        this.userService.insertUser(user);
     }
 
     // 测试参数注入

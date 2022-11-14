@@ -16,7 +16,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.xjhqre.admin.service.NoticeService;
 import com.xjhqre.common.annotation.Log;
 import com.xjhqre.common.common.R;
-import com.xjhqre.common.controller.BaseController;
+import com.xjhqre.common.core.BaseController;
 import com.xjhqre.common.domain.admin.Notice;
 import com.xjhqre.common.enums.BusinessType;
 

@@ -16,6 +16,7 @@
         <module>xjhqreBBS-quartz</module>
         <module>xjhqreBBS-picture</module>
         <module>xjhqreBBS-sms</module>
+        <module>xjhqreBBS-search</module>
     </modules>
 
     <parent>

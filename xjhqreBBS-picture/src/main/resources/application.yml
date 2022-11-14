@@ -50,7 +50,7 @@ logging:
 
 # 端口号
 server:
-  port: 8082
+  port: 8083
 
 # token配置
 token:

@@ -6,6 +6,8 @@ import java.io.InputStreamReader;
 
 import com.xjhqre.common.constant.PictureConstant;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * <p>
  * 向量工具类，对应feature_extractor.py文件
@@ -14,6 +16,7 @@ import com.xjhqre.common.constant.PictureConstant;
  * @author xjhqre
  * @since 10月 24, 2022
  */
+@Slf4j
 public class FeatureExtractor {
 
     /**
@@ -31,7 +34,7 @@ public class FeatureExtractor {
             }
             in.close();
             proc.waitFor();
-            System.out.println(response);
+            log.info(String.valueOf(response));
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }

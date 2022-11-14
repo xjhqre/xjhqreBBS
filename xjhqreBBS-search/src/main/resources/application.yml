@@ -1,0 +1,77 @@
+spring:
+  profiles:
+    active: druid
+  application:
+    name: search
+  # redis 配置
+  redis:
+    # 地址
+    host: 116.62.103.149
+    # 端口
+    port: 6379
+    # 连接超时时间 2s
+    timeout: 5000
+  rabbitmq:
+    ####连接地址
+    host: 116.62.103.149
+    ####端口号
+    port: 5672
+    ####账号
+    username: admin
+    ####密码
+    password: admin
+  elasticsearch:
+    rest:
+      uris: http://1.15.88.204:9201
+      username: elastic
+      password: xjhqre
+  security:
+    user:
+      name: admin
+      password: xjhqre
+
+# token配置
+token:
+  # 令牌自定义标识
+  header: Authorization
+  # 令牌密钥
+  secret: abcdefghijklmnopqrstuvwxyz
+  # 令牌有效期（默认30分钟）
+  expireTime: 30
+
+dubbo:
+  registry:
+    address: N/A # 表示无注册中心
+  protocol:
+    name: dubbo # 提供者协议
+    port: 18081 # 提供者dubbo端口
+    host: 127.0.0.1 # 服务提供者所在机器地址
+  scan:
+    base-packages: com.xjhqre.search.service # 提供者需要交由dubbo管理的扫描包路径
+  application:
+    name: provide-server # 提供者服务名
+
+
+# MyBatis-plus配置
+mybatis-plus:
+  configuration:
+    #在映射实体或者属性时，将数据库中表名和字段名中的下划线去掉，按照驼峰命名法映射
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  #    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
+  global-config:
+    db-config:
+      # 雪花算法生成 ID
+      id-type: ASSIGN_ID
+
+# 日志配置
+logging:
+  #  level:
+  #    config: classpath:log4j2-spring.xml
+  #    com.xjhqre.admin: debug
+  level:
+    com.xjhqre.admin: debug
+
+# 端口号
+server:
+  port: 8082

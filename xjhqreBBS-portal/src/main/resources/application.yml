@@ -83,3 +83,15 @@ aliyun:
     endPoint: https://oss-cn-hangzhou.aliyuncs.com
     keyId: LTAI5tRA8NFprYduUmGAuXAi
     keySecret: UgorzXce3lbW8n8hUMgomakhRtbfVO
+
+dubbo:
+  registry:
+    address: N/A # 表示无注册中心
+  protocol:
+    name: dubbo
+    port: 18082
+    host: 127.0.0.1
+  application:
+    name: consumer-server
+provider:
+  host: "dubbo://127.0.0.1:18081"

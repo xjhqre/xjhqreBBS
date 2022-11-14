@@ -10,12 +10,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.xjhqre.admin.security.service.PasswordService;
+import com.xjhqre.admin.service.LoginInfoService;
 import com.xjhqre.common.annotation.Log;
 import com.xjhqre.common.common.R;
-import com.xjhqre.common.controller.BaseController;
+import com.xjhqre.common.core.BaseController;
 import com.xjhqre.common.domain.LoginInfo;
 import com.xjhqre.common.enums.BusinessType;
-import com.xjhqre.common.service.LoginInfoService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;

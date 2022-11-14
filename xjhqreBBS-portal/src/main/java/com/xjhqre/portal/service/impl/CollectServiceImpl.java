@@ -15,9 +15,9 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.xjhqre.common.domain.portal.Article;
 import com.xjhqre.common.domain.portal.Collect;
 import com.xjhqre.common.domain.portal.vo.CollectVO;
-import com.xjhqre.common.service.ArticleService;
 import com.xjhqre.common.utils.SecurityUtils;
 import com.xjhqre.portal.mapper.CollectMapper;
+import com.xjhqre.portal.service.ArticleService;
 import com.xjhqre.portal.service.CollectService;
 
 /**

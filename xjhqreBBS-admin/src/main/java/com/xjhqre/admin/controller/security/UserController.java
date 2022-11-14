@@ -17,16 +17,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.xjhqre.admin.service.RoleService;
+import com.xjhqre.admin.service.UserService;
 import com.xjhqre.common.annotation.Log;
 import com.xjhqre.common.common.R;
 import com.xjhqre.common.constant.Constants;
-import com.xjhqre.common.controller.BaseController;
+import com.xjhqre.common.core.BaseController;
 import com.xjhqre.common.domain.admin.Role;
 import com.xjhqre.common.domain.admin.User;
 import com.xjhqre.common.enums.BusinessType;
-import com.xjhqre.common.exception.ServiceException;
-import com.xjhqre.common.service.RoleService;
-import com.xjhqre.common.service.UserService;
+import com.xjhqre.common.utils.DateUtils;
 import com.xjhqre.common.utils.SecurityUtils;
 import com.xjhqre.common.utils.StringUtils;
 
@@ -95,6 +95,7 @@ public class UserController extends BaseController {
             return R.error("新增用户'" + user.getUserName() + "'失败，邮箱账号已存在");
         }
         user.setCreateBy(this.getUsername());
+        user.setCreateTime(DateUtils.getNowDate());
         user.setPassword(SecurityUtils.encryptPassword(user.getPassword()));
         this.userService.insertUser(user);
         return R.success("新增用户'" + user.getUserName() + "'成功");
@@ -140,39 +141,6 @@ public class UserController extends BaseController {
     }
 
     /**
-     * 重置密码
-     */
-    @ApiOperation(value = "重置密码")
-    @PreAuthorize("@ss.hasPermission('system:user:resetPwd')")
-    @Log(title = "用户管理", businessType = BusinessType.UPDATE)
-    @PutMapping("/resetPwd")
-    public R<String> resetPwd(@RequestBody User user) {
-        // 只能修改自己的密码
-        if (!this.getLoginUser().getUserId().equals(user.getUserId())) {
-            throw new ServiceException("不能修改其他人的密码");
-        }
-        this.userService.checkUserAllowed(user.getUserId());
-        user.setPassword(SecurityUtils.encryptPassword(user.getPassword()));
-        user.setUpdateBy(this.getUsername());
-        this.userService.resetPwd(user);
-        return R.success("重置密码成功");
-    }
-
-    /**
-     * 状态修改
-     */
-    @ApiOperation(value = "修改用户状态")
-    @PreAuthorize("@ss.hasPermission('system:user:edit')")
-    @Log(title = "用户管理", businessType = BusinessType.UPDATE)
-    @PutMapping("/changeStatus")
-    public R<String> changeStatus(@RequestBody User user) {
-        this.userService.checkUserAllowed(user.getUserId());
-        user.setUpdateBy(this.getUsername());
-        this.userService.updateUserStatus(user);
-        return R.success("状态修改成功");
-    }
-
-    /**
      * 根据用户编号获取角色
      */
     @ApiOperation(value = "根据用户id获取用户角色")
@@ -181,17 +149,5 @@ public class UserController extends BaseController {
     public R<List<Role>> authRole(@PathVariable("userId") Long userId) {
         List<Role> roles = this.roleService.selectRolesByUserId(userId);
         return R.success(roles);
-    }
-
-    /**
-     * 给用户分配角色
-     */
-    @ApiOperation(value = "给用户分配角色")
-    @PreAuthorize("@ss.hasPermission('system:user:edit')")
-    @Log(title = "用户管理", businessType = BusinessType.GRANT)
-    @PutMapping("/authRole")
-    public R<String> insertAuthRole(Long userId, Long[] roleIds) {
-        this.userService.insertUserAuth(userId, roleIds);
-        return R.success("为用户分配角色成功");
     }
 }

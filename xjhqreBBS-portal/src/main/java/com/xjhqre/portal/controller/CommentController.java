@@ -18,7 +18,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.xjhqre.common.common.R;
 import com.xjhqre.common.constant.ErrorCode;
 import com.xjhqre.common.constant.ExceptionConstants;
-import com.xjhqre.common.controller.BaseController;
+import com.xjhqre.common.core.BaseController;
 import com.xjhqre.common.domain.portal.Comment;
 import com.xjhqre.common.exception.ServiceException;
 import com.xjhqre.common.utils.SecurityUtils;

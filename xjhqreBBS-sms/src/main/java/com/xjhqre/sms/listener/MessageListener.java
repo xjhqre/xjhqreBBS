@@ -10,10 +10,10 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.xjhqre.common.config.RabbitMQConfig;
 import com.xjhqre.common.domain.portal.Article;
 import com.xjhqre.common.domain.sms.Message3;
-import com.xjhqre.common.service.ArticleService;
-import com.xjhqre.common.service.Message3Service;
-import com.xjhqre.common.service.UserService;
 import com.xjhqre.common.utils.DateUtils;
+import com.xjhqre.sms.service.ArticleService;
+import com.xjhqre.sms.service.Message3Service;
+import com.xjhqre.sms.service.UserService;
 
 import lombok.extern.slf4j.Slf4j;
 

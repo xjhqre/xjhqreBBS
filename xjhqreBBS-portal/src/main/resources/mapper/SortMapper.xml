@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xjhqre.portal.mapper.SortMapper">
+
+    <!-- 统计分类引用次数，只统计发布状态的文章 -->
+    <select id="countRef" resultType="java.lang.Integer">
+        select count(*)
+        from t_article_sort tas,
+             t_article ta,
+             t_sort ts
+        where tas.article_id = ta.article_id
+          and tas.sort_id = ts.sort_id
+          and ts.sort_id = #{sortId}
+          and ta.status = '2'
+    </select>
+
+</mapper>
