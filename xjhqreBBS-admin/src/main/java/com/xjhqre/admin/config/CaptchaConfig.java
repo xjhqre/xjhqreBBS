@@ -1,4 +1,4 @@
-package com.xjhqre.common.config;
+package com.xjhqre.admin.config;
 
 import java.util.Properties;
 

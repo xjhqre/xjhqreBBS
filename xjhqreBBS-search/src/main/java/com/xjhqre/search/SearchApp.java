@@ -30,6 +30,7 @@ import lombok.extern.slf4j.Slf4j;
  * @since 11月 10, 2022
  */
 @Slf4j
+
 @SpringBootApplication(scanBasePackages = {"com.xjhqre.common.*", "com.xjhqre.search.*"})
 public class SearchApp {
 
