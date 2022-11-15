@@ -1,5 +1,15 @@
 package com.xjhqre.admin.controller.picture;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.xjhqre.admin.service.PictureService;
+import com.xjhqre.common.common.R;
+import com.xjhqre.common.core.BaseController;
+import com.xjhqre.common.domain.picture.Picture;
+import com.xjhqre.common.exception.ServiceException;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,18 +20,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.xjhqre.admin.service.PictureService;
-import com.xjhqre.common.common.R;
-import com.xjhqre.common.core.BaseController;
-import com.xjhqre.common.domain.picture.Picture;
-import com.xjhqre.common.exception.ServiceException;
-
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
 
 /**
  * <p>
@@ -41,12 +39,12 @@ public class PictureController extends BaseController {
 
     @ApiOperation(value = "分页查询图片列表")
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "pageNum", value = "正整数，表示查询第几页", required = true, dataType = "int", example = "1"),
-        @ApiImplicitParam(name = "pageSize", value = "正整数，表示每页几条记录", required = true, dataType = "int",
-            example = "20")})
+            @ApiImplicitParam(name = "pageNum", value = "正整数，表示查询第几页", required = true, dataType = "int", example = "1"),
+            @ApiImplicitParam(name = "pageSize", value = "正整数，表示每页几条记录", required = true, dataType = "int",
+                    example = "20")})
     @GetMapping("find/{pageNum}/{pageSize}")
     public R<IPage<Picture>> find(Picture picture, @PathVariable("pageNum") Integer pageNum,
-        @PathVariable("pageSize") Integer pageSize) {
+                                  @PathVariable("pageSize") Integer pageSize) {
         return R.success(this.pictureService.findPicture(picture, pageNum, pageSize));
     }
 
@@ -60,13 +58,13 @@ public class PictureController extends BaseController {
         return R.success("上传图片成功");
     }
 
-    @ApiOperation(value = "审核图片")
-    @PostMapping(value = "/audit/{pictureId}/{result}")
-    public R<String> audit(@PathVariable String pictureId, @PathVariable Integer result) {
-
-        this.pictureService.audit(pictureId, result);
-        return R.success("审核成功");
-    }
+    //@ApiOperation(value = "审核图片")
+    //@PostMapping(value = "/audit/{pictureId}/{result}")
+    //public R<String> audit(@PathVariable String pictureId, @PathVariable Integer result) {
+    //
+    //    this.pictureService.audit(pictureId, result);
+    //    return R.success("审核成功");
+    //}
 
     @ApiOperation(value = "批量审核图片")
     @PostMapping(value = "/batchAudit/{result}")

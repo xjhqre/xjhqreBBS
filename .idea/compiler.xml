@@ -17,13 +17,13 @@
         <module name="xjhqreBBS-portal" />
         <module name="xjhqreBBS-admin" />
         <module name="xjhqreBBS-quartz" />
-        <module name="xjhqreBBS-picture" />
         <module name="xjhqreBBS-common" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="xjhqreBBS-framework" target="1.8" />
       <module name="xjhqreBBS-gateway" target="1.8" />
+      <module name="xjhqreBBS-picture" target="1.8" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">

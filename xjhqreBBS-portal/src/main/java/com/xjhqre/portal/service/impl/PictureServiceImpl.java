@@ -1,12 +1,4 @@
-package com.xjhqre.picture.service.impl;
-
-import java.util.Arrays;
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
+package com.xjhqre.portal.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -21,8 +13,15 @@ import com.xjhqre.common.utils.OSSUtil;
 import com.xjhqre.common.utils.OSSUtil.FileDirType;
 import com.xjhqre.common.utils.SecurityUtils;
 import com.xjhqre.common.utils.uuid.IdUtils;
-import com.xjhqre.picture.mapper.PictureMapper;
-import com.xjhqre.picture.service.PictureService;
+import com.xjhqre.portal.mapper.PictureMapper;
+import com.xjhqre.portal.service.PictureService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * <p>
@@ -66,7 +65,7 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
 
     /**
      * 分页查询图片列表
-     * 
+     *
      * @param picture
      * @param pageNum
      * @param pageSize

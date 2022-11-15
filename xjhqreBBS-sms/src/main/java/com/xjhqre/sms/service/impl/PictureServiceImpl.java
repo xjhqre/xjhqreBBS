@@ -1,13 +1,9 @@
-package com.xjhqre.admin.service.impl;
+package com.xjhqre.sms.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.xjhqre.admin.mapper.PictureMapper;
-import com.xjhqre.admin.mq.RabbitMQSender;
-import com.xjhqre.admin.service.PictureService;
-import com.xjhqre.common.constant.PictureConstant;
 import com.xjhqre.common.domain.picture.Picture;
 import com.xjhqre.common.exception.ServiceException;
 import com.xjhqre.common.utils.DateUtils;
@@ -17,8 +13,8 @@ import com.xjhqre.common.utils.OSSUtil;
 import com.xjhqre.common.utils.OSSUtil.FileDirType;
 import com.xjhqre.common.utils.SecurityUtils;
 import com.xjhqre.common.utils.uuid.IdUtils;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import com.xjhqre.sms.mapper.PictureMapper;
+import com.xjhqre.sms.service.PictureService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,23 +32,12 @@ import java.util.List;
  * @since 10月 11, 2022
  */
 @Service
-@Slf4j
 @Transactional(rollbackFor = Exception.class)
 public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> implements PictureService {
 
     @Autowired
     PictureMapper pictureMapper;
-    @Autowired
-    RabbitTemplate rabbitTemplate;
-    @Autowired
-    RabbitMQSender rabbitMQSender;
 
-    /**
-     * 上传图片，管理员上传无需审核
-     *
-     * @param picture
-     * @param mFile
-     */
     @Override
     public void savePicture(Picture picture, MultipartFile mFile) {
         String extension = FileUtils.getExtension(mFile.getOriginalFilename());
@@ -61,7 +46,7 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
             throw new ServiceException("上传图片格式不支持！");
         }
 
-        // 生成文件id
+        // 获取文件id
         String pictureId = IdUtils.simpleUUID();
         picture.setPictureId(pictureId);
         if (picture.getPicName() == null) {
@@ -74,9 +59,7 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
         picture.setUrl(pictureUrl);
         picture.setCreateTime(DateUtils.getNowDate());
         picture.setCreateBy(SecurityUtils.getUsername());
-        picture.setStatus(PictureConstant.PASS); // 设置为发布状态，管理员上传的图片不用审核
-
-        // 存入数据库
+        picture.setStatus(0); // 设置为待审核状态
         this.pictureMapper.insert(picture);
     }
 
@@ -91,62 +74,14 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
     @Override
     public IPage<Picture> findPicture(Picture picture, Integer pageNum, Integer pageSize) {
         LambdaQueryWrapper<Picture> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(picture.getUploader() != null, Picture::getUploader, picture.getUploader());
+        queryWrapper.eq(Picture::getUploader, SecurityUtils.getUserId());
         queryWrapper.eq(picture.getPicName() != null, Picture::getPicName, picture.getPicName());
         queryWrapper.eq(picture.getStatus() != null, Picture::getStatus, picture.getStatus());
         return this.pictureMapper.selectPage(new Page<>(pageNum, pageSize), queryWrapper);
     }
 
-    /**
-     * 审核图片
-     *
-     * @param pictureId
-     * @param result    审核结果 0：不通过 1：通过
-     */
     @Override
-    public void audit(String pictureId, Integer result) {
-        Picture picture = this.pictureMapper.selectById(pictureId);
-        if (result == 1) {
-            // 传输图片的本地地址给 Python 程序，返回 OSS url地址
-            picture.setStatus(PictureConstant.PROCESSING);
-            this.pictureMapper.updateById(picture); // 处理过程较长，大约几秒，先保存状态
-
-            // 发送到消息队列
-            this.rabbitMQSender.sendPictureProcessMessage(pictureId);
-
-        } else {
-            picture.setStatus(PictureConstant.FAILED);
-            this.pictureMapper.updateById(picture);
-        }
-    }
-
-    /**
-     * 批量审核图片
-     *
-     * @param pictureIds
-     * @param result
-     */
-    @Override
-    public void batchAudit(String[] pictureIds, Integer result) {
-        List<Picture> pictures = this.pictureMapper.selectBatchIds(Arrays.asList(pictureIds));
-        if (pictures.isEmpty()) {
-            throw new ServiceException("错误：获取图片为空");
-        }
-        if (result == 1) {
-            // 传输图片的本地地址给 Python 程序，返回 OSS url地址
-            for (Picture picture : pictures) {
-                picture.setStatus(PictureConstant.PROCESSING);
-            }
-            this.pictureMapper.updateBatchByIds(pictures);
-
-            // 发送到消息队列
-            this.rabbitMQSender.sendPictureBatchProcessMessage(pictureIds);
-
-        } else {
-            for (Picture picture : pictures) {
-                picture.setStatus(PictureConstant.FAILED);
-            }
-        }
-        this.pictureMapper.updateBatchByIds(pictures);
+    public List<Picture> selectBatch(String[] pictureIds) {
+        return this.pictureMapper.selectBatchIds(Arrays.asList(pictureIds));
     }
 }

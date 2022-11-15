@@ -10,6 +10,7 @@
     <option name="ignoredFiles">
       <set>
         <option value="$PROJECT_DIR$/xjhqreBBS-framework/pom.xml" />
+        <option value="$PROJECT_DIR$/xjhqreBBS-picture/pom.xml" />
       </set>
     </option>
   </component>

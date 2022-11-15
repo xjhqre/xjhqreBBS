@@ -1,12 +1,11 @@
-package com.xjhqre.picture.service;
-
-import java.util.List;
-
-import org.springframework.web.multipart.MultipartFile;
+package com.xjhqre.sms.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.xjhqre.common.domain.picture.Picture;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 /**
  * 图片 业务层
@@ -25,7 +24,7 @@ public interface PictureService extends IService<Picture> {
 
     /**
      * 分页查询图片列表
-     * 
+     *
      * @param picture
      * @param pageNum
      * @param pageSize
@@ -35,7 +34,7 @@ public interface PictureService extends IService<Picture> {
 
     /**
      * 批量查找
-     * 
+     *
      * @param pictureIds
      */
     List<Picture> selectBatch(String[] pictureIds);

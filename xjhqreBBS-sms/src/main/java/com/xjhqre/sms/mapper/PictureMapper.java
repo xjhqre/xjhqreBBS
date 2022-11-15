@@ -1,9 +1,8 @@
-package com.xjhqre.picture.mapper;
-
-import org.apache.ibatis.annotations.Mapper;
+package com.xjhqre.sms.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.xjhqre.common.domain.picture.Picture;
+import org.apache.ibatis.annotations.Mapper;
 
 /**
  * <p>

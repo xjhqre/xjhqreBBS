@@ -14,12 +14,12 @@ public class PictureConstant {
     public static final String INTERPRETER = "G:\\Miniconda3\\envs\\sis3.7\\python.exe";
     // 解析向量文件路径
     public static final String FEATURES =
-        "G:\\workspace\\xjhqreBBS\\xjhqreBBS-common\\src\\main\\java\\com\\xjhqre\\common\\python\\feature_extractor.py";
-    // offline.py
+            "G:\\workspace\\xjhqreBBS\\xjhqreBBS-common\\src\\main\\java\\com\\xjhqre\\common\\python\\feature_extractor.py";
+    // upload.py
     public static final String OFFLINE =
-        "G:\\workspace\\xjhqreBBS\\xjhqreBBS-common\\src\\main\\java\\com\\xjhqre\\common\\python\\offline.py";
+            "G:\\workspace\\xjhqreBBS\\python\\upload.py";
     public static final String OFFLINE_2 =
-        "G:\\workspace\\xjhqreBBS\\xjhqreBBS-common\\src\\main\\java\\com\\xjhqre\\common\\python\\offline2.py";
+            "G:\\workspace\\xjhqreBBS\\python\\batchUpload.py";
 
     // 待审核，用户提交后图片的状态。
     public static final Integer TO_BE_REVIEWED = 0;
