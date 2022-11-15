@@ -14,7 +14,6 @@
         <module>xjhqreBBS-admin</module>
         <module>xjhqreBBS-portal</module>
         <module>xjhqreBBS-quartz</module>
-        <module>xjhqreBBS-picture</module>
         <module>xjhqreBBS-sms</module>
         <module>xjhqreBBS-search</module>
     </modules>
