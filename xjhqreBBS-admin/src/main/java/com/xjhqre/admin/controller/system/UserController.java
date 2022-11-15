@@ -1,20 +1,4 @@
-package com.xjhqre.admin.controller.security;
-
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.apache.commons.lang3.ArrayUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+package com.xjhqre.admin.controller.system;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.xjhqre.admin.service.RoleService;
@@ -29,20 +13,34 @@ import com.xjhqre.common.enums.BusinessType;
 import com.xjhqre.common.utils.DateUtils;
 import com.xjhqre.common.utils.SecurityUtils;
 import com.xjhqre.common.utils.StringUtils;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang3.ArrayUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 用户信息
- * 
+ *
  * @author xjhqre
  */
 @RestController
 @Api(value = "用户操作接口", tags = "用户操作接口")
-@RequestMapping("/system/user")
+@RequestMapping("/admin/system/user")
 public class UserController extends BaseController {
     @Autowired
     private UserService userService;
@@ -52,13 +50,13 @@ public class UserController extends BaseController {
 
     @ApiOperation(value = "分页查询用户列表")
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "pageNum", value = "正整数，表示查询第几页", required = true, dataType = "int", example = "1"),
-        @ApiImplicitParam(name = "pageSize", value = "正整数，表示每页几条记录", required = true, dataType = "int",
-            example = "20")})
+            @ApiImplicitParam(name = "pageNum", value = "正整数，表示查询第几页", required = true, dataType = "int", example = "1"),
+            @ApiImplicitParam(name = "pageSize", value = "正整数，表示每页几条记录", required = true, dataType = "int",
+                    example = "20")})
     @GetMapping("findUser/{pageNum}/{pageSize}")
     @PreAuthorize("@ss.hasPermission('system:user:list')")
     public R<IPage<User>> findUser(User user, @PathVariable("pageNum") Integer pageNum,
-        @PathVariable("pageSize") Integer pageSize) {
+                                   @PathVariable("pageSize") Integer pageSize) {
         return R.success(this.userService.findUser(user, pageNum, pageSize));
     }
 
@@ -88,10 +86,10 @@ public class UserController extends BaseController {
         if (Constants.NOT_UNIQUE.equals(this.userService.checkUserNameUnique(user))) {
             return R.error("新增用户'" + user.getUserName() + "'失败，登录账号已存在");
         } else if (StringUtils.isNotEmpty(user.getMobile())
-            && Constants.NOT_UNIQUE.equals(this.userService.checkPhoneUnique(user))) {
+                && Constants.NOT_UNIQUE.equals(this.userService.checkPhoneUnique(user))) {
             return R.error("新增用户'" + user.getUserName() + "'失败，手机号码已存在");
         } else if (StringUtils.isNotEmpty(user.getEmail())
-            && Constants.NOT_UNIQUE.equals(this.userService.checkEmailUnique(user))) {
+                && Constants.NOT_UNIQUE.equals(this.userService.checkEmailUnique(user))) {
             return R.error("新增用户'" + user.getUserName() + "'失败，邮箱账号已存在");
         }
         user.setCreateBy(this.getUsername());
@@ -113,10 +111,10 @@ public class UserController extends BaseController {
         if (Constants.NOT_UNIQUE.equals(this.userService.checkUserNameUnique(user))) {
             return R.error("修改用户'" + user.getUserName() + "'失败，登录账号已存在");
         } else if (StringUtils.isNotEmpty(user.getMobile())
-            && Constants.NOT_UNIQUE.equals(this.userService.checkPhoneUnique(user))) {
+                && Constants.NOT_UNIQUE.equals(this.userService.checkPhoneUnique(user))) {
             return R.error("修改用户'" + user.getUserName() + "'失败，手机号码已存在");
         } else if (StringUtils.isNotEmpty(user.getEmail())
-            && Constants.NOT_UNIQUE.equals(this.userService.checkEmailUnique(user))) {
+                && Constants.NOT_UNIQUE.equals(this.userService.checkEmailUnique(user))) {
             return R.error("修改用户'" + user.getUserName() + "'失败，邮箱账号已存在");
         }
         user.setUpdateBy(this.getUsername());

@@ -1,10 +1,13 @@
 package com.xjhqre.search;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
-import javax.annotation.PostConstruct;
-
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.xjhqre.common.domain.portal.Article;
+import com.xjhqre.common.domain.search.ESArticleIndex;
+import com.xjhqre.common.exception.ServiceException;
+import com.xjhqre.common.utils.BeanUtils;
+import com.xjhqre.search.service.ArticleService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -12,14 +15,9 @@ import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
 import org.springframework.data.elasticsearch.core.IndexOperations;
 import org.springframework.data.elasticsearch.core.document.Document;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.xjhqre.common.domain.portal.Article;
-import com.xjhqre.common.domain.search.ESArticleIndex;
-import com.xjhqre.common.exception.ServiceException;
-import com.xjhqre.common.utils.BeanUtils;
-import com.xjhqre.search.service.ArticleService;
-
-import lombok.extern.slf4j.Slf4j;
+import javax.annotation.PostConstruct;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -78,8 +76,9 @@ public class SearchApp {
         long size;
 
         do {
-
-            Page<Article> articlePage = this.articleService.page(new Page<>(page, pageSize));
+            LambdaQueryWrapper<Article> wrapper = new LambdaQueryWrapper<>();
+            wrapper.eq(Article::getDelFlag, "0");
+            Page<Article> articlePage = this.articleService.page(new Page<>(page, pageSize), wrapper);
 
             // 取出
             List<ESArticleIndex> esArticleIndices = articlePage.getRecords().stream().map(article -> {

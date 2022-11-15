@@ -1,17 +1,16 @@
 package com.xjhqre.common.domain.admin;
 
-import java.io.Serializable;
-import java.util.Set;
-
-import javax.validation.constraints.NotBlank;
-
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.xjhqre.common.domain.BaseEntity;
-
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
+import javax.validation.constraints.NotBlank;
+import java.io.Serializable;
+import java.util.Set;
 
 /**
  * Created by lhr on 17-7-31.
@@ -42,10 +41,16 @@ public class Role extends BaseEntity implements Serializable {
     @ApiModelProperty(name = "角色状态（0正常 1停用）", hidden = true)
     private String status;
 
-    /** 菜单组 */
+    /**
+     * 菜单组
+     */
+    @TableField(exist = false)
     private Long[] menuIds;
 
-    /** 角色菜单权限 */
+    /**
+     * 角色菜单权限
+     */
+    @TableField(exist = false)
     private Set<String> permissions;
 
     public boolean isSuperAdmin() {

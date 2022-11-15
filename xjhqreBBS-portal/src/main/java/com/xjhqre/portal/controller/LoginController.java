@@ -1,22 +1,20 @@
-package com.xjhqre.portal.controller.security;
+package com.xjhqre.portal.controller;
 
+import com.xjhqre.common.common.R;
+import com.xjhqre.common.constant.Constants;
+import com.xjhqre.common.domain.model.LoginBody;
+import com.xjhqre.portal.security.service.LoginService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.xjhqre.common.common.R;
-import com.xjhqre.common.constant.Constants;
-import com.xjhqre.common.domain.model.LoginBody;
-import com.xjhqre.portal.security.service.LoginService;
-
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-
 /**
  * 登录验证
- * 
+ *
  * @author xjhqre
  */
 @RestController
@@ -28,9 +26,8 @@ public class LoginController {
 
     /**
      * 登录方法
-     * 
-     * @param loginBody
-     *            登录信息
+     *
+     * @param loginBody 登录信息
      * @return token
      */
     @ApiOperation(value = "登陆方法")
@@ -38,7 +35,7 @@ public class LoginController {
     public R<String> login(@RequestBody LoginBody loginBody) {
         // 生成令牌
         String token = this.loginService.login(loginBody.getUsername(), loginBody.getPassword(), loginBody.getCode(),
-            loginBody.getUuid());
+                loginBody.getUuid());
         return R.success("登陆成功").add(Constants.TOKEN, token);
     }
 

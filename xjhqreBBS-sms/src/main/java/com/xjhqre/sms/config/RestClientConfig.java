@@ -1,4 +1,4 @@
-package com.xjhqre.search.config;
+package com.xjhqre.sms.config;
 
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;

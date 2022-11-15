@@ -23,10 +23,13 @@ public class RabbitMQConfig {
     public static final String THUMB_COLLECT = "thumb_collect"; // 点赞收藏队列
     public static final String COMMENT = "comment"; // 评论和@队列
     public static final String FOLLOW = "follow"; // 粉丝队列
+    public static final String ES_ARTICLE_SAVE = "es_article_update"; // 添加或更新文档
+    public static final String ES_ARTICLE_DELETE = "es_article_delete"; // 删除es文档
 
     // 交换机
     public static final String DIRECT_EXCHANGE = "directExchange"; // 图片处理交换机
     public static final String MESSAGE_EXCHANGE = "messageExchange"; // 消息交换机
+    public static final String ES_ARTICLE_EXCHANGE = "es_article_exchange"; // 消息交换机
 
     // 路由密钥
     public static final String DIRECT_ROUTING_A = "directRouting_A"; // 处理图片
@@ -34,6 +37,8 @@ public class RabbitMQConfig {
     public static final String ROUTING_KEY_THUMB_COLLECT = "thumb_collect_key"; // 点赞收藏密钥
     public static final String ROUTING_KEY_COMMENT = "comment_key"; // 评论密钥
     public static final String ROUTING_KEY_FOLLOW = "follow_key"; // 关注密钥
+    public static final String ROUTING_KEY_ES_ARTICLE_SAVE = "routing_key_es_article_update"; // 添加或更新文档密钥
+    public static final String ROUTING_KEY_ES_ARTICLE_DELETE = "routing_key_es_article_delete"; // 关注密钥
 
     ///////////////////////////////////////// 交换机声明 ///////////////////////////////////////////
 
@@ -48,6 +53,12 @@ public class RabbitMQConfig {
     @Bean
     DirectExchange messageExchange() {
         return ExchangeBuilder.directExchange(MESSAGE_EXCHANGE).durable(true).build();
+    }
+
+    // es全文检索交换机
+    @Bean
+    DirectExchange esArticleExchange() {
+        return ExchangeBuilder.directExchange(ES_ARTICLE_EXCHANGE).durable(true).build();
     }
 
     ///////////////////////////////////////// 队列声明 ///////////////////////////////////////////
@@ -82,6 +93,16 @@ public class RabbitMQConfig {
         return new Queue(FOLLOW, true);
     }
 
+    @Bean
+    public Queue esArticleUpdateQueue() {
+        return new Queue(ES_ARTICLE_SAVE, true);
+    }
+
+    @Bean
+    public Queue esArticleDeleteQueue() {
+        return new Queue(ES_ARTICLE_DELETE, true);
+    }
+
     ///////////////////////////////////////// 绑定队列和交换机 ///////////////////////////////////////////
 
     // 绑定 将队列和交换机绑定, 并设置用于匹配键
@@ -109,6 +130,18 @@ public class RabbitMQConfig {
     Binding bindingFollow() {
         return BindingBuilder.bind(this.followQueue()).to(this.messageExchange()).with(ROUTING_KEY_FOLLOW);
     }
+
+    @Bean
+    Binding bindingEsArticleUpdate() {
+        return BindingBuilder.bind(this.esArticleUpdateQueue()).to(this.esArticleExchange()).with(ROUTING_KEY_ES_ARTICLE_SAVE);
+    }
+
+    @Bean
+    Binding bindingEsArticleDelete() {
+        return BindingBuilder.bind(this.esArticleDeleteQueue()).to(this.esArticleExchange()).with(ROUTING_KEY_ES_ARTICLE_DELETE);
+    }
+
+    ///////////////////////////////////////// json ///////////////////////////////////////////
 
     @Bean
     public MessageConverter messageConverter() {

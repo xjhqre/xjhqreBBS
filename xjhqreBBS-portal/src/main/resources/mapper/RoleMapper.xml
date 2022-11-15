@@ -20,23 +20,32 @@
     </select>
 
     <select id="selectRoleById" parameterType="Long" resultType="com.xjhqre.common.domain.admin.Role">
-        <include refid="selectRoleVo"/>
+        select *
+        from t_role r
         where r.role_id = #{roleId}
     </select>
 
     <select id="selectRolesByUserName" parameterType="String" resultType="com.xjhqre.common.domain.admin.Role">
-        <include refid="selectRoleVo"/>
-        WHERE r.del_flag = '0' and u.user_name = #{userName}
+        select *
+        from t_role r
+        WHERE r.del_flag = '0'
+          and u.user_name = #{userName}
     </select>
 
     <select id="checkRoleNameUnique" parameterType="String" resultType="com.xjhqre.common.domain.admin.Role">
-        <include refid="selectRoleVo"/>
-        where r.role_name=#{roleName} and r.del_flag = '0' limit 1
+        select *
+        from t_role r
+        where r.role_name = #{roleName}
+          and r.del_flag = '0'
+        limit 1
     </select>
 
     <select id="checkRoleKeyUnique" parameterType="String" resultType="com.xjhqre.common.domain.admin.Role">
-        <include refid="selectRoleVo"/>
-        where r.role_key=#{roleKey} and r.del_flag = '0' limit 1
+        select *
+        from t_role r
+        where r.role_key = #{roleKey}
+          and r.del_flag = '0'
+        limit 1
     </select>
 
 

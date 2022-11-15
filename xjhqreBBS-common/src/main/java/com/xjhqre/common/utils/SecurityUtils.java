@@ -1,21 +1,21 @@
 package com.xjhqre.common.utils;
 
+import com.xjhqre.common.constant.HttpStatus;
+import com.xjhqre.common.domain.LoginUser;
+import com.xjhqre.common.exception.ServiceException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import com.xjhqre.common.constant.HttpStatus;
-import com.xjhqre.common.domain.LoginUser;
-import com.xjhqre.common.exception.ServiceException;
-
 /**
  * 安全服务工具类
- * 
+ *
  * @author xjhqre
  */
 public class SecurityUtils {
 
-    private SecurityUtils() {}
+    private SecurityUtils() {
+    }
 
     /**
      * 用户ID
@@ -44,8 +44,9 @@ public class SecurityUtils {
      **/
     public static LoginUser getLoginUser() {
         try {
-            return (LoginUser)getAuthentication().getPrincipal();
+            return (LoginUser) getAuthentication().getPrincipal();
         } catch (Exception e) {
+            e.printStackTrace();
             throw new ServiceException(HttpStatus.UNAUTHORIZED, "获取用户信息异常");
         }
     }
@@ -60,8 +61,7 @@ public class SecurityUtils {
     /**
      * 生成BCryptPasswordEncoder密码
      *
-     * @param password
-     *            密码
+     * @param password 密码
      * @return 加密字符串
      */
     public static String encryptPassword(String password) {
@@ -72,10 +72,8 @@ public class SecurityUtils {
     /**
      * 判断密码是否相同
      *
-     * @param rawPassword
-     *            真实密码
-     * @param encodedPassword
-     *            加密后字符
+     * @param rawPassword     真实密码
+     * @param encodedPassword 加密后字符
      * @return 结果
      */
     public static boolean matchesPassword(String rawPassword, String encodedPassword) {
@@ -85,9 +83,8 @@ public class SecurityUtils {
 
     /**
      * 是否为超级管理员
-     * 
-     * @param userId
-     *            用户ID
+     *
+     * @param userId 用户ID
      * @return 结果
      */
     public static boolean isSuperAdmin(Long userId) {

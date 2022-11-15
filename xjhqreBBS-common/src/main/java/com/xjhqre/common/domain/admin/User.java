@@ -1,22 +1,21 @@
 package com.xjhqre.common.domain.admin;
 
-import java.io.Serializable;
-import java.time.LocalDate;
-import java.util.Date;
-import java.util.List;
-
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
-
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.xjhqre.common.domain.BaseEntity;
-
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
+import java.io.Serializable;
+import java.time.LocalDate;
+import java.util.Date;
+import java.util.List;
 
 /**
  * <p>
@@ -92,11 +91,23 @@ public class User extends BaseEntity implements Serializable {
     @ApiModelProperty(name = "操作系统", hidden = true)
     private String os;
 
-    /** 角色对象 */
+    /**
+     * 角色对象
+     */
+    @TableField(exist = false)
     private List<Role> roles;
 
-    /** 角色id */
+    /**
+     * 角色id
+     */
+    @TableField(exist = false)
     private List<Long> roleIds;
+
+    /**
+     * 备注
+     */
+    @TableField(exist = false)
+    private String remark;
 
     public boolean isSuperAdmin() {
         return isSuperAdmin(this.userId);

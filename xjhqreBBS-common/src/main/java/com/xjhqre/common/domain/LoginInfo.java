@@ -1,13 +1,13 @@
 package com.xjhqre.common.domain;
 
-import java.util.Date;
-
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
-
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
+import java.util.Date;
 
 /**
  * 系统访问记录表 t_logininfor
@@ -15,6 +15,7 @@ import lombok.Data;
  * @author xjhqre
  */
 @Data
+@TableName("t_login_info")
 public class LoginInfo extends BaseEntity {
     private static final long serialVersionUID = 1L;
 

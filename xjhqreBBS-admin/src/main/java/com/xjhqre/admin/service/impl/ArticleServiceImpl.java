@@ -1,27 +1,27 @@
 package com.xjhqre.admin.service.impl;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
-
-import javax.annotation.Resource;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.xjhqre.admin.mapper.ArticleMapper;
+import com.xjhqre.admin.mq.RabbitMQSender;
 import com.xjhqre.admin.service.ArticleService;
 import com.xjhqre.common.constant.CacheConstants;
 import com.xjhqre.common.domain.portal.Article;
 import com.xjhqre.common.utils.DateUtils;
 import com.xjhqre.common.utils.SecurityUtils;
 import com.xjhqre.common.utils.redis.RedisCache;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * <p>
@@ -38,6 +38,8 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     ArticleMapper articleMapper;
     @Resource
     RedisCache redisCache;
+    @Autowired
+    RabbitMQSender rabbitMQSender;
 
     /**
      * 根据分类id分页查询文章
@@ -77,6 +79,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         article.setUpdateBy(SecurityUtils.getUsername());
         article.setUpdateTime(DateUtils.getNowDate());
         this.articleMapper.updateById(article);
+        this.rabbitMQSender.sendArticleDeleteMessage(String.valueOf(articleId));
     }
 
     /**
@@ -131,8 +134,8 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         Date lastMonth = DateUtils.stepMonth(curMonth, 1);
         LambdaQueryWrapper<Article> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.select(Article.class, article -> !article.getProperty().equals("content")) // 不返回文章内容
-            // 查询这个月之间的文章
-            .between(Article::getCreateTime, curMonth, lastMonth);
+                // 查询这个月之间的文章
+                .between(Article::getCreateTime, curMonth, lastMonth);
         return this.articleMapper.selectPage(new Page<>(pageNum, pageSize), queryWrapper);
     }
 

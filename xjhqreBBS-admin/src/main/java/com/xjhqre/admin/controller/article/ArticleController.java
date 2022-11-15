@@ -1,5 +1,20 @@
-package com.xjhqre.admin.controller.system;
+package com.xjhqre.admin.controller.article;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.xjhqre.admin.mq.RabbitMQSender;
+import com.xjhqre.admin.service.ArticleService;
+import com.xjhqre.common.common.R;
+import com.xjhqre.common.constant.ArticleStatus;
+import com.xjhqre.common.constant.ErrorCode;
+import com.xjhqre.common.core.BaseController;
+import com.xjhqre.common.domain.portal.Article;
+import com.xjhqre.common.exception.ServiceException;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -8,46 +23,32 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.xjhqre.admin.service.ArticleService;
-import com.xjhqre.common.common.R;
-import com.xjhqre.common.constant.ArticleStatus;
-import com.xjhqre.common.constant.ErrorCode;
-import com.xjhqre.common.core.BaseController;
-import com.xjhqre.common.domain.portal.Article;
-import com.xjhqre.common.exception.ServiceException;
-
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
-
 /**
  * @Author xjhqre
  */
 @Api(value = "文章管理接口", tags = "文章管理接口")
 @RestController
-@RequestMapping("/article")
+@RequestMapping("/admin/article")
 public class ArticleController extends BaseController {
 
     @Autowired
     private ArticleService articleService;
+    @Autowired
+    RabbitMQSender rabbitMQSender;
 
     @ApiOperation(value = "分页查询文章列表")
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "pageNum", value = "正整数，表示查询第几页", required = true, dataType = "int", example = "1"),
-        @ApiImplicitParam(name = "pageSize", value = "正整数，表示每页几条记录", required = true, dataType = "int",
-            example = "20")})
+            @ApiImplicitParam(name = "pageNum", value = "正整数，表示查询第几页", required = true, dataType = "int", example = "1"),
+            @ApiImplicitParam(name = "pageSize", value = "正整数，表示每页几条记录", required = true, dataType = "int",
+                    example = "20")})
     @GetMapping("findArticle/{pageNum}/{pageSize}")
     public R<IPage<Article>> findArticle(Article article, @PathVariable("pageNum") Integer pageNum,
-        @PathVariable("pageSize") Integer pageSize) {
+                                         @PathVariable("pageSize") Integer pageSize) {
         LambdaQueryWrapper<Article> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(article.getArticleId() != null, Article::getArticleId, article.getArticleId())
-            .eq(article.getStatus() != null, Article::getStatus, ArticleStatus.PUBLISH)
-            .eq(article.getAuthor() != null, Article::getAuthor, article.getAuthor())
-            .like(article.getCreateBy() != null, Article::getCreateBy, article.getCreateBy());
+                .eq(article.getStatus() != null, Article::getStatus, ArticleStatus.PUBLISH)
+                .eq(article.getAuthor() != null, Article::getAuthor, article.getAuthor())
+                .like(article.getCreateBy() != null, Article::getCreateBy, article.getCreateBy());
         return R.success(this.articleService.page(new Page<>(pageNum, pageSize), queryWrapper));
     }
 
@@ -67,6 +68,7 @@ public class ArticleController extends BaseController {
         Article article = this.articleService.getById(articleId);
         if ("Y".equals(isPass)) {
             article.setStatus(ArticleStatus.PUBLISH);
+            this.rabbitMQSender.sendArticleSaveMessage(String.valueOf(articleId));
         } else {
             article.setStatus(ArticleStatus.GOBACK);
         }

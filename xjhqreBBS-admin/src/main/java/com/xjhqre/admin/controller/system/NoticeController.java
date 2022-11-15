@@ -1,5 +1,16 @@
 package com.xjhqre.admin.controller.system;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.xjhqre.admin.service.NoticeService;
+import com.xjhqre.common.annotation.Log;
+import com.xjhqre.common.common.R;
+import com.xjhqre.common.core.BaseController;
+import com.xjhqre.common.domain.admin.Notice;
+import com.xjhqre.common.enums.BusinessType;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -12,40 +23,27 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.xjhqre.admin.service.NoticeService;
-import com.xjhqre.common.annotation.Log;
-import com.xjhqre.common.common.R;
-import com.xjhqre.common.core.BaseController;
-import com.xjhqre.common.domain.admin.Notice;
-import com.xjhqre.common.enums.BusinessType;
-
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
-
 /**
  * 公告 信息操作处理
- * 
+ *
  * @author xjhqre
  */
 @RestController
 @Api(value = "公告操作接口", tags = "公告操作接口")
-@RequestMapping("/system/notice")
+@RequestMapping("/admin/system/notice")
 public class NoticeController extends BaseController {
     @Autowired
     private NoticeService noticeService;
 
     @ApiOperation(value = "分页查询公告信息")
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "pageNum", value = "正整数，表示查询第几页", required = true, dataType = "int", example = "1"),
-        @ApiImplicitParam(name = "pageSize", value = "正整数，表示每页几条记录", required = true, dataType = "int",
-            example = "20")})
+            @ApiImplicitParam(name = "pageNum", value = "正整数，表示查询第几页", required = true, dataType = "int", example = "1"),
+            @ApiImplicitParam(name = "pageSize", value = "正整数，表示每页几条记录", required = true, dataType = "int",
+                    example = "20")})
     @GetMapping("list/{pageNum}/{pageSize}")
     @PreAuthorize("@ss.hasPermission('system:notice:list')")
     public R<IPage<Notice>> findNotice(Notice notice, @PathVariable("pageNum") Integer pageNum,
-        @PathVariable("pageSize") Integer pageSize) {
+                                       @PathVariable("pageSize") Integer pageSize) {
         return R.success(this.noticeService.findNotice(notice, pageNum, pageSize));
     }
 

@@ -1,21 +1,12 @@
 package com.xjhqre.admin.service.impl;
 
-import java.util.Arrays;
-import java.util.List;
-
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
-
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.xjhqre.admin.mapper.PictureMapper;
+import com.xjhqre.admin.mq.RabbitMQSender;
 import com.xjhqre.admin.service.PictureService;
-import com.xjhqre.common.config.RabbitMQConfig;
 import com.xjhqre.common.constant.PictureConstant;
 import com.xjhqre.common.domain.picture.Picture;
 import com.xjhqre.common.exception.ServiceException;
@@ -26,8 +17,15 @@ import com.xjhqre.common.utils.OSSUtil;
 import com.xjhqre.common.utils.OSSUtil.FileDirType;
 import com.xjhqre.common.utils.SecurityUtils;
 import com.xjhqre.common.utils.uuid.IdUtils;
-
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * <p>
@@ -46,10 +44,12 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
     PictureMapper pictureMapper;
     @Autowired
     RabbitTemplate rabbitTemplate;
+    @Autowired
+    RabbitMQSender rabbitMQSender;
 
     /**
      * 上传图片，管理员上传无需审核
-     * 
+     *
      * @param picture
      * @param mFile
      */
@@ -82,7 +82,7 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
 
     /**
      * 分页查询图片列表
-     * 
+     *
      * @param picture
      * @param pageNum
      * @param pageSize
@@ -99,10 +99,9 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
 
     /**
      * 审核图片
-     * 
+     *
      * @param pictureId
-     * @param result
-     *            审核结果 0：不通过 1：通过
+     * @param result    审核结果 0：不通过 1：通过
      */
     @Override
     public void audit(String pictureId, Integer result) {
@@ -113,8 +112,7 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
             this.pictureMapper.updateById(picture); // 处理过程较长，大约几秒，先保存状态
 
             // 发送到消息队列
-            this.rabbitTemplate.convertAndSend(RabbitMQConfig.DIRECT_EXCHANGE, RabbitMQConfig.DIRECT_ROUTING_A,
-                pictureId);
+            this.rabbitMQSender.sendPictureProcessMessage(pictureId);
 
         } else {
             picture.setStatus(PictureConstant.FAILED);
@@ -124,7 +122,7 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
 
     /**
      * 批量审核图片
-     * 
+     *
      * @param pictureIds
      * @param result
      */
@@ -140,9 +138,9 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
                 picture.setStatus(PictureConstant.PROCESSING);
             }
             this.pictureMapper.updateBatchByIds(pictures);
+            
             // 发送到消息队列
-            this.rabbitTemplate.convertAndSend(RabbitMQConfig.DIRECT_EXCHANGE, RabbitMQConfig.DIRECT_ROUTING_B,
-                pictureIds);
+            this.rabbitMQSender.sendPictureBatchProcessMessage(pictureIds);
 
         } else {
             for (Picture picture : pictures) {

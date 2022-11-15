@@ -1,28 +1,26 @@
-package com.xjhqre.portal.controller.security;
+package com.xjhqre.portal.controller;
 
-import java.util.List;
-
+import com.xjhqre.common.common.R;
+import com.xjhqre.common.core.BaseController;
+import com.xjhqre.common.domain.admin.Menu;
+import com.xjhqre.portal.service.MenuService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.xjhqre.common.common.R;
-import com.xjhqre.common.core.BaseController;
-import com.xjhqre.common.domain.admin.Menu;
-import com.xjhqre.portal.service.MenuService;
-
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import java.util.List;
 
 /**
  * 菜单信息
- * 
+ *
  * @author xjhqre
  */
 @RestController
-@RequestMapping("/system/menu")
+@RequestMapping("/portal/menu")
 @Api(value = "菜单操作接口", tags = "菜单操作接口")
 public class MenuController extends BaseController {
     @Autowired

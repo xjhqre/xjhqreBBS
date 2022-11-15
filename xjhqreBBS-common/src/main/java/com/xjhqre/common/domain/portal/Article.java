@@ -1,16 +1,15 @@
 package com.xjhqre.common.domain.portal;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
-
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.xjhqre.common.domain.BaseEntity;
-
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 /**
  * <p>
@@ -28,7 +27,7 @@ public class Article extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
 
-    @ApiModelProperty(value = "文章id")
+    @ApiModelProperty(value = "文章id", hidden = true)
     @TableId(value = "article_id", type = IdType.AUTO)
     private Long articleId;
 
@@ -44,7 +43,7 @@ public class Article extends BaseEntity {
     @ApiModelProperty(value = "博客内容")
     private String content;
 
-    @ApiModelProperty(value = "作者(用户id)")
+    @ApiModelProperty(value = "作者(用户id)", hidden = true)
     private Long author;
 
     @ApiModelProperty(value = "博客浏览数", hidden = true)
@@ -62,7 +61,7 @@ public class Article extends BaseEntity {
     @ApiModelProperty(value = "状态（1：正常 0：禁止）", hidden = true)
     private Integer status;
 
-    @ApiModelProperty(value = "是否发布：0：否，1：是")
+    @ApiModelProperty(value = "是否发布：0：否，1：是", hidden = true)
     private String isPublish;
 
     @ApiModelProperty(value = "排序字段", hidden = true)

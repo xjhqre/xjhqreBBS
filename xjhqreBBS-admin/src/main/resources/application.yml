@@ -96,3 +96,13 @@ aliyun:
     endPoint: https://oss-cn-hangzhou.aliyuncs.com
     keyId: LTAI5tRA8NFprYduUmGAuXAi
     keySecret: UgorzXce3lbW8n8hUMgomakhRtbfVO
+
+# 防止XSS攻击
+xss:
+  # 过滤开关
+  enabled: true
+  # 排除链接（多个用逗号分隔）
+  excludes: /admin/system/notice/*
+  # 匹配链接
+  urlPatterns: /admin/*,/monitor/*
+

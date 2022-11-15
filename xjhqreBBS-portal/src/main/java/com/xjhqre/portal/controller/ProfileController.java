@@ -1,17 +1,4 @@
-package com.xjhqre.portal.controller.security;
-
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
+package com.xjhqre.portal.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.xjhqre.common.annotation.Log;
@@ -32,15 +19,26 @@ import com.xjhqre.common.utils.uuid.IdUtils;
 import com.xjhqre.portal.security.service.TokenService;
 import com.xjhqre.portal.service.RoleService;
 import com.xjhqre.portal.service.UserService;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 /**
  * 个人信息 业务处理
- * 
+ *
  * @author xjhqre
  */
 @RestController
@@ -75,15 +73,15 @@ public class ProfileController extends BaseController {
     public R<String> updateProfile(@RequestBody User user) {
         // 校验
         if (StringUtils.isNotEmpty(user.getUserName())
-            && Constants.NOT_UNIQUE.equals(this.userService.checkUserNameUnique(user))) {
+                && Constants.NOT_UNIQUE.equals(this.userService.checkUserNameUnique(user))) {
             return R.error("修改用户'" + user.getUserName() + "'失败，用户名称已存在");
         }
         if (StringUtils.isNotEmpty(user.getMobile())
-            && Constants.NOT_UNIQUE.equals(this.userService.checkPhoneUnique(user))) {
+                && Constants.NOT_UNIQUE.equals(this.userService.checkPhoneUnique(user))) {
             return R.error("修改用户'" + user.getUserName() + "'失败，手机号码已存在");
         }
         if (StringUtils.isNotEmpty(user.getEmail())
-            && Constants.NOT_UNIQUE.equals(this.userService.checkEmailUnique(user))) {
+                && Constants.NOT_UNIQUE.equals(this.userService.checkEmailUnique(user))) {
             return R.error("修改用户'" + user.getUserName() + "'失败，邮箱账号已存在");
         }
         this.userService.updateById(user);
@@ -135,7 +133,7 @@ public class ProfileController extends BaseController {
         if (!file.isEmpty()) {
             LoginUser loginUser = this.getLoginUser();
             String avatarUrl = OSSUtil.upload(file, FileDirType.AVATAR,
-                IdUtils.simpleUUID() + FileUtils.getExtension(file.getOriginalFilename()));
+                    IdUtils.simpleUUID() + FileUtils.getExtension(file.getOriginalFilename()));
             this.userService.updateUserAvatar(loginUser.getUserId(), avatarUrl);
             // 更新缓存用户头像
             loginUser.getUser().setAvatar(avatarUrl);
@@ -147,12 +145,12 @@ public class ProfileController extends BaseController {
 
     @ApiOperation(value = "查询用户消息-点赞或收藏")
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "pageNum", value = "正整数，表示查询第几页", required = true, dataType = "int", example = "1"),
-        @ApiImplicitParam(name = "pageSize", value = "正整数，表示每页几条记录", required = true, dataType = "int",
-            example = "20")})
+            @ApiImplicitParam(name = "pageNum", value = "正整数，表示查询第几页", required = true, dataType = "int", example = "1"),
+            @ApiImplicitParam(name = "pageSize", value = "正整数，表示每页几条记录", required = true, dataType = "int",
+                    example = "20")})
     @GetMapping("findMessage3/{pageNum}/{pageSize}")
     public R<IPage<Message3>> findMessage3(Long userId, @PathVariable("pageNum") Integer pageNum,
-        @PathVariable("pageSize") Integer pageSize) {
+                                           @PathVariable("pageSize") Integer pageSize) {
         return R.success(this.userService.findMessage3(userId, pageNum, pageSize));
     }
 }

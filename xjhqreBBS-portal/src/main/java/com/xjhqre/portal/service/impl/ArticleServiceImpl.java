@@ -1,30 +1,10 @@
 package com.xjhqre.portal.service.impl;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.TreeSet;
-
-import javax.annotation.Resource;
-
-import org.apache.commons.collections4.SetUtils;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.beans.BeanUtils;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.xjhqre.common.config.RabbitMQConfig;
 import com.xjhqre.common.constant.ArticleStatus;
 import com.xjhqre.common.constant.CacheConstants;
 import com.xjhqre.common.domain.portal.Article;
@@ -38,8 +18,22 @@ import com.xjhqre.common.utils.redis.RedisCache;
 import com.xjhqre.portal.mapper.ArticleMapper;
 import com.xjhqre.portal.mapper.ArticleSortMapper;
 import com.xjhqre.portal.mapper.ArticleTagMapper;
+import com.xjhqre.portal.mq.RabbitMQSender;
 import com.xjhqre.portal.service.ArticleService;
 import com.xjhqre.portal.service.ConfigService;
+import org.apache.commons.collections4.SetUtils;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * <p>
@@ -63,7 +57,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     @Resource
     ArticleTagMapper articleTagMapper;
     @Resource
-    RabbitTemplate rabbitTemplate;
+    RabbitMQSender rabbitMQSender;
 
     // 文章点赞锁，防止多线程修改redis时产生线程安全问题
     final Object thumbLock = new Object();
@@ -122,7 +116,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 
     /**
      * 使用SQL根据关键字检索文章
-     * 
+     *
      * @param keywords
      * @param pageNum
      * @param pageSize
@@ -148,31 +142,14 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     }
 
     /**
-     * 发布文章
+     * 保存为草稿
      *
      * @param articleDTO
-     * @return
      */
     @Override
-    public void postArticle(ArticleDTO articleDTO) {
-        articleDTO.setCreateBy(SecurityUtils.getUsername());
-        articleDTO.setCreateTime(DateUtils.getNowDate());
-        // 是否开启文章审核
-        if ("N".equals(articleDTO.getIsPublish())) {
-            articleDTO.setStatus(ArticleStatus.DRAFT); // 草稿状态
-        } else if (this.configService.selectArticleAuditEnabled()) {
-            articleDTO.setStatus(ArticleStatus.PENDING_REVIEW); // 待审核状态
-        } else {
-            articleDTO.setStatus(ArticleStatus.PUBLISH); // 发布状态
-        }
-        articleDTO.setAuthor(SecurityUtils.getUserId());
-        articleDTO.setCollectCount(0);
-        articleDTO.setThumbCount(0);
-        articleDTO.setViewCount(0);
-        articleDTO.setSort(5);
+    public void saveDraft(ArticleDTO articleDTO) {
         articleDTO.setIsPublish("1");
-        articleDTO.setCreateBy(SecurityUtils.getUsername());
-        articleDTO.setCreateTime(DateUtils.getNowDate());
+        articleDTO.setStatus(0);
         // 添加文章
         this.articleMapper.insert(articleDTO);
         // 关联分类
@@ -190,37 +167,77 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     }
 
     /**
-     * 修改文章
+     * 直接发布文章
+     *
+     * @param articleDTO
+     * @return
+     */
+    @Override
+    public void directPostArticle(ArticleDTO articleDTO) {
+        // 设置属性
+        articleDTO.setCreateBy(SecurityUtils.getUsername());
+        articleDTO.setCreateTime(DateUtils.getNowDate());
+        articleDTO.setAuthor(SecurityUtils.getUserId());
+        articleDTO.setCollectCount(0);
+        articleDTO.setThumbCount(0);
+        articleDTO.setViewCount(0);
+        articleDTO.setSort(5);
+        articleDTO.setIsPublish("1");
+        this.judgeArticleReview(articleDTO);
+        // 添加文章
+        this.articleMapper.insert(articleDTO);
+        // 如果不需要审核则直接更新es文档
+        if (Objects.equals(articleDTO.getStatus(), ArticleStatus.PUBLISH)) {
+            this.rabbitMQSender.sendArticleSaveMessage(String.valueOf(articleDTO.getArticleId()));
+        }
+        // 关联分类
+        ArticleSort articleSort = new ArticleSort();
+        articleSort.setArticleId(articleDTO.getArticleId());
+        articleSort.setSortId(articleDTO.getSortId());
+        this.articleSortMapper.insert(articleSort);
+        // 关联标签
+        for (Long tagId : articleDTO.getTagIds()) {
+            ArticleTag articleTag = new ArticleTag();
+            articleTag.setArticleId(articleDTO.getArticleId());
+            articleTag.setTagId(tagId);
+            this.articleTagMapper.insert(articleTag);
+        }
+    }
+
+    /**
+     * 重新发布文章
      *
      * @param articleDTO
      */
     @Override
-    public void updateArticle(ArticleDTO articleDTO) {
-        Article article = this.articleMapper.selectById(articleDTO.getArticleId());
-        BeanUtils.copyProperties(articleDTO, article);
-        // 是否开启文章审核
-        if (this.configService.selectArticleAuditEnabled()) {
-            article.setStatus(ArticleStatus.PENDING_REVIEW); // 待审核状态
-        } else {
-            article.setStatus(ArticleStatus.PUBLISH); // 发布状态
+    public void rePostArticle(ArticleDTO articleDTO) {
+        // 更新文章属性
+        articleDTO.setCreateBy(SecurityUtils.getUsername());
+        articleDTO.setCreateTime(DateUtils.getNowDate());
+        articleDTO.setAuthor(SecurityUtils.getUserId());
+        articleDTO.setCollectCount(0);
+        articleDTO.setThumbCount(0);
+        articleDTO.setViewCount(0);
+        articleDTO.setSort(5);
+        articleDTO.setIsPublish("1");
+        this.judgeArticleReview(articleDTO);
+        this.articleMapper.updateById(articleDTO);
+
+        // 如果不需要审核则直接更新es文档
+        if (Objects.equals(articleDTO.getStatus(), ArticleStatus.PUBLISH)) {
+            this.rabbitMQSender.sendArticleSaveMessage(String.valueOf(articleDTO.getArticleId()));
         }
-        article.setUpdateBy(SecurityUtils.getUsername());
-        article.setUpdateTime(DateUtils.getNowDate());
 
-        // 更新文章表
-        this.articleMapper.updateById(article);
-
-        // 如果修改了分类
-        Long oldSortId = this.articleMapper.getSortIdByArticleId(article.getArticleId());
+        // 如果修改了分类，更新分类
+        Long oldSortId = this.articleMapper.getSortIdByArticleId(articleDTO.getArticleId());
         if (!Objects.equals(oldSortId, articleDTO.getSortId())) {
             LambdaUpdateWrapper<ArticleSort> wrapper = new LambdaUpdateWrapper<>();
             wrapper.eq(ArticleSort::getArticleId, articleDTO.getArticleId()).set(ArticleSort::getSortId,
-                articleDTO.getSortId());
+                    articleDTO.getSortId());
             this.articleSortMapper.update(null, wrapper);
         }
-
         // 如果修改了标签
-        Set<Long> oldTagIds = this.articleMapper.getTagIdsByArticleId(article.getArticleId());
+        Set<Long> oldTagIds = this.articleMapper.getTagIdsByArticleId(articleDTO.getArticleId());
         if (!SetUtils.isEqualSet(oldTagIds, articleDTO.getTagIds())) {
             // 先删除关联在添加
             this.articleMapper.deleteArticleTag(articleDTO.getArticleId());
@@ -231,6 +248,59 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
                 articleTag.setTagId(tagId);
                 this.articleTagMapper.insert(articleTag);
             }
+        }
+    }
+
+    /**
+     * 修改文章
+     *
+     * @param articleDTO
+     */
+    @Override
+    public void updateArticle(ArticleDTO articleDTO) {
+        this.judgeArticleReview(articleDTO);
+        articleDTO.setUpdateBy(SecurityUtils.getUsername());
+        articleDTO.setUpdateTime(DateUtils.getNowDate());
+        // 更新文章表
+        this.articleMapper.updateById(articleDTO);
+
+        // 如果不需要审核则直接更新es文档
+        if (Objects.equals(articleDTO.getStatus(), ArticleStatus.PUBLISH)) {
+            this.rabbitMQSender.sendArticleSaveMessage(String.valueOf(articleDTO.getArticleId()));
+        }
+
+        // 如果修改了分类
+        Long oldSortId = this.articleMapper.getSortIdByArticleId(articleDTO.getArticleId());
+        if (!Objects.equals(oldSortId, articleDTO.getSortId())) {
+            LambdaUpdateWrapper<ArticleSort> wrapper = new LambdaUpdateWrapper<>();
+            wrapper.eq(ArticleSort::getArticleId, articleDTO.getArticleId()).set(ArticleSort::getSortId,
+                    articleDTO.getSortId());
+            this.articleSortMapper.update(null, wrapper);
+        }
+
+        // 如果修改了标签
+        Set<Long> oldTagIds = this.articleMapper.getTagIdsByArticleId(articleDTO.getArticleId());
+        if (!SetUtils.isEqualSet(oldTagIds, articleDTO.getTagIds())) {
+            // 先删除关联在添加
+            this.articleMapper.deleteArticleTag(articleDTO.getArticleId());
+            // 关联标签
+            for (Long tagId : articleDTO.getTagIds()) {
+                ArticleTag articleTag = new ArticleTag();
+                articleTag.setArticleId(articleDTO.getArticleId());
+                articleTag.setTagId(tagId);
+                this.articleTagMapper.insert(articleTag);
+            }
+        }
+    }
+
+    /**
+     * 判断是否需要审核文章
+     */
+    public void judgeArticleReview(ArticleDTO articleDTO) {
+        if (this.configService.selectArticleAuditEnabled()) {
+            articleDTO.setStatus(ArticleStatus.PENDING_REVIEW); // 待审核状态
+        } else {
+            articleDTO.setStatus(ArticleStatus.PUBLISH); // 发布状态
         }
     }
 
@@ -246,6 +316,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         article.setUpdateBy(SecurityUtils.getUsername());
         article.setUpdateTime(DateUtils.getNowDate());
         this.articleMapper.updateById(article);
+        this.rabbitMQSender.sendArticleDeleteMessage(String.valueOf(articleId));
     }
 
     /**
@@ -261,7 +332,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         synchronized (this.thumbLock) {
             // articleIds：用户点赞过的文章id
             Set<Long> articleIds =
-                this.redisCache.getCacheSet(CacheConstants.USER_THUMB_ARTICLE_KEY + SecurityUtils.getUserId());
+                    this.redisCache.getCacheSet(CacheConstants.USER_THUMB_ARTICLE_KEY + SecurityUtils.getUserId());
             if (Boolean.TRUE.equals(isThumb)) {
                 // 用户已点赞文章，取消点赞
                 if (articleIds == null) { // 应该不会走这里
@@ -272,7 +343,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
                     // 更新用户点赞的文章 HashMap<用户id, Set<文章id>>
                     articleIds.remove(articleId);
                     this.redisCache.setCacheSet(CacheConstants.USER_THUMB_ARTICLE_KEY + SecurityUtils.getUserId(),
-                        articleIds);
+                            articleIds);
                 }
 
                 // 更新文章点赞的用户信息 HashMap<文章id, Set<用户id>>
@@ -288,7 +359,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
                 articleIds.add(articleId);
                 // 更新用户点赞的文章 HashMap<用户id, Set<文章id>>
                 this.redisCache.setCacheSet(CacheConstants.USER_THUMB_ARTICLE_KEY + SecurityUtils.getUserId(),
-                    articleIds);
+                        articleIds);
 
                 // 更新文章点赞的用户信息 HashMap<文章id, Set<用户id>>
                 Set<Long> userIds = this.redisCache.getCacheSet(CacheConstants.ARTICLE_LIKED_USER_KEY + articleId);
@@ -296,14 +367,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
                 this.redisCache.setCacheSet(CacheConstants.ARTICLE_LIKED_USER_KEY + articleId, userIds);
 
                 // 通知文章作者
-                Map<String, Object> hashMap = new HashMap<>();
-                hashMap.put("collectorId", SecurityUtils.getUserId());
-                hashMap.put("articleId", articleId);
-                hashMap.put("messageType", "1");
-                hashMap.put("type", "点赞");
-                // 发送到RabbitMq
-                this.rabbitTemplate.convertAndSend(RabbitMQConfig.MESSAGE_EXCHANGE,
-                    RabbitMQConfig.ROUTING_KEY_THUMB_COLLECT, hashMap);
+                this.rabbitMQSender.sendThumbMessage(articleId);
                 return "点赞成功";
             }
         }
@@ -361,8 +425,8 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         Date lastMonth = DateUtils.stepMonth(curMonth, 1);
         LambdaQueryWrapper<Article> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.select(Article.class, article -> !article.getProperty().equals("content")) // 不返回文章内容
-            // 查询这个月之间的文章
-            .between(Article::getCreateTime, curMonth, lastMonth);
+                // 查询这个月之间的文章
+                .between(Article::getCreateTime, curMonth, lastMonth);
         return this.articleMapper.selectPage(new Page<>(pageNum, pageSize), queryWrapper);
     }
 
@@ -374,7 +438,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     private Boolean likeArticleLogicValidate(Long articleId) {
         // 获取用户点赞的文章ID集合
         Set<Long> articleIdSet =
-            this.redisCache.getCacheSet(CacheConstants.USER_THUMB_ARTICLE_KEY + SecurityUtils.getUserId());
+                this.redisCache.getCacheSet(CacheConstants.USER_THUMB_ARTICLE_KEY + SecurityUtils.getUserId());
         if (articleIdSet == null) {
             // redis缓存中没有，到数据库中查询
             articleIdSet = this.articleMapper.selectUserLikedArticle(SecurityUtils.getUserId());

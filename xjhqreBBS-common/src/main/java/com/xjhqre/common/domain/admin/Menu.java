@@ -1,20 +1,19 @@
 package com.xjhqre.common.domain.admin;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.xjhqre.common.domain.BaseEntity;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.xjhqre.common.domain.BaseEntity;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @TableName("t_menu")
@@ -57,6 +56,9 @@ public class Menu extends BaseEntity implements Serializable {
     @ApiModelProperty(name = "权限标识")
     private String perms;
 
-    /** 子菜单 */
+    /**
+     * 子菜单
+     */
+    @TableField(exist = false)
     private List<Menu> children = new ArrayList<>();
 }

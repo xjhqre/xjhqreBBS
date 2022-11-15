@@ -33,6 +33,15 @@ spring:
       mail.smtp.socketFactory.port: 465
       mail.smtp.socketFactory.class: javax.net.ssl.SSLSocketFactory
       mail.smtp.socketFactory.fallback: false
+  rabbitmq:
+    ####连接地址
+    host: 116.62.103.149
+    ####端口号
+    port: 5672
+    ####账号
+    username: admin
+    ####密码
+    password: admin
 
 # MyBatis-plus配置
 mybatis-plus:
@@ -95,3 +104,11 @@ dubbo:
     name: consumer-server
 provider:
   host: "dubbo://127.0.0.1:18081"
+
+# 防止XSS攻击
+xss:
+  # 过滤开关
+  enabled: true
+  excludes:
+  # 匹配链接
+  urlPatterns: /portal/*

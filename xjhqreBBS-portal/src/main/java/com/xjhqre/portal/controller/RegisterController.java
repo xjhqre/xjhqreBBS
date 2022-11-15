@@ -1,5 +1,11 @@
-package com.xjhqre.portal.controller.security;
+package com.xjhqre.portal.controller;
 
+import com.xjhqre.common.common.R;
+import com.xjhqre.common.core.BaseController;
+import com.xjhqre.common.domain.model.RegisterBody;
+import com.xjhqre.portal.security.service.RegisterService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -7,17 +13,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.xjhqre.common.common.R;
-import com.xjhqre.common.core.BaseController;
-import com.xjhqre.common.domain.model.RegisterBody;
-import com.xjhqre.portal.security.service.RegisterService;
-
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-
 /**
  * 注册验证
- * 
+ *
  * @author xjhqre
  */
 @RestController

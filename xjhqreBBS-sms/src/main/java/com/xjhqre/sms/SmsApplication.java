@@ -1,6 +1,7 @@
 package com.xjhqre.sms;
 
 import org.springframework.amqp.rabbit.annotation.EnableRabbit;
+import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.context.annotation.ComponentScan;
@@ -16,4 +17,8 @@ import org.springframework.context.annotation.ComponentScan;
 @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
 @EnableRabbit
 @ComponentScan(basePackages = {"com.xjhqre.common.*", "com.xjhqre.sms.*"})
-public class SmsApplication {}
+public class SmsApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(SmsApplication.class, args);
+    }
+}

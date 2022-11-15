@@ -1,11 +1,11 @@
 package com.xjhqre.portal.service;
 
-import java.util.Set;
-
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.xjhqre.common.domain.portal.Article;
 import com.xjhqre.common.domain.portal.dto.ArticleDTO;
+
+import java.util.Set;
 
 /**
  * 文章 业务层
@@ -34,12 +34,26 @@ public interface ArticleService extends IService<Article> {
     IPage<Article> findArticleByTagId(Long tagId, Integer pageNum, Integer pageSize);
 
     /**
-     * 添加文章
+     * 保存为草稿
+     *
+     * @param articleDTO
+     */
+    void saveDraft(ArticleDTO articleDTO);
+
+    /**
+     * 直接发布文章
      *
      * @param articleDTO
      * @return
      */
-    void postArticle(ArticleDTO articleDTO);
+    void directPostArticle(ArticleDTO articleDTO);
+
+    /**
+     * 重新发布文章
+     *
+     * @param articleDTO
+     */
+    void rePostArticle(ArticleDTO articleDTO);
 
     /**
      * 修改文章
@@ -91,7 +105,7 @@ public interface ArticleService extends IService<Article> {
 
     /**
      * 使用SQL根据关键字检索文章
-     * 
+     *
      * @param keywords
      * @param pageNum
      * @param pageSize
