@@ -11,6 +11,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,6 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.beans.PropertyEditorSupport;
 import java.util.Date;
+import java.util.List;
 
 /**
  * <p>
@@ -33,9 +35,9 @@ import java.util.Date;
  * @author xjhqre
  * @since 10月 25, 2022
  */
-@Api(value = "图片操作接口", tags = "图片操作接口")
+@Api(value = "以图搜图操作接口", tags = "以图搜图操作接口")
 @RestController
-@RequestMapping("/picture/picture")
+@RequestMapping("/portal/picture")
 public class PictureController {
     @InitBinder
     public void initBinder(WebDataBinder binder) {
@@ -62,14 +64,26 @@ public class PictureController {
         return R.success(this.pictureService.findPicture(picture, pageNum, pageSize));
     }
 
-    @ApiOperation(value = "上传图片")
-    @PostMapping(value = "/add")
-    public R<String> add(@Validated Picture picture, @RequestParam("file") MultipartFile mFile) {
+    @ApiOperation(value = "单个上传图片")
+    @PostMapping(value = "/upload")
+    public R<String> upload(@Validated Picture picture, @RequestParam("file") MultipartFile mFile) {
         if (mFile == null) {
             throw new ServiceException("上传图片文件为空");
         }
 
         this.pictureService.savePicture(picture, mFile);
+
+        return R.success("上传图片成功");
+    }
+
+    @ApiOperation(value = "批量上传图片")
+    @PostMapping(value = "/batchUpload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public R<String> batchUpload(@RequestParam("files") List<MultipartFile> files) {
+        if (files == null) {
+            throw new ServiceException("上传图片文件为空");
+        }
+
+        this.pictureService.batchUpload(files);
 
         return R.success("上传图片成功");
     }

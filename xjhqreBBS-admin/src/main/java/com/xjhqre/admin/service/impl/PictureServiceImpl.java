@@ -112,7 +112,7 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
             this.pictureMapper.updateById(picture); // 处理过程较长，大约几秒，先保存状态
 
             // 发送到消息队列
-            this.rabbitMQSender.sendPictureProcessMessage(pictureId);
+            this.rabbitMQSender.sendPictureProcessMessage(new String[]{pictureId});
 
         } else {
             picture.setStatus(PictureConstant.FAILED);
@@ -140,13 +140,13 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
             this.pictureMapper.updateBatchByIds(pictures);
 
             // 发送到消息队列
-            this.rabbitMQSender.sendPictureBatchProcessMessage(pictureIds);
+            this.rabbitMQSender.sendPictureProcessMessage(pictureIds);
 
         } else {
             for (Picture picture : pictures) {
                 picture.setStatus(PictureConstant.FAILED);
             }
+            this.pictureMapper.updateBatchByIds(pictures);
         }
-        this.pictureMapper.updateBatchByIds(pictures);
     }
 }

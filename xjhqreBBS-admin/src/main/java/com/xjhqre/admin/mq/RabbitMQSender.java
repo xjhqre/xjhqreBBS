@@ -20,22 +20,12 @@ public class RabbitMQSender {
     RabbitTemplate rabbitTemplate;
 
     /**
-     * 发送图片处理消息
-     *
-     * @param pictureId
-     */
-    public void sendPictureProcessMessage(String pictureId) {
-        this.rabbitTemplate.convertAndSend(RabbitMQConfig.DIRECT_EXCHANGE, RabbitMQConfig.DIRECT_ROUTING_A,
-                pictureId);
-    }
-
-    /**
      * 发送图片批量处理消息
      *
      * @param pictureIds
      */
-    public void sendPictureBatchProcessMessage(String[] pictureIds) {
-        this.rabbitTemplate.convertAndSend(RabbitMQConfig.DIRECT_EXCHANGE, RabbitMQConfig.DIRECT_ROUTING_B,
+    public void sendPictureProcessMessage(String[] pictureIds) {
+        this.rabbitTemplate.convertAndSend(RabbitMQConfig.DIRECT_EXCHANGE, RabbitMQConfig.ROUTING_KEY_PICTURE,
                 pictureIds);
     }
 

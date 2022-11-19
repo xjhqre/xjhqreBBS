@@ -33,10 +33,9 @@ public interface PictureService extends IService<Picture> {
     IPage<Picture> findPicture(Picture picture, Integer pageNum, Integer pageSize);
 
     /**
-     * 批量查找
+     * 批量上传图片
      *
-     * @param pictureIds
+     * @param multipartFileList
      */
-    List<Picture> selectBatch(String[] pictureIds);
-
+    void batchUpload(List<MultipartFile> multipartFileList);
 }

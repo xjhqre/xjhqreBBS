@@ -60,4 +60,14 @@ public class RabbitMQSender {
                 RabbitMQConfig.ROUTING_KEY_ES_ARTICLE_DELETE, articleId);
     }
 
+    /**
+     * 发送图片批量处理消息
+     *
+     * @param pictureIds
+     */
+    public void sendPictureProcessMessage(String[] pictureIds) {
+        this.rabbitTemplate.convertAndSend(RabbitMQConfig.DIRECT_EXCHANGE, RabbitMQConfig.ROUTING_KEY_PICTURE,
+                pictureIds);
+    }
+
 }

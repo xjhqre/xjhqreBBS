@@ -1,17 +1,5 @@
 package com.xjhqre.portal.controller;
 
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.util.concurrent.TimeUnit;
-
-import javax.annotation.Resource;
-import javax.imageio.ImageIO;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.FastByteArrayOutputStream;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.google.code.kaptcha.Producer;
 import com.xjhqre.common.common.R;
 import com.xjhqre.common.constant.CacheConstants;
@@ -21,17 +9,26 @@ import com.xjhqre.common.utils.redis.RedisCache;
 import com.xjhqre.common.utils.sign.Base64;
 import com.xjhqre.common.utils.uuid.IdUtils;
 import com.xjhqre.portal.service.ConfigService;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.FastByteArrayOutputStream;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.annotation.Resource;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 /***
  * 验证码操作处理**
- * 
+ *
  * @author xjhqre
  */
 @RestController
-@Api(value = "验证码接口", tags = "验证码接口")
+@Api(value = "图形验证码接口", tags = "图形验证码接口")
 public class CaptchaController extends BaseController {
     @Resource(name = "captchaProducer")
     private Producer captchaProducer;
@@ -53,7 +50,7 @@ public class CaptchaController extends BaseController {
             return R.error("验证码未开启");
         }
 
-        // 保存验证码信息
+        // 保存验证码信息，uuid：区分每个人的验证码
         String uuid = IdUtils.simpleUUID();
         String verifyKey = CacheConstants.CAPTCHA_CODE_KEY + uuid;
 

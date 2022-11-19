@@ -12,8 +12,8 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="xjhqreBBS-sms" />
         <module name="xjhqreBBS-search" />
+        <module name="xjhqreBBS-sms" />
         <module name="xjhqreBBS-portal" />
         <module name="xjhqreBBS-admin" />
         <module name="xjhqreBBS-quartz" />

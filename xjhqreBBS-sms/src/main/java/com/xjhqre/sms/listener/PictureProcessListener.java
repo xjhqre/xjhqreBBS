@@ -10,9 +10,6 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,27 +20,9 @@ public class PictureProcessListener {
     @Autowired
     PictureService pictureService;
 
-    //@RabbitListener(queues = RabbitMQConfig.DIRECT_QUEUE_A) // 监听的队列名称
-    //public void process(String pictureId) {
-    //    Picture picture = this.pictureService.getById(pictureId);
-    //
-    //    String response = this.executePython(pictureId, picture.getUrl());
-    //
-    //    if (response.contains("200")) {
-    //        // 审核通过
-    //        log.info("图片处理成功");
-    //        picture.setStatus(PictureConstant.PASS);
-    //    } else {
-    //        // 审核出现异常，回到待审核状态
-    //        log.info("图片处理失败");
-    //        picture.setStatus(PictureConstant.TO_BE_REVIEWED);
-    //    }
-    //    this.pictureService.updateById(picture);
-    //}
-
-    @RabbitListener(queues = RabbitMQConfig.DIRECT_QUEUE_B) // 监听的队列名称
-    public void batchProcess(String[] pictureIds) {
-        log.info("批量处理被调用");
+    @RabbitListener(queues = RabbitMQConfig.PICTURE) // 监听的队列名称
+    public void pictureProcess(String[] pictureIds) {
+        log.info("图片处理被调用");
         List<Picture> pictures = this.pictureService.selectBatch(pictureIds);
         List<String> urlList = pictures.stream().map(Picture::getUrl).collect(Collectors.toList());
         String urls = String.join(",", urlList);
@@ -52,69 +31,17 @@ public class PictureProcessListener {
         log.info(urls);
         String response = TransferPython.send(ids, urls);
         if (response.contains("200")) {
-            // 审核通过
             log.info("图片处理成功");
             for (Picture picture : pictures) {
                 picture.setStatus(PictureConstant.PASS);
             }
         } else {
-            // 审核出现异常，回到待审核状态
-            log.info("图片处理失败");
+            // 图片处理出现异常，回到待审核状态
+            log.info("图片处理异常");
             for (Picture picture : pictures) {
-                picture.setStatus(PictureConstant.TO_BE_REVIEWED);
+                picture.setStatus(PictureConstant.ABNORMAL);
             }
         }
         this.pictureService.updateBatchById(pictures);
-    }
-
-    /**
-     * 调用 Python 程序，上传本地到 OSS，解析图片向量保存到es
-     *
-     * @param pictureId  图片id
-     * @param pictureUrl 图片OSS地址
-     */
-    public String executePython(String pictureId, String pictureUrl) {
-        StringBuilder response = new StringBuilder();
-        try {
-            // 参数1：解释器地址 参数二：Python程序地址 参数三：图片id 参数四：图片OSS地址。调用Python上传图片特征
-            String[] args = new String[]{PictureConstant.INTERPRETER, PictureConstant.OFFLINE, pictureId, pictureUrl};
-            Process proc = Runtime.getRuntime().exec(args);
-            BufferedReader in = new BufferedReader(new InputStreamReader(proc.getInputStream()));
-            String line;
-            while ((line = in.readLine()) != null) {
-                response.append(line).append('\n');
-            }
-            in.close();
-            proc.waitFor();
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-        }
-        return response.toString();
-    }
-
-    /**
-     * 调用 Python 程序，上传本地到 OSS，解析图片向量保存到es
-     *
-     * @param ids  图片id
-     * @param urls 图片OSS地址
-     */
-    public String batchExecutePython(List<String> ids, List<String> urls) {
-        StringBuilder response = new StringBuilder();
-        try {
-            // 参数1：解释器地址 参数二：Python程序地址 参数三：图片id 参数四：图片OSS地址。调用Python上传图片特征
-            String[] args =
-                    new String[]{PictureConstant.INTERPRETER, PictureConstant.OFFLINE_2, ids.toString(), urls.toString()};
-            Process proc = Runtime.getRuntime().exec(args);
-            BufferedReader in = new BufferedReader(new InputStreamReader(proc.getInputStream()));
-            String line;
-            while ((line = in.readLine()) != null) {
-                response.append(line).append('\n');
-            }
-            in.close();
-            proc.waitFor();
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-        }
-        return response.toString();
     }
 }

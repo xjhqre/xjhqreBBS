@@ -66,7 +66,7 @@ public class PictureController extends BaseController {
     //    return R.success("审核成功");
     //}
 
-    @ApiOperation(value = "批量审核图片")
+    @ApiOperation(value = "审核图片")
     @PostMapping(value = "/batchAudit/{result}")
     public R<String> batchAudit(@RequestBody String[] pictureIds, @PathVariable Integer result) {
 

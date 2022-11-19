@@ -29,5 +29,7 @@ public class PictureConstant {
     public static final Integer PASS = 2;
     // 未通过，审核没通过的图片，经用户修改后再次变为待审核
     public static final Integer FAILED = 3;
+    // 图片处理异常，归入到失败队列，使用定时任务解决
+    public static final Integer ABNORMAL = 4;
 
 }

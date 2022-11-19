@@ -18,8 +18,7 @@ import org.springframework.context.annotation.Configuration;
 public class RabbitMQConfig {
 
     // 队列
-    public static final String DIRECT_QUEUE_A = "directQueue_A"; // 单个图片审核
-    public static final String DIRECT_QUEUE_B = "directQueue_B"; // 批量图片审核
+    public static final String PICTURE = "picture"; // 批量图片审核
     public static final String THUMB_COLLECT = "thumb_collect"; // 点赞收藏队列
     public static final String COMMENT = "comment"; // 评论和@队列
     public static final String FOLLOW = "follow"; // 粉丝队列
@@ -32,8 +31,7 @@ public class RabbitMQConfig {
     public static final String ES_ARTICLE_EXCHANGE = "es_article_exchange"; // 消息交换机
 
     // 路由密钥
-    public static final String DIRECT_ROUTING_A = "directRouting_A"; // 处理图片
-    public static final String DIRECT_ROUTING_B = "directRouting_B";
+    public static final String ROUTING_KEY_PICTURE = "routing_key_picture"; // 处理图片
     public static final String ROUTING_KEY_THUMB_COLLECT = "thumb_collect_key"; // 点赞收藏密钥
     public static final String ROUTING_KEY_COMMENT = "comment_key"; // 评论密钥
     public static final String ROUTING_KEY_FOLLOW = "follow_key"; // 关注密钥
@@ -64,18 +62,13 @@ public class RabbitMQConfig {
     ///////////////////////////////////////// 队列声明 ///////////////////////////////////////////
 
     @Bean
-    public Queue directQueueA() {
+    public Queue pictureQueue() {
         // durable:是否持久化,默认是false,持久化队列：会被存储在磁盘上，当消息代理重启时仍然存在，暂存队列：当前连接有效
         // exclusive:默认也是false，只能被当前创建的连接使用，而且当连接关闭后队列即被删除。此参考优先级高于durable
         // autoDelete:是否自动删除，当没有生产者或者消费者使用此队列，该队列会自动删除。
         // return new Queue("TestDirectQueue",true,true,false);
         // 一般设置一下队列的持久化就好,其余两个就是默认false
-        return new Queue(DIRECT_QUEUE_A, true);
-    }
-
-    @Bean
-    public Queue directQueueB() {
-        return new Queue(DIRECT_QUEUE_B, true);
+        return new Queue(PICTURE, true);
     }
 
     @Bean
@@ -107,13 +100,8 @@ public class RabbitMQConfig {
 
     // 绑定 将队列和交换机绑定, 并设置用于匹配键
     @Bean
-    Binding bindingDirectA() {
-        return BindingBuilder.bind(this.directQueueA()).to(this.directExchange()).with(DIRECT_ROUTING_A);
-    }
-
-    @Bean
-    Binding bindingDirectB() {
-        return BindingBuilder.bind(this.directQueueB()).to(this.directExchange()).with(DIRECT_ROUTING_B);
+    Binding bindingPicture() {
+        return BindingBuilder.bind(this.pictureQueue()).to(this.directExchange()).with(ROUTING_KEY_PICTURE);
     }
 
     @Bean
